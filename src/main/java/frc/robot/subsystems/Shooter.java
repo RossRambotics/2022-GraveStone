@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -35,11 +36,13 @@ public class Shooter extends SubsystemBase {
    * 
    * kP kI kD kF Iz PeakOut
    */
-  private TalonFX_Gains m_gainsVelocity = new TalonFX_Gains(0.1, 0.001, 5, 1023.0 / 20660.0, 300, 1.00);
+  private TalonFX_Gains m_gainsVelocity = new TalonFX_Gains(0.1, 0, 5, 1023.0 / 20660.0, 300, 1.00);
   private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Shooter");
   private NetworkTableEntry m_testRPM = null;
   private NetworkTableEntry m_actualFrontRPM = null;
   private NetworkTableEntry m_actualBackRPM = null;
+  private NetworkTableEntry m_diffFrontRPM = null;
+  private NetworkTableEntry m_diffBackRPM = null;
   private NetworkTableEntry m_pid_kP = null;
   private NetworkTableEntry m_pid_kI = null;
   private NetworkTableEntry m_pid_kD = null;
@@ -65,6 +68,10 @@ public class Shooter extends SubsystemBase {
     m_backMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
         ShooterConstants.kPIDLoopIdx,
         ShooterConstants.kTimeoutMs);
+
+    // Reverse the back motor
+    m_backMotor.setInverted(TalonFXInvertType.Clockwise);
+    m_frontMotor.setInverted(TalonFXInvertType.CounterClockwise);
 
     /* Config the peak and nominal outputs */
     m_frontMotor.configNominalOutputForward(0, ShooterConstants.kTimeoutMs);
@@ -98,10 +105,12 @@ public class Shooter extends SubsystemBase {
     m_FrontRPM_shooter = Math.abs(m_frontMotor.getSelectedSensorVelocity(ShooterConstants.kPIDLoopIdx));
     m_FrontRPM_shooter = m_FrontRPM_shooter / 2048 * 600;
     m_actualFrontRPM.setDouble(m_FrontRPM_shooter);
+    m_diffFrontRPM.setDouble(m_FrontRPM_shooter - m_testRPM.getDouble(0));
 
     m_BackRPM_shooter = Math.abs(m_backMotor.getSelectedSensorVelocity(ShooterConstants.kPIDLoopIdx));
     m_BackRPM_shooter = m_BackRPM_shooter / 2048 * 600;
     m_actualBackRPM.setDouble(m_BackRPM_shooter);
+    m_diffBackRPM.setDouble(m_BackRPM_shooter - m_testRPM.getDouble(0));
   }
 
   public void createShuffleBoardTab() {
@@ -127,10 +136,19 @@ public class Shooter extends SubsystemBase {
     m_testRPM = m_shuffleboardTab.add("Shooter Test RPM", 4000).withWidget(BuiltInWidgets.kNumberSlider).withSize(4, 1)
         .withPosition(2, 0).withProperties(Map.of("min", 0, "max", 10000)).getEntry();
 
-    m_actualFrontRPM = m_shuffleboardTab.add("Shooter Ftont Actual RPM", 4000).withWidget(BuiltInWidgets.kGraph)
+    m_actualFrontRPM = m_shuffleboardTab.add("Shooter Front Actual RPM", 4000).withWidget(BuiltInWidgets.kGraph)
         .withSize(4, 3)
         .withPosition(0, 2).getEntry();
+
+    m_diffFrontRPM = m_shuffleboardTab.add("Shooter Front Diff RPM", 4000).withWidget(BuiltInWidgets.kGraph)
+        .withSize(4, 3)
+        .withPosition(0, 2).getEntry();
+
     m_actualBackRPM = m_shuffleboardTab.add("Shooter Back Actual RPM", 4000).withWidget(BuiltInWidgets.kGraph)
+        .withSize(4, 3)
+        .withPosition(4, 2).getEntry();
+
+    m_diffBackRPM = m_shuffleboardTab.add("Shooter Back Diff RPM", 4000).withWidget(BuiltInWidgets.kGraph)
         .withSize(4, 3)
         .withPosition(4, 2).getEntry();
 
@@ -206,7 +224,10 @@ public class Shooter extends SubsystemBase {
     m_frontMotor.config_kP(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kP, ShooterConstants.kTimeoutMs);
     m_frontMotor.config_kI(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kI, ShooterConstants.kTimeoutMs);
     m_frontMotor.config_kD(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kD, ShooterConstants.kTimeoutMs);
-
+    m_backMotor.config_kF(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kF, ShooterConstants.kTimeoutMs);
+    m_backMotor.config_kP(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kP, ShooterConstants.kTimeoutMs);
+    m_backMotor.config_kI(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kI, ShooterConstants.kTimeoutMs);
+    m_backMotor.config_kD(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kD, ShooterConstants.kTimeoutMs);
   }
 
 }
