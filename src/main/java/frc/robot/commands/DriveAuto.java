@@ -8,7 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
-private final DrivetrainSubsystem m_drivetrainSubsystem;
+//private final DrivetrainSubsystem m_drivetrainSubsystem;
 
 public class DriveAuto extends CommandBase {
   /** Creates a new DriveAuto. */
@@ -24,10 +24,9 @@ public class DriveAuto extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      m_drivetrainSubsystem.drive(
-    ChassisSpeeds.fromFieldRelativeSpeeds(0 ,0.2 ,0 ,0));
+    // m_drivetrainSubsystem.drive(
+    // ChassisSpeeds.fromFieldRelativeSpeeds(0 ,0.2 ,0 ,0));
 
-    
   }
 
   // Called once the command ends or is interrupted.
