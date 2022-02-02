@@ -92,9 +92,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // adding SwerveOdometry
     private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
     private Pose2d m_odometryPose = new Pose2d();
-    private SwerveModuleState[] m_swerveModuleStates; // added while adding odometry support & replaced m_chassisSpeeds
+    private SwerveModuleState[] m_swerveModuleStates = new SwerveModuleState[4]; // added while adding odometry support
+                                                                                 // & replaced m_chassisSpeeds
 
     public DrivetrainSubsystem() {
+        m_swerveModuleStates[0] = new SwerveModuleState();
+        m_swerveModuleStates[1] = new SwerveModuleState();
+        m_swerveModuleStates[2] = new SwerveModuleState();
+        m_swerveModuleStates[3] = new SwerveModuleState();
+
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
 
         // There are 4 methods you can call to create your swerve modules.
