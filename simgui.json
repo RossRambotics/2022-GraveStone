@@ -1,0 +1,29 @@
+{
+  "HALProvider": {
+    "Other Devices": {
+      "Talon FX[31]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[31]/Integrated Sensor": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Shooter": "Subsystem",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/Shuffleboard/Sub.Shooter/Commands/Start Shooter": "Command",
+      "/Shuffleboard/Sub.Shooter/Commands/Stop Shooter": "Command",
+      "/Shuffleboard/Sub.Shooter/Commands/Update PIDF": "Command",
+      "/SmartDashboard/Start Shooter": "Command",
+      "/SmartDashboard/Stop Shooter": "Command",
+      "/SmartDashboard/Update PIDF": "Command"
+    }
+  }
+}
