@@ -47,9 +47,13 @@ public class Shooter extends SubsystemBase {
   private NetworkTableEntry m_pid_kI = null;
   private NetworkTableEntry m_pid_kD = null;
   private NetworkTableEntry m_pid_kFF = null;
+  private NetworkTableEntry m_pid_distance = null;
+  private NetworkTableEntry m_pid_rpmreturn = null;
 
   private double m_FrontRPM_shooter = 0;
   private double m_BackRPM_shooter = 0;
+  private double m_distance = 0;
+  private double m_interpolated_RPM = 0;
 
   /** Creates a new Shooter. */
   public Shooter() {
@@ -111,6 +115,18 @@ public class Shooter extends SubsystemBase {
     m_BackRPM_shooter = m_BackRPM_shooter / 2048 * 600;
     m_actualBackRPM.setDouble(m_BackRPM_shooter);
     m_diffBackRPM.setDouble(m_BackRPM_shooter - m_testRPM.getDouble(0));
+
+    m_distance = m_pid_distance.getDouble(0);
+
+    if (m_distance <= 0) {
+      m_interpolated_RPM = 200;
+    } else if (m_distance > 0 && m_distance < 1) {
+      m_interpolated_RPM = (800 * m_distance);
+    } else if (m_distance >= 1 && m_distance < 30) {
+      m_interpolated_RPM = (1000 * m_distance);
+    }
+    System.out.println(m_distance + " " + m_interpolated_RPM);
+    SmartDashboard.putNumber("Shooter/RPM Return", m_interpolated_RPM);
   }
 
   public void createShuffleBoardTab() {
@@ -156,7 +172,12 @@ public class Shooter extends SubsystemBase {
     // "Y-axis/Upper bound": 7000.0,
     // "Y-axis/Lower bound": 0.0,
     // "Y-axis/Unit": "RPM",
-
+    m_pid_distance = m_shuffleboardTab.add("Shooter Distance", m_distance).withWidget(BuiltInWidgets.kNumberSlider)
+        .withSize(2, 1)
+        .withPosition(7, 0).withProperties(Map.of("min", 0, "max", 30)).getEntry();
+    m_pid_rpmreturn = m_shuffleboardTab.add("Shooter/RPM Return", 0.0)
+        .withSize(1, 1)
+        .withPosition(6, 0).getEntry();
     m_pid_kFF = m_shuffleboardTab.add("Shooter PID kFF",
         m_gainsVelocity.kF).withSize(2, 1).withPosition(8, 1).getEntry();
     m_pid_kP = m_shuffleboardTab.add("Shooter PID kP",
