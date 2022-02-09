@@ -12,10 +12,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWhileTracking;
+import frc.robot.commands.Turret.TrackTarget;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Targeting;
 import frc.robot.subsystems.Tracking;
+import frc.robot.subsystems.Turret;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 public class RobotContainer {
@@ -33,6 +36,8 @@ public class RobotContainer {
 
     public final Shooter m_Shooter = new Shooter();
     public final Tracking m_Tracking = new Tracking();
+    public final Turret m_Turret = new Turret();
+    public final Targeting m_Targeting = new Targeting();
 
     private final XboxController m_controller = new XboxController(0);
 
@@ -51,13 +56,15 @@ public class RobotContainer {
                 () -> -modifyAxis(m_controller.getRightX())
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
+        m_Turret.setDefaultCommand(new TrackTarget(m_Turret));
+
         // Configure the button bindings
         configureButtonBindings();
 
         // disable Live Window per recommendations by WPILIB team to reduce network
         // overhead
         // remove this line if stuff is missing from shuffleboard that we need.
-        LiveWindow.disableAllTelemetry();
+        // LiveWindow.disableAllTelemetry();
     }
 
     /**
