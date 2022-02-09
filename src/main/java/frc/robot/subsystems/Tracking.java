@@ -35,7 +35,8 @@ public class Tracking extends SubsystemBase {
         // https://docs.photonvision.org/en/latest/docs/programming/photonlib/creating-photon-camera.html
         // Use yaw & gyro to calculate target gyro reading
         // return the difference between current gyro reading and target gyro reading
-
+        System.out.println("Gyro: " + RobotContainer.getTheRobot().m_drivetrainSubsystem.getGyroscopeRotation()
+                .getDegrees() + " Test Target: " + m_testTarget.getDegrees());
         return m_testTarget.minus(RobotContainer.getTheRobot().m_drivetrainSubsystem.getGyroscopeRotation())
                 .getDegrees();
     }
