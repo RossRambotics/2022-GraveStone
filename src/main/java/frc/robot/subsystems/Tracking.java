@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.Map;
 
+import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,6 +33,9 @@ public class Tracking extends SubsystemBase {
     public Tracking() {
         // create the camera
         // https://docs.photonvision.org/en/latest/docs/programming/photonlib/creating-photon-camera.html
+        // TODO Chester!
+        // something like
+        m_camera = new PhotonCamera("photonvision");
 
         // set the appropriate pipeline for the color of the ball based
         createShuffleBoardTab();
@@ -50,14 +54,28 @@ public class Tracking extends SubsystemBase {
     }
 
     public double getHeadingOffset() {
-        // TODO Implement this!
+        if (m_isTesting) {
+            return m_testTargetYaw.getDouble(0) - m_currentYaw.getDouble(0);
+        }
+
+        // TODO Chester fix this! this!
 
         // Get yaw from tracking camera
         // https://docs.photonvision.org/en/latest/docs/programming/photonlib/creating-photon-camera.html
         // Use yaw & gyro to calculate target gyro reading
         // return the difference between current gyro reading and target gyro reading
+        double yaw = 0;
 
-        return m_testTargetYaw.getDouble(0) - m_currentYaw.getDouble(0);
+        // set yaw equal to yaw from photonvision
+        // something like
+        PhotonPipelineResult result = m_camera.getLatestResult();
+
+        if (result.hasTargets()) {
+            yaw = result.getBestTarget().getYaw();
+        }
+
+        return yaw;
+
     }
 
     // used only for testing
@@ -70,7 +88,13 @@ public class Tracking extends SubsystemBase {
     }
 
     public boolean isTrackingTarget() {
-        return true;
+        if (m_isTesting) {
+            return true;
+        }
+
+        PhotonPipelineResult result = m_camera.getLatestResult();
+
+        return result.hasTargets();
     }
 
     public void createShuffleBoardTab() {
