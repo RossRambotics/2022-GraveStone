@@ -37,8 +37,6 @@ public class DriveWhileTracking extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        // TODO remove when finished testing
-        RobotContainer.getTheRobot().m_Tracking.setTestTarget(45);
 
         final double ANGULAR_P = 0.1;
         final double ANGULAR_D = 0.0;
