@@ -9,11 +9,6 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -24,10 +19,6 @@ public class DriveWhileTracking extends CommandBase {
     private final DoubleSupplier m_translationYSupplier;
     private final DoubleSupplier m_rotationSupplier;
     PIDController m_PIDTracking = null;
-    private NetworkTableEntry m_currentYaw = null;
-    private NetworkTableEntry m_goalYaw = null;
-    private NetworkTableEntry m_testTargetYaw = null;
-    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Tracking");
 
     /** Creates a new DriveWhileTracking. */
     public DriveWhileTracking(DrivetrainSubsystem drivetrainSubsystem,
@@ -52,8 +43,6 @@ public class DriveWhileTracking extends CommandBase {
         final double ANGULAR_P = 0.1;
         final double ANGULAR_D = 0.0;
         m_PIDTracking = new PIDController(ANGULAR_P, 0, ANGULAR_D);
-        // Shuffleboard.getTab("Sub.Tracking").add(m_PIDTracking);
-        createShuffleBoardTab();
 
     }
 
@@ -70,16 +59,13 @@ public class DriveWhileTracking extends CommandBase {
 
             // convert p from degrees to motor power
             double rotationSpeed = m_PIDTracking.calculate(p, 0);
-            m_currentYaw.setDouble(RobotContainer.getTheRobot().m_drivetrainSubsystem.getGyroHeading()
-                    .getDegrees());
-            m_goalYaw.setDouble(p);
-            m_testTargetYaw.setDouble(45);
 
-            System.out.println(
-                    "auto turning to target: " + p + " offset error: "
-                            + RobotContainer.getTheRobot().m_Tracking.getHeadingOffset()
-                            + " Gyro: "
-                            + RobotContainer.getTheRobot().m_drivetrainSubsystem.getGyroHeading().getDegrees());
+            // System.out.println(
+            // "auto turning to target: " + p + " offset error: "
+            // + RobotContainer.getTheRobot().m_Tracking.getHeadingOffset()
+            // + " Gyro: "
+            // +
+            // RobotContainer.getTheRobot().m_drivetrainSubsystem.getGyroHeading().getDegrees());
 
             m_drivetrainSubsystem.drive(
                     ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -96,32 +82,6 @@ public class DriveWhileTracking extends CommandBase {
                             m_rotationSupplier.getAsDouble(),
                             m_drivetrainSubsystem.getGyroscopeRotation()));
         }
-    }
-
-    public void createShuffleBoardTab() {
-        ShuffleboardTab tab = m_shuffleboardTab;
-        ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 2)
-                .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
-
-        // CommandBase c = new frc.robot.commands.Turret.UpdatePIDF(this);
-        // c.setName("Update PIDF");
-        // commands.add(c);
-
-        // c = new frc.robot.commands.Turret.EnableTestMode(this);
-        // c.setName("Test Mode");
-        // commands.add(c);
-
-        m_testTargetYaw = m_shuffleboardTab.add("Test Target Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(4, 1)
-                .withPosition(2, 0).withProperties(Map.of("min", -100.0, "max", 100.0)).getEntry();
-
-        m_currentYaw = m_shuffleboardTab.add("Current Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(4, 1)
-                .withPosition(2, 1).withProperties(Map.of("min", -100.0, "max", 100.0)).getEntry();
-
-        m_goalYaw = m_shuffleboardTab.add("Goal Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(4, 1)
-                .withPosition(2, 2).withProperties(Map.of("min", -100.0, "max", 100.0)).getEntry();
     }
 
     // Called once the command ends or is interrupted.
