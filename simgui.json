@@ -1,18 +1,4 @@
 {
-  "HALProvider": {
-    "Other Devices": {
-      "Talon FX[31]": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[31]/Integrated Sensor": {
-        "header": {
-          "open": true
-        }
-      }
-    }
-  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",

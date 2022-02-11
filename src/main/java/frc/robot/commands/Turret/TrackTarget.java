@@ -27,7 +27,9 @@ public class TrackTarget extends CommandBase {
             // Get the Yaw to the target from the targeting subsystem
             // and send it to the turret subsystem
             RobotContainer.getTheRobot().m_Turret.setYawDegreesRelative(
-                    RobotContainer.getTheRobot().m_Targeting.getTargetOffset());
+                    RobotContainer.getTheRobot().m_Targeting.getTargetOffsetYaw());
+            RobotContainer.getTheRobot().m_Turret.setPitchDegreesRelative(
+                    RobotContainer.getTheRobot().m_Targeting.getTargetOffsetPitch());
 
         } else {
             // we have lost the target so hold steady for a bit and see if we get it back

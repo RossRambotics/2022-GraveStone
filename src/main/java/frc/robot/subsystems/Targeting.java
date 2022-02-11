@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Targeting extends SubsystemBase {
     private double m_testTargetYaw = 0.0;
+    private double m_testTargetPitch = 0.0;
     private boolean m_isTestMode = false;
 
     /** Creates a new Targeting. */
@@ -19,14 +20,26 @@ public class Targeting extends SubsystemBase {
         // This method will be called once per scheduler run
     }
 
-    public double getTargetOffset() {
+    public double getTargetOffsetYaw() {
         if (m_isTestMode) {
             return m_testTargetYaw;
         }
 
         // TODO implement this
-        return 0;
+        // get result from camera
 
+        return 0;
+    }
+
+    public double getTargetOffsetPitch() {
+        if (m_isTestMode) {
+            return m_testTargetPitch;
+        }
+
+        // TODO implement this
+        // get result from camera
+
+        return 0;
     }
 
     public void setTestMode(boolean b) {
@@ -39,10 +52,16 @@ public class Targeting extends SubsystemBase {
         }
 
         // TODO implement this
+        // get result from camera
+
         return false;
     }
 
     public void setTestTargetYaw(double d) {
         m_testTargetYaw = d;
+    }
+
+    public void setTestTargetPitch(double d) {
+        m_testTargetPitch = d;
     }
 }
