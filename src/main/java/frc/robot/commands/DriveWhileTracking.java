@@ -38,8 +38,8 @@ public class DriveWhileTracking extends CommandBase {
     @Override
     public void initialize() {
 
-        final double ANGULAR_P = 0.15;
-        final double ANGULAR_D = 0.01;
+        final double ANGULAR_P = RobotContainer.getTheRobot().m_Tracking.getAngleP();
+        final double ANGULAR_D = RobotContainer.getTheRobot().m_Tracking.getAngleD();
         m_PIDTracking = new PIDController(ANGULAR_P, 0, ANGULAR_D);
 
     }

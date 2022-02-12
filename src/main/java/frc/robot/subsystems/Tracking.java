@@ -14,6 +14,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.commands.DriveWhileTracking;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -27,6 +28,8 @@ public class Tracking extends SubsystemBase {
     private NetworkTableEntry m_testTargetYaw = null;
     private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Tracking");
     private PhotonCamera m_camera;
+    private NetworkTableEntry m_pEntry = null;
+    private NetworkTableEntry m_dEntry = null;
 
     private boolean m_isTesting = false;
 
@@ -124,6 +127,20 @@ public class Tracking extends SubsystemBase {
         m_goalYaw = m_shuffleboardTab.add("Goal Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
                 .withPosition(2, 2).withProperties(Map.of("min", -100.0, "max", 100.0)).getEntry();
+        m_pEntry = m_shuffleboardTab.add("Angle P", 0.1)
+                .withSize(1, 1)
+                .withPosition(6, 0).getEntry();
+        m_dEntry = m_shuffleboardTab.add("Angle D", 0)
+                .withSize(1, 1)
+                .withPosition(6, 1).getEntry();
+
     }
 
+    public double getAngleP() {
+        return m_pEntry.getDouble(0);
+    }
+
+    public double getAngleD() {
+        return m_dEntry.getDouble(0);
+    }
 }
