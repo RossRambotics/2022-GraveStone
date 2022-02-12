@@ -10,20 +10,50 @@
         "header": {
           "open": true
         }
+      },
+      "Talon FX[41]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[42]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[42]/Integrated Sensor": {
+        "header": {
+          "open": true
+        }
       }
     }
   },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Intake": "Subsystem",
       "/LiveWindow/Shooter": "Subsystem",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/Shuffleboard/Sub.Intake/Commands/Extend Arm": "Command",
+      "/Shuffleboard/Sub.Intake/Commands/Retract Arm": "Command",
+      "/Shuffleboard/Sub.Intake/Commands/Reverse Intake": "Command",
+      "/Shuffleboard/Sub.Intake/Commands/Start Intake": "Command",
+      "/Shuffleboard/Sub.Intake/Commands/Stop Intake": "Command",
+      "/Shuffleboard/Sub.Intake/Commands/Update PIDF": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Start Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Stop Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Update PIDF": "Command",
+      "/SmartDashboard/Extend Arm": "Command",
+      "/SmartDashboard/Retract Arm": "Command",
+      "/SmartDashboard/Reverse Intake": "Command",
+      "/SmartDashboard/Start Intake": "Command",
       "/SmartDashboard/Start Shooter": "Command",
+      "/SmartDashboard/Stop Intake": "Command",
       "/SmartDashboard/Stop Shooter": "Command",
       "/SmartDashboard/Update PIDF": "Command"
     }
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

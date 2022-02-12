@@ -13,6 +13,7 @@ import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake;
 
 public class RobotContainer {
   private static RobotContainer m_theRobot = null;
@@ -28,6 +29,7 @@ public class RobotContainer {
   // private final DrivetrainSubsystem m_drivetrainSubsystem = new
   // DrivetrainSubsystem();
   public final Shooter m_Shooter = new Shooter();
+  public final Intake m_Intake = new Intake();
 
   private final XboxController m_controller = new XboxController(0);
 
