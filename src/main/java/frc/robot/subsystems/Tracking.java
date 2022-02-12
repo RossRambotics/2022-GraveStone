@@ -26,6 +26,7 @@ public class Tracking extends SubsystemBase {
     private NetworkTableEntry m_goalYaw = null;
     private NetworkTableEntry m_testTargetYaw = null;
     private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Tracking");
+    private PhotonCamera m_camera;
 
     private boolean m_isTesting = false;
 
@@ -50,6 +51,8 @@ public class Tracking extends SubsystemBase {
                 .getDegrees());
         m_goalYaw.setDouble(m_currentYaw.getDouble(0) + getHeadingOffset());
         this.setTestTarget(m_testTargetYaw.getDouble(0));
+
+        PhotonPipelineResult result = m_camera.getLatestResult();
 
     }
 
