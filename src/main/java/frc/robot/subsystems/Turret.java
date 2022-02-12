@@ -113,8 +113,16 @@ public class Turret extends SubsystemBase {
         if (m_testMode.getBoolean(false)) {
             RobotContainer.getTheRobot().m_Targeting.setTestTargetYaw(m_testTargetYaw.getDouble(0)
                     - m_currentYaw.getDouble(0));
-            RobotContainer.getTheRobot().m_Targeting.setTestTargetPitch(m_testTargetPitch.getDouble(0)
-                    - m_currentPitch.getDouble(0));
+
+            // this is commented out because the camera's pitch doesn't adjust based on the
+            // the pitch of the target. we are using the distance instead
+            // RobotContainer.getTheRobot().m_Targeting.setTestTargetPitch(m_testTargetPitch.getDouble(0)
+            // - m_currentPitch.getDouble(0));
+        }
+
+        // update pitch of turret/shooter based on the distance
+        if (RobotContainer.getTheRobot().m_Targeting.isTrackingTarget()) {
+            this.updatePitchUsingDistance();
         }
 
         // check if a soft limit is triggered?
@@ -137,6 +145,19 @@ public class Turret extends SubsystemBase {
 
         // int com.ctre.phoenix.motorcontrol.can.BaseTalon.isFwdLimitSwitchClosed()
 
+    }
+
+    private void updatePitchUsingDistance() {
+        double distance = RobotContainer.getTheRobot().m_Targeting.getTargetDistance();
+
+        // translate from distance to pitch
+        double pitch = 5; // TODO
+
+        // make sure pitch is in range
+
+        m_goalPitch.setDouble(pitch);
+        m_pitchMotor.set(TalonFXControlMode.Position, m_goalPitch.getDouble(0) *
+                kPITCH_TICKS_PER_DEGREE);
     }
 
     // sets the yaw of the turret
