@@ -29,6 +29,13 @@ public class TrackTarget extends CommandBase {
             RobotContainer.getTheRobot().m_Turret.setYawDegreesRelative(
                     RobotContainer.getTheRobot().m_Targeting.getTargetOffsetYaw());
 
+            // this is commented out because we don't want the turret pitch to adjust
+            // to follow the pitch of the target.
+            // we will use the distance calculation to determine the appropriate pitch
+            // to adjust the turret
+            // RobotContainer.getTheRobot().m_Turret.setPitchDegreesRelative(
+            // RobotContainer.getTheRobot().m_Targeting.getTargetOffsetPitch());
+
         } else {
             // we have lost the target so hold steady for a bit and see if we get it back
             CommandBase cmd = new ReAcquireTarget().withTimeout(2.0);

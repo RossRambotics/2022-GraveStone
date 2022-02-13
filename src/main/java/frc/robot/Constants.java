@@ -59,5 +59,6 @@ public final class Constants {
     public static final int SHOOTER_MOTOR_FRONT = 31; // CAN ID of the front shooter motor
     public static final int SHOOTER_MOTOR_BACK = 32; // CAN ID of the back shooter motor
 
-    public static final int TURRET_MOTOR = 35; // CAN ID of the turret motor
+    public static final int TURRET_MOTOR = 35; // CAN ID of the yaw turret motor
+    public static final int ANGULAR_MOTOR = 36; // CAN ID of the angular (pitch) motor on the turret
 }
