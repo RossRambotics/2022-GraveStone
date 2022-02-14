@@ -127,10 +127,10 @@ public class Tracking extends SubsystemBase {
         m_goalYaw = m_shuffleboardTab.add("Goal Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
                 .withPosition(2, 2).withProperties(Map.of("min", -100.0, "max", 100.0)).getEntry();
-        m_pEntry = m_shuffleboardTab.add("Angle P", 0.1)
+        m_pEntry = m_shuffleboardTab.add("Angle P", 0.095)
                 .withSize(1, 1)
                 .withPosition(6, 0).getEntry();
-        m_dEntry = m_shuffleboardTab.add("Angle D", 0)
+        m_dEntry = m_shuffleboardTab.add("Angle D", 0.001)
                 .withSize(1, 1)
                 .withPosition(6, 1).getEntry();
 
