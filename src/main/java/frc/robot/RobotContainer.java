@@ -4,6 +4,18 @@
 
 package frc.robot;
 
+import java.util.Map;
+
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +32,10 @@ import frc.robot.subsystems.Targeting;
 import frc.robot.subsystems.Tracking;
 import frc.robot.subsystems.Turret;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class RobotContainer {
     private static RobotContainer m_theRobot = null;
@@ -32,11 +48,15 @@ public class RobotContainer {
         return m_theRobot;
     }
 
+    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Auto");
+
     public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
-    public final Shooter m_Shooter = new Shooter();
+    // public final Shooter m_Shooter = new Shooter();
+    public final Shooter m_Shooter = null;
     public final Tracking m_Tracking = new Tracking();
-    public final Turret m_Turret = new Turret();
+    // public final Turret m_Turret = new Turret();
+    public final Turret m_Turret = null;
     public final Targeting m_Targeting = new Targeting();
 
     private final XboxController m_controller = new XboxController(0);
@@ -56,10 +76,13 @@ public class RobotContainer {
                 () -> -modifyAxis(m_controller.getRightX())
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
-        m_Turret.setDefaultCommand(new TrackTarget(m_Turret));
+        // m_Turret.setDefaultCommand(new TrackTarget(m_Turret));
 
         // Configure the button bindings
         configureButtonBindings();
+
+        // Configure auton shuffleboard panel
+        createShuffleBoardTab();
 
         // disable Live Window per recommendations by WPILIB team to reduce network
         // overhead
@@ -123,4 +146,36 @@ public class RobotContainer {
 
         return value;
     }
+
+    public void createShuffleBoardTab() {
+        ShuffleboardTab tab = m_shuffleboardTab;
+        ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 1)
+                .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
+
+        PathPlannerTrajectory examplePath = PathPlanner.loadPath("Example Path2", 1, 0.5);
+
+        TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
+                Math.PI, Math.PI);
+        ProfiledPIDController thetaController = new ProfiledPIDController(
+                1, 0, 0, kThetaControllerConstraints);
+
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        m_drivetrainSubsystem.getOdometry().resetPosition(new Pose2d(), new Rotation2d());
+        m_drivetrainSubsystem.zeroGyroscope();
+
+        PPSwerveControllerCommand command = new PPSwerveControllerCommand(
+                examplePath,
+                m_drivetrainSubsystem::getOdometryPose,
+                m_drivetrainSubsystem.getKinematics(),
+                // Position controllers
+                new PIDController(0.1, 0, 0),
+                new PIDController(0.1, 0, 0),
+                thetaController,
+                m_drivetrainSubsystem::setSwerveModulesStates,
+                m_drivetrainSubsystem);
+        command.setName("Example Path");
+        commands.add(command);
+
+    }
+
 }

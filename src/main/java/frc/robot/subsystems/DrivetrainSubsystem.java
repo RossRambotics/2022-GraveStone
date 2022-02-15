@@ -69,6 +69,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
             // Back right
             new Translation2d(-DRIVETRAIN_TRACKWIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0));
 
+    public SwerveDriveKinematics getKinematics() {
+        return m_kinematics;
+    }
+
     // By default we use a Pigeon for our gyroscope. But if you use another
     // gyroscope, like a NavX, you can change this.
     // The important thing about how you configure your gyroscope is that rotating
@@ -277,5 +281,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public Pose2d getOdometryPose() {
         return m_odometryPose;
+    }
+
+    public SwerveDriveOdometry getOdometry() {
+        return m_odometry;
     }
 }
