@@ -99,6 +99,12 @@ public class Turret extends SubsystemBase {
         m_pitchMotor.config_kI(m_kPIDLoopIdx, m_pitchGains.kI, m_kTimeoutMs);
         m_pitchMotor.config_kD(m_kPIDLoopIdx, m_pitchGains.kD, m_kTimeoutMs);
 
+        // TODO fix this once we know the counts
+        // m_yawMotor.configForwardSoftLimitThreshold(7000);
+        // m_yawMotor.configReverseSoftLimitThreshold(-7000);
+        // m_yawMotor.configForwardSoftLimitEnable(true);
+        // m_yawMotor.configReverseSoftLimitEnable(true);
+
         // setup shuffleboard
         createShuffleBoardTab();
     }
