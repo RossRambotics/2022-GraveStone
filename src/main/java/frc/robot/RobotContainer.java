@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -152,24 +153,30 @@ public class RobotContainer {
         ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 1)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
-        PathPlannerTrajectory examplePath = PathPlanner.loadPath("Example Path2", 1, 0.5);
+        PathPlannerTrajectory examplePath = PathPlanner.loadPath("Example Path2", 3, 1);
 
         TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
                 Math.PI, Math.PI);
         ProfiledPIDController thetaController = new ProfiledPIDController(
-                1, 0, 0, kThetaControllerConstraints);
+                4, 0, 0, kThetaControllerConstraints);
 
+        // let's the theta controller know that it is a circle (ie, 180 = -180)
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
-        m_drivetrainSubsystem.getOdometry().resetPosition(new Pose2d(), new Rotation2d());
         m_drivetrainSubsystem.zeroGyroscope();
+
+        // use this to automatically set
+        // the robot position on the field to match the start of the trajectory
+        PathPlannerState start = examplePath.getInitialState();
+        m_drivetrainSubsystem.getOdometry().resetPosition(start.poseMeters,
+                m_drivetrainSubsystem.getGyroscopeRotation());
 
         PPSwerveControllerCommand command = new PPSwerveControllerCommand(
                 examplePath,
                 m_drivetrainSubsystem::getOdometryPose,
                 m_drivetrainSubsystem.getKinematics(),
                 // Position controllers
-                new PIDController(0.1, 0, 0),
-                new PIDController(0.1, 0, 0),
+                new PIDController(0.2, 0, 0),
+                new PIDController(0.2, 0, 0),
                 thetaController,
                 m_drivetrainSubsystem::setSwerveModulesStates,
                 m_drivetrainSubsystem);
