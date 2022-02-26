@@ -28,8 +28,8 @@ import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-  WPI_TalonFX m_rollerMotor = new WPI_TalonFX(Constants.INTAKE_MOTOR_ROLL);
-  WPI_TalonFX m_extensionMotor = new WPI_TalonFX(Constants.INTAKE_MOTOR_EXTENSION);
+  WPI_TalonFX m_rollerMotor = new WPI_TalonFX(Constants.INDEXER_MOTOR_FRONT);
+  WPI_TalonFX m_extensionMotor = new WPI_TalonFX(Constants.INDEXER_MOTOR_BACK);
 
   // Default Intake Extension
   private double m_extensionTargetDegrees = 90;

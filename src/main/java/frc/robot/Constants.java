@@ -59,6 +59,6 @@ public final class Constants {
     public static final int SHOOTER_MOTOR_FRONT = 31; // CAN ID of the front shooter motor
     public static final int SHOOTER_MOTOR_BACK = 32; // CAN ID of the back shooter motor
 
-    public static final int INTAKE_MOTOR_ROLL = 41; // CAN ID of the roll intake motor
-    public static final int INTAKE_MOTOR_EXTENSION = 42; // CAN ID of the extension intake motor
+    public static final int INDEXER_MOTOR_FRONT = 41; // CAN ID of the roll intake motor
+    public static final int INDEXER_MOTOR_BACK = 42; // CAN ID of the extension intake motor
 }
