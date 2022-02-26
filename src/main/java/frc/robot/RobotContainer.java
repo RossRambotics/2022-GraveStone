@@ -153,7 +153,7 @@ public class RobotContainer {
         ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 1)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
-        PathPlannerTrajectory examplePath = PathPlanner.loadPath("Example Path2", 3, 1);
+        PathPlannerTrajectory examplePath = PathPlanner.loadPath("BBL", 3, 1);
 
         TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
                 Math.PI, Math.PI);
