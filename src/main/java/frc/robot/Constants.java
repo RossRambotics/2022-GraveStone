@@ -32,6 +32,12 @@ public final class Constants {
 
     public static final int DRIVETRAIN_PIGEON_ID = 19; // FIXME Set Pigeon ID
 
+    public static final int SHOOTER_MOTOR_FRONT = 31; // CAN ID of the front shooter motor
+    public static final int SHOOTER_MOTOR_BACK = 32; // CAN ID of the back shooter motor
+
+    public static final int INDEXER_MOTOR_FRONT = 41; // CAN ID of the roll intake motor
+    public static final int INDEXER_MOTOR_BACK = 42; // CAN ID of the extension intake motor
+
     public static final int MASTER_STEER_OFFSET = 0; // additional offset to true up robot travel direction
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 3; // FIXME Set front left module drive motor ID
