@@ -82,17 +82,17 @@ public class Indexer extends SubsystemBase {
 
         CommandBase c = new frc.robot.commands.Indexer.ShootCargo(this);
         c.setName("Start Indexer");
-        SmartDashboard.putData(c);
+        // SmartDashboard.putData(c);
         indexerCommands.add(c);
 
         c = new frc.robot.commands.Indexer.StopWheels(this);
         c.setName("Stop Indexer");
-        SmartDashboard.putData(c);
+        // SmartDashboard.putData(c);
         indexerCommands.add(c);
 
         c = new frc.robot.commands.Indexer.ReverseWheels(this);
         c.setName("Reverse Indexer");
-        SmartDashboard.putData(c);
+        // SmartDashboard.putData(c);
         indexerCommands.add(c);
 
     }
@@ -121,8 +121,10 @@ public class Indexer extends SubsystemBase {
 
     public void shoot() {
         // Start intake
-        m_frontwheels.set(TalonFXControlMode.PercentOutput, 0.25);
-        m_backwheels.set(TalonFXControlMode.PercentOutput, -0.25);
+        double p = 0.25;
+
+        m_frontwheels.set(TalonFXControlMode.PercentOutput, p);
+        m_backwheels.set(TalonFXControlMode.PercentOutput, -p);
     }
 
     public void stop() {
