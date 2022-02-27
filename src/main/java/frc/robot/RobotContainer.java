@@ -28,6 +28,8 @@ import frc.robot.commands.DriveWhileTracking;
 import frc.robot.commands.Turret.TrackTarget;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Targeting;
 import frc.robot.subsystems.Tracking;
@@ -59,6 +61,8 @@ public class RobotContainer {
     // public final Turret m_Turret = new Turret();
     public final Turret m_Turret = null;
     public final Targeting m_Targeting = new Targeting();
+    public final Intake m_Intake = new Intake();
+    public final Indexer m_Indexer = new Indexer();
 
     private final XboxController m_controller = new XboxController(0);
 

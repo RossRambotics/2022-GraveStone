@@ -3,7 +3,6 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
-
       "/LiveWindow/Shooter": "Subsystem",
       "/LiveWindow/Targeting": "Subsystem",
       "/LiveWindow/Tracking": "Subsystem",
@@ -18,12 +17,12 @@
       "/Shuffleboard/Sub.Shooter/Commands/Start Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Stop Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Update PIDF": "Command",
+      "/Shuffleboard/Sub.Turret/Commands/Test Mode": "Command",
+      "/Shuffleboard/Sub.Turret/Commands/Update PIDF": "Command",
       "/SmartDashboard/Extend Arm": "Command",
       "/SmartDashboard/Retract Arm": "Command",
       "/SmartDashboard/Reverse Intake": "Command",
       "/SmartDashboard/Start Intake": "Command",
-      "/Shuffleboard/Sub.Turret/Commands/Test Mode": "Command",
-      "/Shuffleboard/Sub.Turret/Commands/Update PIDF": "Command",
       "/SmartDashboard/Start Shooter": "Command",
       "/SmartDashboard/Stop Intake": "Command",
       "/SmartDashboard/Stop Shooter": "Command",

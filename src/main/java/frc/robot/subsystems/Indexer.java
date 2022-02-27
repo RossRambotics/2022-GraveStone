@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -28,108 +29,112 @@ import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Indexer extends SubsystemBase {
-  WPI_TalonFX m_frontwheels = new WPI_TalonFX(Constants.INDEXER_MOTOR_FRONT);
-  WPI_TalonFX m_backwheels = new WPI_TalonFX(Constants.INDEXER_MOTOR_BACK);
-
-  /**
-   * PID Gains may have to be adjusted based on the responsiveness of control
-   * loop.
-   * kF: 1023 represents output value to Talon at 100%, 20660 represents Velocity
-   * units at 100% output
-   * 
-   * kP kI kD kF Iz PeakOut
-   */
-  private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Intake");
-
-  /** Creates a new Intake. */
-  public Indexer() {
-    /* Factory Default all hardware to prevent unexpected behaviour */
-    m_frontwheels.configFactoryDefault();
-    m_backwheels.configFactoryDefault();
-
-    /* Config neutral deadband to be the smallest possible */
-    m_frontwheels.configNeutralDeadband(0.001);
-    m_backwheels.configNeutralDeadband(0.001);
-
-    /* Config the peak and nominal outputs */
-    m_frontwheels.configNominalOutputForward(0, IndexerConstants.kTimeoutMs);
-    m_frontwheels.configNominalOutputReverse(0, IndexerConstants.kTimeoutMs);
-    m_frontwheels.configPeakOutputForward(1, IndexerConstants.kTimeoutMs);
-    m_frontwheels.configPeakOutputReverse(-1, IndexerConstants.kTimeoutMs);
-
-    m_backwheels.configNominalOutputForward(0, IndexerConstants.kTimeoutMs);
-    m_backwheels.configNominalOutputReverse(0, IndexerConstants.kTimeoutMs);
-    m_backwheels.configPeakOutputForward(1, IndexerConstants.kTimeoutMs);
-    m_backwheels.configPeakOutputReverse(-1, IndexerConstants.kTimeoutMs);
-
-    this.createShuffleBoardTab();
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
-
-  public void createShuffleBoardTab() {
-    ShuffleboardTab tab = m_shuffleboardTab;
-    ShuffleboardLayout indexerCommands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 2)
-        .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
-
-    CommandBase c = new frc.robot.commands.Indexer.ShootCargo(this);
-    c.setName("Start Indexer");
-    SmartDashboard.putData(c);
-    indexerCommands.add(c);
-
-    c = new frc.robot.commands.Indexer.StopWheels(this);
-    c.setName("Stop Indexer");
-    SmartDashboard.putData(c);
-    indexerCommands.add(c);
-
-    c = new frc.robot.commands.Indexer.ReverseWheels(this);
-    c.setName("Reverse Indexer");
-    SmartDashboard.putData(c);
-    indexerCommands.add(c);
-
-  }
-
-  class IndexerConstants {
-    /**
-     * Which PID slot to pull gains from. Starting 2018, you can choose from
-     * 0,1,2 or 3. Only the first two (0,1) are visible in web-based
-     * configuration.
-     */
-    public static final int kSlotIdx = 0;
+    WPI_TalonFX m_frontwheels = new WPI_TalonFX(Constants.INDEXER_MOTOR_FRONT, "usb");
+    WPI_TalonFX m_backwheels = new WPI_TalonFX(Constants.INDEXER_MOTOR_BACK, "usb");
 
     /**
-     * Talon FX supports multiple (cascaded) PID loops. For
-     * now we just want the primary one.
+     * PID Gains may have to be adjusted based on the responsiveness of control
+     * loop.
+     * kF: 1023 represents output value to Talon at 100%, 20660 represents Velocity
+     * units at 100% output
+     * 
+     * kP kI kD kF Iz PeakOut
      */
-    public static final int kPIDLoopIdx = 0;
+    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Indexer");
 
-    /**
-     * Set to zero to skip waiting for confirmation, set to nonzero to wait and
-     * report to DS if action fails.
-     */
-    public static final int kTimeoutMs = 30;
+    /** Creates a new Intake. */
+    public Indexer() {
+        /* Factory Default all hardware to prevent unexpected behaviour */
+        m_frontwheels.configFactoryDefault();
+        m_backwheels.configFactoryDefault();
 
-  }
+        /* Config neutral deadband to be the smallest possible */
+        m_frontwheels.configNeutralDeadband(0.001);
+        m_backwheels.configNeutralDeadband(0.001);
 
-  public void shoot() {
-    // Start intake
-    m_frontwheels.set(TalonFXControlMode.PercentOutput, 0.25);
-    m_backwheels.set(TalonFXControlMode.PercentOutput, -0.25);
-  }
+        /* Config the peak and nominal outputs */
+        m_frontwheels.configNominalOutputForward(0, IndexerConstants.kTimeoutMs);
+        m_frontwheels.configNominalOutputReverse(0, IndexerConstants.kTimeoutMs);
+        m_frontwheels.configPeakOutputForward(1, IndexerConstants.kTimeoutMs);
+        m_frontwheels.configPeakOutputReverse(-1, IndexerConstants.kTimeoutMs);
 
-  public void stop() {
-    // Stop intake
-    m_frontwheels.set(TalonFXControlMode.PercentOutput, 0);
-    m_backwheels.set(TalonFXControlMode.PercentOutput, 0);
-  }
+        m_backwheels.configNominalOutputForward(0, IndexerConstants.kTimeoutMs);
+        m_backwheels.configNominalOutputReverse(0, IndexerConstants.kTimeoutMs);
+        m_backwheels.configPeakOutputForward(1, IndexerConstants.kTimeoutMs);
+        m_backwheels.configPeakOutputReverse(-1, IndexerConstants.kTimeoutMs);
 
-  public void reverse() {
-    // Reverse intake
-    m_frontwheels.set(TalonFXControlMode.PercentOutput, -0.25);
-    m_backwheels.set(TalonFXControlMode.PercentOutput, 0.25);
-  }
+        // set orientation
+        m_frontwheels.setInverted(TalonFXInvertType.Clockwise);
+        m_backwheels.setInverted(TalonFXInvertType.Clockwise);
+
+        this.createShuffleBoardTab();
+    }
+
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+    }
+
+    public void createShuffleBoardTab() {
+        ShuffleboardTab tab = m_shuffleboardTab;
+        ShuffleboardLayout indexerCommands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 2)
+                .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
+
+        CommandBase c = new frc.robot.commands.Indexer.ShootCargo(this);
+        c.setName("Start Indexer");
+        SmartDashboard.putData(c);
+        indexerCommands.add(c);
+
+        c = new frc.robot.commands.Indexer.StopWheels(this);
+        c.setName("Stop Indexer");
+        SmartDashboard.putData(c);
+        indexerCommands.add(c);
+
+        c = new frc.robot.commands.Indexer.ReverseWheels(this);
+        c.setName("Reverse Indexer");
+        SmartDashboard.putData(c);
+        indexerCommands.add(c);
+
+    }
+
+    class IndexerConstants {
+        /**
+         * Which PID slot to pull gains from. Starting 2018, you can choose from
+         * 0,1,2 or 3. Only the first two (0,1) are visible in web-based
+         * configuration.
+         */
+        public static final int kSlotIdx = 0;
+
+        /**
+         * Talon FX supports multiple (cascaded) PID loops. For
+         * now we just want the primary one.
+         */
+        public static final int kPIDLoopIdx = 0;
+
+        /**
+         * Set to zero to skip waiting for confirmation, set to nonzero to wait and
+         * report to DS if action fails.
+         */
+        public static final int kTimeoutMs = 30;
+
+    }
+
+    public void shoot() {
+        // Start intake
+        m_frontwheels.set(TalonFXControlMode.PercentOutput, 0.25);
+        m_backwheels.set(TalonFXControlMode.PercentOutput, -0.25);
+    }
+
+    public void stop() {
+        // Stop intake
+        m_frontwheels.set(TalonFXControlMode.PercentOutput, 0);
+        m_backwheels.set(TalonFXControlMode.PercentOutput, 0);
+    }
+
+    public void reverse() {
+        // Reverse intake
+        m_frontwheels.set(TalonFXControlMode.PercentOutput, -0.25);
+        m_backwheels.set(TalonFXControlMode.PercentOutput, 0.25);
+    }
 
 }
