@@ -82,7 +82,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // FIXME Remove if you are using a Pigeon
 
     // private final PigeonIMU m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
-    private final WPI_Pigeon2 m_pigeon = new WPI_Pigeon2(DRIVETRAIN_PIGEON_ID, "usb-can");
+    private final WPI_Pigeon2 m_pigeon = new WPI_Pigeon2(DRIVETRAIN_PIGEON_ID);
 
     // FIXME Uncomment if you are using a NavX
     // private final AHRS m_navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX

@@ -115,8 +115,8 @@ public class Robot extends TimedRobot {
     }
 
     public void simulationInit() {
-        m_robotContainer.m_Shooter.simulationInit();
-        m_robotContainer.m_Turret.simulationInit();
+        // m_robotContainer.m_Shooter.simulationInit();
+        // m_robotContainer.m_Turret.simulationInit();
     }
 
     public void simulationPeriodic() {

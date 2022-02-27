@@ -38,6 +38,9 @@ public final class Constants {
     public static final int INDEXER_MOTOR_FRONT = 41; // CAN ID of the roll intake motor
     public static final int INDEXER_MOTOR_BACK = 42; // CAN ID of the extension intake motor
 
+    public static final int INTAKE_MOTOR_ROLLER = 45; // CAN ID of the roll intake motor
+    public static final int INTAKE_MOTOR_EXTENSION = 46; // CAN ID of the extension intake motor
+
     public static final int MASTER_STEER_OFFSET = 0; // additional offset to true up robot travel direction
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 3; // FIXME Set front left module drive motor ID
