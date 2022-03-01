@@ -33,7 +33,7 @@ public class Intake extends SubsystemBase {
     WPI_TalonFX m_extensionMotor = new WPI_TalonFX(Constants.INTAKE_MOTOR_EXTENSION, "usb");
 
     // Default Intake Extension
-    private double m_extensionTargetDegrees = 90;
+    private double m_extensionTargetDegrees = 120;
 
     /**
      * PID Gains may have to be adjusted based on the responsiveness of control
@@ -102,32 +102,32 @@ public class Intake extends SubsystemBase {
 
         CommandBase c = new frc.robot.commands.Intake.StartIntake(this);
         c.setName("Start Intake");
-        SmartDashboard.putData(c);
+        // SmartDashboard.putData(c);
         intakeCommands.add(c);
 
         c = new frc.robot.commands.Intake.StopIntake(this);
         c.setName("Stop Intake");
-        SmartDashboard.putData(c);
+        // SmartDashboard.putData(c);
         intakeCommands.add(c);
 
         c = new frc.robot.commands.Intake.UpdatePIDF(this);
         c.setName("Update PIDF");
-        SmartDashboard.putData(c);
+        // SmartDashboard.putData(c);
         intakeCommands.add(c);
 
         c = new frc.robot.commands.Intake.ReverseIntake(this);
         c.setName("Reverse Intake");
-        SmartDashboard.putData(c);
+        // SmartDashboard.putData(c);
         intakeCommands.add(c);
 
         c = new frc.robot.commands.Intake.RetractIntake(this);
         c.setName("Retract Arm");
-        SmartDashboard.putData(c);
+        // SmartDashboard.putData(c);
         intakeCommands.add(c);
 
         c = new frc.robot.commands.Intake.ExtendIntake(this);
         c.setName("Extend Arm");
-        SmartDashboard.putData(c);
+        // SmartDashboard.putData(c);
         intakeCommands.add(c);
 
         // "Y-axis/Automatic bounds": false,
@@ -135,16 +135,16 @@ public class Intake extends SubsystemBase {
         // "Y-axis/Lower bound": 0.0,
         // "Y-axis/Unit": "RPM",
         m_pid_kFF = m_shuffleboardTab.add("Extension PID kFF",
-                m_gainsVelocity.kF).withSize(2, 1).withPosition(8, 1).getEntry();
+                m_gainsVelocity.kF).withSize(2, 1).withPosition(3, 0).getEntry();
         m_pid_kP = m_shuffleboardTab.add("Extension PID kP",
-                m_gainsVelocity.kP).withSize(2, 1).withPosition(8, 2).getEntry();
+                m_gainsVelocity.kP).withSize(2, 1).withPosition(3, 1).getEntry();
         m_pid_kD = m_shuffleboardTab.add("Extension PID kD",
-                m_gainsVelocity.kD).withSize(2, 1).withPosition(8, 3).getEntry();
+                m_gainsVelocity.kD).withSize(2, 1).withPosition(3, 2).getEntry();
         m_pid_kI = m_shuffleboardTab.add("Extension PID kI",
-                m_gainsVelocity.kI).withSize(2, 1).withPosition(8, 4).getEntry();
+                m_gainsVelocity.kI).withSize(2, 1).withPosition(3, 3).getEntry();
 
         m_targetExtensionDegrees = m_shuffleboardTab.add("Extension Target", m_extensionTargetDegrees).withSize(1, 1)
-                .withPosition(7, 4).getEntry();
+                .withPosition(2, 3).getEntry();
 
     }
 

@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class RobotContainer {
     private static RobotContainer m_theRobot = null;
@@ -58,8 +59,8 @@ public class RobotContainer {
     // public final Shooter m_Shooter = new Shooter();
     public final Shooter m_Shooter = null;
     public final Tracking m_Tracking = new Tracking();
-    // public final Turret m_Turret = new Turret();
-    public final Turret m_Turret = null;
+    public final Turret m_Turret = new Turret();
+    // public final Turret m_Turret = null;
     public final Targeting m_Targeting = new Targeting();
     public final Intake m_Intake = new Intake();
     public final Indexer m_Indexer = new Indexer();
@@ -127,7 +128,11 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
-        return new InstantCommand();
+        CommandBase cmd = (CommandBase) m_autoChooser.getSelected();
+        if (cmd == null) {
+            return new InstantCommand();
+        }
+        return cmd;
     }
 
     private static double deadband(double value, double deadband) {
@@ -151,6 +156,8 @@ public class RobotContainer {
 
         return value;
     }
+
+    private SendableChooser m_autoChooser = new SendableChooser();
 
     public void createShuffleBoardTab() {
         ShuffleboardTab tab = m_shuffleboardTab;
@@ -187,6 +194,20 @@ public class RobotContainer {
         command.setName("Example Path");
         commands.add(command);
 
+        // Add auto routines
+        CommandBase autoCmd = null;
+        autoCmd = new InstantCommand();
+        autoCmd.setName("Do Nothing");
+        m_autoChooser.setDefaultOption("Do Nothing", autoCmd);
+
+        autoCmd = new InstantCommand();
+        autoCmd.setName("Drive");
+        m_autoChooser.addOption("Drive", autoCmd);
+
+        autoCmd = new InstantCommand();
+        autoCmd.setName("Drive And Shoot");
+        m_autoChooser.addOption("Drive And Shoot", autoCmd);
+        tab.add("Autonomous", m_autoChooser).withSize(2, 1);
     }
 
 }
