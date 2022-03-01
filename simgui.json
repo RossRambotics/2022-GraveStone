@@ -33,6 +33,8 @@
       "/Shuffleboard/Sub.Shooter/Commands/Start Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Stop Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Update PIDF": "Command",
+      "/Shuffleboard/Sub.Tracking/Commands/Test Mode": "Command",
+      "/Shuffleboard/Sub.Tracking/Commands/Update PIDF": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Test Mode": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Update PIDF": "Command",
       "/SmartDashboard/Extend Arm": "Command",

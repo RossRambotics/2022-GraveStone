@@ -258,16 +258,6 @@ public class Turret extends SubsystemBase {
                 .withSize(3, 1)
                 .withPosition(5, 2).withProperties(Map.of("min", 0.0, "max", 45.0)).getEntry();
 
-        // m_actualBackRPM = m_shuffleboardTab.add("Shooter Back Actual RPM",
-        // 4000).withWidget(BuiltInWidgets.kGraph)
-        // .withSize(4, 3)
-        // .withPosition(4, 2).getEntry();
-
-        // m_diffBackRPM = m_shuffleboardTab.add("Shooter Back Diff RPM",
-        // 4000).withWidget(BuiltInWidgets.kGraph)
-        // .withSize(4, 3)
-        // .withPosition(4, 2).getEntry();
-
         m_testMode = m_shuffleboardTab.add("Turret Test Mode",
                 false).withSize(2, 1).withPosition(8, 0).getEntry();
 
