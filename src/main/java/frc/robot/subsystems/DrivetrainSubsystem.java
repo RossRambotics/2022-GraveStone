@@ -215,6 +215,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // return Rotation2d.fromDegrees(360.0 - m_navx.getYaw());
     }
 
+    // clockwise rotoation is a positive change in angle
+    public Rotation2d getGyroHeading() {
+        Rotation2d r = new Rotation2d();
+        r = r.fromDegrees(-m_pigeon.getYaw());
+        return r;
+    }
+
     private void updateSDSSwerveModules() {
         m_frontLeftModule.set(
                 m_swerveModuleStates[0].speedMetersPerSecond /

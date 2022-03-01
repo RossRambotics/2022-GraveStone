@@ -4,19 +4,21 @@
 
 package frc.robot.commands;
 
+import java.util.Map;
 import java.util.function.DoubleSupplier;
-
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class DriveWhileTracking extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
-
     private final DoubleSupplier m_translationXSupplier;
     private final DoubleSupplier m_translationYSupplier;
     private final DoubleSupplier m_rotationSupplier;
+    PIDController m_PIDTracking = null;
 
     /** Creates a new DriveWhileTracking. */
     public DriveWhileTracking(DrivetrainSubsystem drivetrainSubsystem,
@@ -35,8 +37,10 @@ public class DriveWhileTracking extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        // TODO remove when finished testing
-        RobotContainer.getTheRobot().m_Tracking.setTestTarget(5);
+
+        final double ANGULAR_P = RobotContainer.getTheRobot().m_Tracking.getAngleP();
+        final double ANGULAR_D = RobotContainer.getTheRobot().m_Tracking.getAngleD();
+        m_PIDTracking = new PIDController(ANGULAR_P, 0, ANGULAR_D);
 
     }
 
@@ -52,14 +56,20 @@ public class DriveWhileTracking extends CommandBase {
             double p = RobotContainer.getTheRobot().m_Tracking.getHeadingOffset();
 
             // convert p from degrees to motor power
-            // TODO replace with PID
-            p = (p / 180);
+            double rotationSpeed = m_PIDTracking.calculate(p, 0);
+
+            // System.out.println(
+            // "auto turning to target: " + p + " offset error: "
+            // + RobotContainer.getTheRobot().m_Tracking.getHeadingOffset()
+            // + " Gyro: "
+            // +
+            // RobotContainer.getTheRobot().m_drivetrainSubsystem.getGyroHeading().getDegrees());
 
             m_drivetrainSubsystem.drive(
                     ChassisSpeeds.fromFieldRelativeSpeeds(
                             m_translationXSupplier.getAsDouble(),
                             m_translationYSupplier.getAsDouble(),
-                            p,
+                            rotationSpeed,
                             m_drivetrainSubsystem.getGyroscopeRotation()));
         } else {
             // if we aren't tracking a target then do normal drive...

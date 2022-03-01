@@ -57,7 +57,6 @@ public class RobotContainer {
     public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
     // public final Shooter m_Shooter = new Shooter();
-    public final Shooter m_Shooter = null;
     public final Tracking m_Tracking = new Tracking();
     public final Turret m_Turret = new Turret();
     // public final Turret m_Turret = null;
@@ -117,8 +116,8 @@ public class RobotContainer {
                 () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
                 () -> -modifyAxis(m_controller.getRightX())
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
-        new Button(m_controller::getLeftBumperPressed)
-                .whileHeld(cmd, true);
+        new Button(m_controller::getLeftBumper)
+                .whenHeld(cmd, true);
     }
 
     /**
