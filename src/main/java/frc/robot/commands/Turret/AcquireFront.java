@@ -18,7 +18,7 @@ public class AcquireFront extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        // Move the turret to zero
+        // Move the turret to zero yaw
         RobotContainer.getTheRobot().m_Turret.setYawDegreesFront(0);
     }
 
