@@ -59,8 +59,8 @@ public class RobotContainer {
     // public final Shooter m_Shooter = new Shooter();
     public final Shooter m_Shooter = null;
     public final Tracking m_Tracking = new Tracking();
-    // public final Turret m_Turret = new Turret();
-    public final Turret m_Turret = null;
+    public final Turret m_Turret = new Turret();
+    // public final Turret m_Turret = null;
     public final Targeting m_Targeting = new Targeting();
     public final Intake m_Intake = new Intake();
     public final Indexer m_Indexer = new Indexer();
