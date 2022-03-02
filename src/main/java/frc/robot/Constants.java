@@ -61,4 +61,8 @@ public final class Constants {
 
     public static final int INDEXER_MOTOR_FRONT = 41; // CAN ID of the roll intake motor
     public static final int INDEXER_MOTOR_BACK = 42; // CAN ID of the extension intake motor
+
+    public static final int INDEXER_ENTRY = 2; // Sensor ID for the Indexer Entry
+    public static final int INDEXER_MIDDLE = 3; // Sensor ID for the Indexer Middle
+    public static final int INDEXER_EXIT = 4; // Sensor ID for the Indexer Exit
 }

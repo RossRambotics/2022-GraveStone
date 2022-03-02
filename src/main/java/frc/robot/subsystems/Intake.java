@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-// ID 41 for arm ID 42 for Intake motor
+// ID 46 for arm ID 45 for Intake motor
 
 import java.util.Map;
 

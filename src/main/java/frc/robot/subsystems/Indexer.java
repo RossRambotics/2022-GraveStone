@@ -4,7 +4,7 @@
 
 package frc.robot.subsystems;
 
-// ID 41 for arm ID 42 for Intake motor
+// ID 41 for Indexer front (5 sets of green wheels) ID 42 for Indexer back (3 green & 1 gray)
 
 import java.util.Map;
 
@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -31,6 +32,9 @@ public class Indexer extends SubsystemBase {
   WPI_TalonFX m_frontwheels = new WPI_TalonFX(Constants.INDEXER_MOTOR_FRONT);
   WPI_TalonFX m_backwheels = new WPI_TalonFX(Constants.INDEXER_MOTOR_BACK);
 
+  public AnalogInput m_Sensor_IndexerEntry = new AnalogInput(Constants.INDEXER_ENTRY);
+  public AnalogInput m_Sensor_IndexerMiddle = new AnalogInput(Constants.INDEXER_MIDDLE);
+  public AnalogInput m_Sensor_IndexerExit = new AnalogInput(Constants.INDEXER_EXIT);
   /**
    * PID Gains may have to be adjusted based on the responsiveness of control
    * loop.
@@ -132,4 +136,27 @@ public class Indexer extends SubsystemBase {
     m_backwheels.set(TalonFXControlMode.PercentOutput, 0.25);
   }
 
+  public boolean getSensorIndexerEntry() {
+    if (m_Sensor_IndexerEntry.getValue() > 10) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public boolean getSensorIndexerMiddle() {
+    if (m_Sensor_IndexerMiddle.getValue() > 10) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public boolean getSensorIndexerExit() {
+    if (m_Sensor_IndexerExit.getValue() > 10) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

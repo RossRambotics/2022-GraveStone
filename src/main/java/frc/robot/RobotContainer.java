@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake;
 
@@ -30,6 +31,7 @@ public class RobotContainer {
   // DrivetrainSubsystem();
   public final Shooter m_Shooter = new Shooter();
   public final Intake m_Intake = new Intake();
+  public final Indexer m_Indexer = new Indexer();
 
   private final XboxController m_controller = new XboxController(0);
 
