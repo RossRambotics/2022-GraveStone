@@ -1,38 +1,13 @@
 {
-  "HALProvider": {
-    "Other Devices": {
-      "Talon FX[31]": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[31]/Integrated Sensor": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[41]": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[42]": {
-        "header": {
-          "open": true
-        }
-      },
-      "Talon FX[42]/Integrated Sensor": {
-        "header": {
-          "open": true
-        }
-      }
-    }
-  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/LiveWindow/Intake": "Subsystem",
+      "/LiveWindow/DrivetrainSubsystem": "Subsystem",
+
       "/LiveWindow/Shooter": "Subsystem",
+      "/LiveWindow/Targeting": "Subsystem",
+      "/LiveWindow/Tracking": "Subsystem",
+      "/LiveWindow/Turret": "Subsystem",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/Shuffleboard/Sub.Intake/Commands/Extend Arm": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Retract Arm": "Command",
@@ -47,9 +22,12 @@
       "/SmartDashboard/Retract Arm": "Command",
       "/SmartDashboard/Reverse Intake": "Command",
       "/SmartDashboard/Start Intake": "Command",
+      "/Shuffleboard/Sub.Turret/Commands/Test Mode": "Command",
+      "/Shuffleboard/Sub.Turret/Commands/Update PIDF": "Command",
       "/SmartDashboard/Start Shooter": "Command",
       "/SmartDashboard/Stop Intake": "Command",
       "/SmartDashboard/Stop Shooter": "Command",
+      "/SmartDashboard/Test Mode": "Command",
       "/SmartDashboard/Update PIDF": "Command"
     }
   },
