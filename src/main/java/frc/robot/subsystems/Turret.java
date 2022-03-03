@@ -63,6 +63,7 @@ public class Turret extends SubsystemBase {
     private NetworkTableEntry m_pitch_pid_kI = null;
     private NetworkTableEntry m_pitch_pid_kD = null;
     private NetworkTableEntry m_pitch_pid_kFF = null;
+    private boolean m_isTurretLocked = false;
 
     WPI_TalonFX m_pitchMotor = new WPI_TalonFX(Constants.ANGULAR_MOTOR);
 
@@ -91,12 +92,12 @@ public class Turret extends SubsystemBase {
         /* Config the peak and nominal outputs */
         m_yawMotor.configNominalOutputForward(0, m_kTimeoutMs);
         m_yawMotor.configNominalOutputReverse(0, m_kTimeoutMs);
-        m_yawMotor.configPeakOutputForward(1, m_kTimeoutMs);
-        m_yawMotor.configPeakOutputReverse(-1, m_kTimeoutMs);
+        m_yawMotor.configPeakOutputForward(0.1, m_kTimeoutMs);
+        m_yawMotor.configPeakOutputReverse(-0.1, m_kTimeoutMs);
         m_pitchMotor.configNominalOutputForward(0, m_kTimeoutMs);
         m_pitchMotor.configNominalOutputReverse(0, m_kTimeoutMs);
-        m_pitchMotor.configPeakOutputForward(1, m_kTimeoutMs);
-        m_pitchMotor.configPeakOutputReverse(-1, m_kTimeoutMs);
+        m_pitchMotor.configPeakOutputForward(0.1, m_kTimeoutMs);
+        m_pitchMotor.configPeakOutputReverse(-0.1, m_kTimeoutMs);
 
         /* Config the position closed loop gains in slot0 */
         m_yawMotor.config_kF(m_kPIDLoopIdx, m_yawGains.kF, m_kTimeoutMs);
@@ -161,6 +162,7 @@ public class Turret extends SubsystemBase {
     }
 
     private void updatePitchUsingDistance() {
+
         double distance = RobotContainer.getTheRobot().m_Targeting.getTargetDistance();
 
         // translate from distance to pitch
@@ -169,6 +171,10 @@ public class Turret extends SubsystemBase {
         // make sure pitch is in range
 
         m_goalPitch.setDouble(pitch);
+
+        if (isTurretLocked()) {
+            return;
+        }
         m_pitchMotor.set(TalonFXControlMode.Position, m_goalPitch.getDouble(0) *
                 kPITCH_TICKS_PER_DEGREE);
     }
@@ -181,6 +187,10 @@ public class Turret extends SubsystemBase {
         // if the goal is outside the bounds, set the goal to the boundary
 
         m_goalYaw.setDouble(goal);
+
+        if (isTurretLocked()) {
+            return;
+        }
         m_yawMotor.set(TalonFXControlMode.Position, m_goalYaw.getDouble(0) *
                 kYAW_TICKS_PER_DEGREE);
     }
@@ -190,7 +200,9 @@ public class Turret extends SubsystemBase {
     // returns false if we are still moving
     public boolean initializeTurretLock() {
         // if we are within 5 degrees true true
-        if (Math.abs(this.getYaw() - kTURRET_LOCK_SEARCH_START) < 5) {
+        if (Math.abs(this.getYaw() - kTURRET_LOCK_SEARCH_START) < 2) {
+            // stop spinning the turret
+            m_yawMotor.set(ControlMode.PercentOutput, 0);
             return true;
         }
 
@@ -201,15 +213,23 @@ public class Turret extends SubsystemBase {
         return false;
     }
 
+    // returns true if the sensor indicates the turret is in the lock position
+    public boolean getSensorTurretLock() {
+        if (m_Sensor_TurretLock.getValue() > 10) {
+            return false;
+        }
+
+        return true;
+    }
+
     // rotates the turret at a relatively slow speed waiting for the sensor to
     // indicate that it is in the lock position
     // returns true if lock position is found
     // returns false if the lock position is not found
     public boolean searchTurretLock() {
-        if (m_Sensor_TurretLock.getValue() > 10) {
+        if (getSensorTurretLock()) {
             // lock the turret
-            // set the position control to here
-            m_yawMotor.set(TalonFXControlMode.Position, m_yawMotor.getSelectedSensorPosition(0));
+            lockTurret();
 
             return true;
         } else {
@@ -217,6 +237,21 @@ public class Turret extends SubsystemBase {
         }
 
         return false;
+    }
+
+    public void lockTurret() {
+        // set the position control to here
+        m_yawMotor.set(TalonFXControlMode.Position, m_yawMotor.getSelectedSensorPosition(0));
+
+        m_isTurretLocked = true;
+    }
+
+    public void unlockTurret() {
+        m_isTurretLocked = false;
+    }
+
+    public boolean isTurretLocked() {
+        return m_isTurretLocked;
     }
 
     // set the yaw of the turret
@@ -233,6 +268,10 @@ public class Turret extends SubsystemBase {
         // convert to ptich that is relative to the current position
         goal += m_currentPitch.getDouble(0);
         m_goalPitch.setDouble(goal);
+
+        if (isTurretLocked()) {
+            return;
+        }
         m_pitchMotor.set(TalonFXControlMode.Position, m_goalPitch.getDouble(0) *
                 kPITCH_TICKS_PER_DEGREE);
     }
@@ -242,6 +281,10 @@ public class Turret extends SubsystemBase {
     // or to rezero the turret
     public void resetYawDegressAbs(double yaw) {
         m_currentYaw.setDouble(yaw);
+
+        if (isTurretLocked()) {
+            return;
+        }
 
         // update the encoder and set the target to match
         m_yawMotor.setSelectedSensorPosition(m_currentYaw.getDouble(0) * kYAW_TICKS_PER_DEGREE);
@@ -254,6 +297,10 @@ public class Turret extends SubsystemBase {
     // or to rezero the turret
     public void resetPitchDegressAbs(double pitch) {
         m_currentPitch.setDouble(pitch);
+
+        if (isTurretLocked()) {
+            return;
+        }
 
         // update the encoder and set the target to match
         m_pitchMotor.setSelectedSensorPosition(m_currentPitch.getDouble(0) * kPITCH_TICKS_PER_DEGREE);
@@ -279,6 +326,14 @@ public class Turret extends SubsystemBase {
 
         c = new frc.robot.commands.Turret.EnableTestMode();
         c.setName("Test Mode");
+        commands.add(c);
+
+        c = new frc.robot.commands.Turret.LockTurret();
+        c.setName("Lock Turret");
+        commands.add(c);
+
+        c = new frc.robot.commands.Turret.UnlockTurret();
+        c.setName("Unlock Turret");
         commands.add(c);
 
         m_testTargetYaw = m_shuffleboardTab.add("Test Target Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
