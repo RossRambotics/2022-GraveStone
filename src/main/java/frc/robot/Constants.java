@@ -73,4 +73,5 @@ public final class Constants {
 
     public static final int TURRET_MOTOR = 35; // CAN ID of the yaw turret motor
     public static final int ANGULAR_MOTOR = 36; // CAN ID of the angular (pitch) motor on the turret
+    public static final int TURRET_SENSOR = 1; // Analog IN port for light beam sensor
 }

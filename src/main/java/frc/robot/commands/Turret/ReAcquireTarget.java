@@ -24,7 +24,7 @@ public class ReAcquireTarget extends CommandBase {
     public void execute() {
         if (RobotContainer.getTheRobot().m_Targeting.isTrackingTarget()) {
             // we have found the target again so go back to tracking the target
-            CommandBase cmd = new TrackTarget(RobotContainer.getTheRobot().m_Turret);
+            CommandBase cmd = new TrackTarget();
             cmd.schedule();
         }
     }

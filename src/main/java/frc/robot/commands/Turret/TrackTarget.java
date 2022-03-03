@@ -10,9 +10,9 @@ import frc.robot.subsystems.Turret;
 
 public class TrackTarget extends CommandBase {
     /** Creates a new TrackTarget. */
-    public TrackTarget(Turret t) {
+    public TrackTarget() {
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(t);
+        addRequirements(RobotContainer.getTheRobot().m_Turret);
     }
 
     // Called when the command is initially scheduled.

@@ -5,40 +5,42 @@
 package frc.robot.commands.Intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Intake;
 
 public class UpdatePIDF extends CommandBase {
 
-  private Intake m_intake = null;
+    private Intake m_intake = null;
 
-  /** Creates a new UpdatePIDF. */
-  public UpdatePIDF(Intake intake) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    m_intake = intake;
+    /** Creates a new UpdatePIDF. */
+    public UpdatePIDF() {
+        // Use addRequirements() here to declare subsystem dependencies.
+        m_intake = RobotContainer.getTheRobot().m_Intake;
+        ;
 
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.addRequirements(m_intake);
-  }
+        // Use addRequirements() here to declare subsystem dependencies.
+        this.addRequirements(m_intake);
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    m_intake.updatePIDF();
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        m_intake.updatePIDF();
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

@@ -80,17 +80,17 @@ public class Indexer extends SubsystemBase {
         ShuffleboardLayout indexerCommands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 2)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
-        CommandBase c = new frc.robot.commands.Indexer.ShootCargo(this);
+        CommandBase c = new frc.robot.commands.Indexer.ShootCargo();
         c.setName("Start Indexer");
         // SmartDashboard.putData(c);
         indexerCommands.add(c);
 
-        c = new frc.robot.commands.Indexer.StopWheels(this);
+        c = new frc.robot.commands.Indexer.StopWheels();
         c.setName("Stop Indexer");
         // SmartDashboard.putData(c);
         indexerCommands.add(c);
 
-        c = new frc.robot.commands.Indexer.ReverseWheels(this);
+        c = new frc.robot.commands.Indexer.ReverseWheels();
         c.setName("Reverse Indexer");
         // SmartDashboard.putData(c);
         indexerCommands.add(c);

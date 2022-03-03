@@ -5,15 +5,17 @@
 package frc.robot.commands.Turret;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Turret;
 
 public class UpdatePIDF extends CommandBase {
     private Turret m_turret = null;
 
     /** Creates a new UpdatePIDF. */
-    public UpdatePIDF(Turret turret) {
+    public UpdatePIDF() {
         // Use addRequirements() here to declare subsystem dependencies.
-        m_turret = turret;
+        m_turret = RobotContainer.getTheRobot().m_Turret;
+        ;
 
         // Use addRequirements() here to declare subsystem dependencies.
         this.addRequirements(m_turret);

@@ -100,32 +100,32 @@ public class Intake extends SubsystemBase {
         ShuffleboardLayout intakeCommands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 3)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
-        CommandBase c = new frc.robot.commands.Intake.StartIntake(this);
+        CommandBase c = new frc.robot.commands.Intake.StartIntake();
         c.setName("Start Intake");
         // SmartDashboard.putData(c);
         intakeCommands.add(c);
 
-        c = new frc.robot.commands.Intake.StopIntake(this);
+        c = new frc.robot.commands.Intake.StopIntake();
         c.setName("Stop Intake");
         // SmartDashboard.putData(c);
         intakeCommands.add(c);
 
-        c = new frc.robot.commands.Intake.UpdatePIDF(this);
+        c = new frc.robot.commands.Intake.UpdatePIDF();
         c.setName("Update PIDF");
         // SmartDashboard.putData(c);
         intakeCommands.add(c);
 
-        c = new frc.robot.commands.Intake.ReverseIntake(this);
+        c = new frc.robot.commands.Intake.ReverseIntake();
         c.setName("Reverse Intake");
         // SmartDashboard.putData(c);
         intakeCommands.add(c);
 
-        c = new frc.robot.commands.Intake.RetractIntake(this);
+        c = new frc.robot.commands.Intake.RetractIntake();
         c.setName("Retract Arm");
         // SmartDashboard.putData(c);
         intakeCommands.add(c);
 
-        c = new frc.robot.commands.Intake.ExtendIntake(this);
+        c = new frc.robot.commands.Intake.ExtendIntake();
         c.setName("Extend Arm");
         // SmartDashboard.putData(c);
         intakeCommands.add(c);

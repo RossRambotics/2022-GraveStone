@@ -56,7 +56,7 @@ public class RobotContainer {
 
     public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
-    // public final Shooter m_Shooter = new Shooter();
+    public final Shooter m_Shooter = new Shooter();
     public final Tracking m_Tracking = new Tracking();
     public final Turret m_Turret = new Turret();
     // public final Turret m_Turret = null;
@@ -81,7 +81,7 @@ public class RobotContainer {
                 () -> -modifyAxis(m_controller.getRightX())
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
-        m_Turret.setDefaultCommand(new TrackTarget(m_Turret));
+        m_Turret.setDefaultCommand(new TrackTarget());
 
         // Configure the button bindings
         configureButtonBindings();

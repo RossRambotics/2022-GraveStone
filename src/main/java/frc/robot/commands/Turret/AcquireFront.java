@@ -28,7 +28,7 @@ public class AcquireFront extends CommandBase {
         // if the targeting camera has found the target transition to the TrackTarget
         // command
         if (RobotContainer.getTheRobot().m_Targeting.isTrackingTarget()) {
-            CommandBase cmd = new TrackTarget(RobotContainer.getTheRobot().m_Turret);
+            CommandBase cmd = new TrackTarget();
             cmd.schedule();
         }
     }

@@ -5,15 +5,16 @@
 package frc.robot.commands.Tracking;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Tracking;
 
 public class EnableTestMode extends CommandBase {
     private Tracking m_tracking = null;
 
     /** Creates a new EnableTestMode. */
-    public EnableTestMode(Tracking t) {
+    public EnableTestMode() {
         // Use addRequirements() here to declare subsystem dependencies.
-        m_tracking = t;
+        m_tracking = RobotContainer.getTheRobot().m_Tracking;
     }
 
     // Called when the command is initially scheduled.

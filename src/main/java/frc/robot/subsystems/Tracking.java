@@ -113,11 +113,11 @@ public class Tracking extends SubsystemBase {
         ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 2)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
-        CommandBase c = new frc.robot.commands.Tracking.UpdatePIDF(this);
+        CommandBase c = new frc.robot.commands.Tracking.UpdatePIDF();
         c.setName("Update PIDF");
         commands.add(c);
 
-        c = new frc.robot.commands.Tracking.EnableTestMode(this);
+        c = new frc.robot.commands.Tracking.EnableTestMode();
         c.setName("Test Mode");
         commands.add(c);
 

@@ -6,12 +6,14 @@ package frc.robot.subsystems;
 
 import java.util.Map;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -30,7 +32,14 @@ public class Turret extends SubsystemBase {
     private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Turret");
 
     // yaw related member variables
-    private final double kYAW_TICKS_PER_DEGREE = (20 * 2048.0) / 360; // TODO update with gear ratio
+    private final double kYAW_TICKS_PER_DEGREE = (20 * 2048.0) / 360; // TODO update with gear
+    private final double kTURRET_LOCK_SEARCH_START = 70; // angle the turret moves to start search for lock sensor
+    private final double kTURRET_LOCK_SEARCH_END = 120; // maximum angle the turret will look for the lock sensor
+    private final double kTURRET_LOCK_SEARCH_SPEED = 0.1; // the speed the turret will move while searching for the
+                                                          // correct angle
+
+    public AnalogInput m_Sensor_TurretLock = new AnalogInput(Constants.TURRET_SENSOR);
+
     private NetworkTableEntry m_currentYaw = null; // updated by calaculating it back from the turret motor encoder
     private NetworkTableEntry m_goalYaw = null;
     private NetworkTableEntry m_testTargetYaw = null;
@@ -147,6 +156,10 @@ public class Turret extends SubsystemBase {
 
     }
 
+    public double getYaw() {
+        return m_currentYaw.getDouble(0);
+    }
+
     private void updatePitchUsingDistance() {
         double distance = RobotContainer.getTheRobot().m_Targeting.getTargetDistance();
 
@@ -170,6 +183,40 @@ public class Turret extends SubsystemBase {
         m_goalYaw.setDouble(goal);
         m_yawMotor.set(TalonFXControlMode.Position, m_goalYaw.getDouble(0) *
                 kYAW_TICKS_PER_DEGREE);
+    }
+
+    // moves the turret to the beginning of the turret lock/sensor search range
+    // returns true if we are close to search start angle
+    // returns false if we are still moving
+    public boolean initializeTurretLock() {
+        // if we are within 5 degrees true true
+        if (Math.abs(this.getYaw() - kTURRET_LOCK_SEARCH_START) < 5) {
+            return true;
+        }
+
+        m_goalYaw.setDouble(kTURRET_LOCK_SEARCH_START);
+        m_yawMotor.set(TalonFXControlMode.Position, m_goalYaw.getDouble(0) *
+                kYAW_TICKS_PER_DEGREE);
+
+        return false;
+    }
+
+    // rotates the turret at a relatively slow speed waiting for the sensor to
+    // indicate that it is in the lock position
+    // returns true if lock position is found
+    // returns false if the lock position is not found
+    public boolean searchTurretLock() {
+        if (m_Sensor_TurretLock.getValue() > 10) {
+            // lock the turret
+            // set the position control to here
+            m_yawMotor.set(TalonFXControlMode.Position, m_yawMotor.getSelectedSensorPosition(0));
+
+            return true;
+        } else {
+            m_yawMotor.set(ControlMode.PercentOutput, kTURRET_LOCK_SEARCH_SPEED);
+        }
+
+        return false;
     }
 
     // set the yaw of the turret
@@ -226,11 +273,11 @@ public class Turret extends SubsystemBase {
         ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 1)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
-        CommandBase c = new frc.robot.commands.Turret.UpdatePIDF(this);
+        CommandBase c = new frc.robot.commands.Turret.UpdatePIDF();
         c.setName("Update PIDF");
         commands.add(c);
 
-        c = new frc.robot.commands.Turret.EnableTestMode(this);
+        c = new frc.robot.commands.Turret.EnableTestMode();
         c.setName("Test Mode");
         commands.add(c);
 
