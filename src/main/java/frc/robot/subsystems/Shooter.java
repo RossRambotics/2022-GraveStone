@@ -25,8 +25,10 @@ import frc.robot.TalonFX_Gains;
 import frc.robot.RobotContainer;
 
 public class Shooter extends SubsystemBase {
+
     WPI_TalonFX m_frontMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_FRONT);
     WPI_TalonFX m_backMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_BACK);
+
 
     /**
      * PID Gains may have to be adjusted based on the responsiveness of control

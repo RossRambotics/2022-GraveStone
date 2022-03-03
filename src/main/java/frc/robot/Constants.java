@@ -69,8 +69,14 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 7; // FIXME Set back right steer encoder ID
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(171.6339 + MASTER_STEER_OFFSET);
 
-    // right steer offse
+    // right steer offset
+
 
     public static final int TURRET_MOTOR = 35; // CAN ID of the yaw turret motor
     public static final int ANGULAR_MOTOR = 36; // CAN ID of the angular (pitch) motor on the turret
+
+    public static final int INDEXER_ENTRY = 2; // Sensor ID for the Indexer Entry
+    public static final int INDEXER_MIDDLE = 3; // Sensor ID for the Indexer Middle
+    public static final int INDEXER_EXIT = 4; // Sensor ID for the Indexer Exit
+
 }
