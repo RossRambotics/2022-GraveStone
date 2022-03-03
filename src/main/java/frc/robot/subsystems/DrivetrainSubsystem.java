@@ -82,7 +82,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // FIXME Remove if you are using a Pigeon
 
     // private final PigeonIMU m_pigeon = new PigeonIMU(DRIVETRAIN_PIGEON_ID);
-    private final WPI_Pigeon2 m_pigeon = new WPI_Pigeon2(DRIVETRAIN_PIGEON_ID, "usb-can");
+    private final WPI_Pigeon2 m_pigeon = new WPI_Pigeon2(DRIVETRAIN_PIGEON_ID);
 
     // FIXME Uncomment if you are using a NavX
     // private final AHRS m_navx = new AHRS(SPI.Port.kMXP, (byte) 200); // NavX
@@ -213,6 +213,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // // We have to invert the angle of the NavX so that rotating the robot
         // counter-clockwise makes the angle increase.
         // return Rotation2d.fromDegrees(360.0 - m_navx.getYaw());
+    }
+
+    // clockwise rotoation is a positive change in angle
+    public Rotation2d getGyroHeading() {
+        Rotation2d r = new Rotation2d();
+        r = r.fromDegrees(-m_pigeon.getYaw());
+        return r;
     }
 
     private void updateSDSSwerveModules() {
