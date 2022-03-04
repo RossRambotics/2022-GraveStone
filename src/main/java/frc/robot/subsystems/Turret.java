@@ -50,22 +50,22 @@ public class Turret extends SubsystemBase {
     private NetworkTableEntry m_yaw_pid_kD = null;
     private NetworkTableEntry m_yaw_pid_kFF = null;
 
-    WPI_TalonFX m_yawMotor = new WPI_TalonFX(Constants.TURRET_MOTOR);
+    WPI_TalonFX m_yawMotor = new WPI_TalonFX(Constants.TURRET_MOTOR, "usb");
 
     // pitch related member variables
-    private final double kPITCH_TICKS_PER_DEGREE = (20 * 2048.0) / 360; // TODO update with gear ratio
+    private final double kPITCH_TICKS_PER_DEGREE = (20 * 2048.0) / 360.0; // TODO update with gear ratio
     private NetworkTableEntry m_currentPitch = null; // updated by calaculating it back from the turret motor encoder
     private NetworkTableEntry m_goalPitch = null;
     private NetworkTableEntry m_testTargetPitch = null;
 
-    private TalonFX_Gains m_pitchGains = new TalonFX_Gains(0.05, 0, 0.5, 0, 300, 1.00);
+    private TalonFX_Gains m_pitchGains = new TalonFX_Gains(0.2, 0, 0.5, 0, 300, 1.00);
     private NetworkTableEntry m_pitch_pid_kP = null;
     private NetworkTableEntry m_pitch_pid_kI = null;
     private NetworkTableEntry m_pitch_pid_kD = null;
     private NetworkTableEntry m_pitch_pid_kFF = null;
     private boolean m_isTurretLocked = false;
 
-    WPI_TalonFX m_pitchMotor = new WPI_TalonFX(Constants.ANGULAR_MOTOR);
+    WPI_TalonFX m_pitchMotor = new WPI_TalonFX(Constants.ANGULAR_MOTOR, "usb");
 
     /** Creates a new Turret. */
     public Turret() {
@@ -96,8 +96,8 @@ public class Turret extends SubsystemBase {
         m_yawMotor.configPeakOutputReverse(-0.1, m_kTimeoutMs);
         m_pitchMotor.configNominalOutputForward(0, m_kTimeoutMs);
         m_pitchMotor.configNominalOutputReverse(0, m_kTimeoutMs);
-        m_pitchMotor.configPeakOutputForward(0.1, m_kTimeoutMs);
-        m_pitchMotor.configPeakOutputReverse(-0.1, m_kTimeoutMs);
+        m_pitchMotor.configPeakOutputForward(0.3, m_kTimeoutMs);
+        m_pitchMotor.configPeakOutputReverse(-0.3, m_kTimeoutMs);
 
         /* Config the position closed loop gains in slot0 */
         m_yawMotor.config_kF(m_kPIDLoopIdx, m_yawGains.kF, m_kTimeoutMs);
@@ -110,7 +110,15 @@ public class Turret extends SubsystemBase {
         m_pitchMotor.config_kD(m_kPIDLoopIdx, m_pitchGains.kD, m_kTimeoutMs);
 
         // setup shuffleboard
-        createShuffleBoardTab();
+        // createShuffleBoardTab();
+    }
+
+    public void setPitchToGoal() {
+        setPitchDegrees(m_goalPitch.getDouble(0));
+    }
+
+    public void setYawToGoal() {
+        setYawDegreesFront(m_goalYaw.getDouble(0));
     }
 
     @Override
@@ -236,6 +244,11 @@ public class Turret extends SubsystemBase {
             m_yawMotor.set(ControlMode.PercentOutput, kTURRET_LOCK_SEARCH_SPEED);
         }
 
+        // if we are past the search range restart the search
+        if (m_currentYaw.getDouble(0) > kTURRET_LOCK_SEARCH_END) {
+            CommandBase cmd = new frc.robot.commands.Turret.LockTurret();
+            cmd.schedule();
+        }
         return false;
     }
 
@@ -260,6 +273,17 @@ public class Turret extends SubsystemBase {
         // convert to yaw that is relative to the front of the robot
         goal += m_currentYaw.getDouble(0);
         this.setYawDegreesFront(goal);
+    }
+
+    public void setPitchDegrees(double goal) {
+        m_goalPitch.setDouble(goal);
+        if (isTurretLocked()) {
+            return;
+        }
+        System.out.println("**** Setting Pitch to goal: " + goal + " " + m_goalPitch.getDouble(0) *
+                kPITCH_TICKS_PER_DEGREE);
+        m_pitchMotor.set(TalonFXControlMode.Position, m_goalPitch.getDouble(0) *
+                kPITCH_TICKS_PER_DEGREE);
     }
 
     // set the pitch of the turret
@@ -317,7 +341,7 @@ public class Turret extends SubsystemBase {
 
     public void createShuffleBoardTab() {
         ShuffleboardTab tab = m_shuffleboardTab;
-        ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 1)
+        ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 5)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
         CommandBase c = new frc.robot.commands.Turret.UpdatePIDF();
@@ -334,6 +358,14 @@ public class Turret extends SubsystemBase {
 
         c = new frc.robot.commands.Turret.UnlockTurret();
         c.setName("Unlock Turret");
+        commands.add(c);
+
+        c = new frc.robot.commands.Turret.EnablePitch();
+        c.setName("Enable Pitch");
+        commands.add(c);
+
+        c = new frc.robot.commands.Turret.EnableYaw();
+        c.setName("Enable Yaw");
         commands.add(c);
 
         m_testTargetYaw = m_shuffleboardTab.add("Test Target Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
@@ -364,22 +396,22 @@ public class Turret extends SubsystemBase {
                 false).withSize(2, 1).withPosition(8, 0).getEntry();
 
         m_yaw_pid_kFF = m_shuffleboardTab.add("Yaw PID kFF",
-                m_yawGains.kF).withSize(1, 1).withPosition(0, 1).getEntry();
+                m_yawGains.kF).withSize(1, 1).withPosition(2, 3).getEntry();
         m_yaw_pid_kP = m_shuffleboardTab.add("Yaw PID kP",
-                m_yawGains.kP).withSize(1, 1).withPosition(0, 2).getEntry();
+                m_yawGains.kP).withSize(1, 1).withPosition(3, 3).getEntry();
         m_yaw_pid_kD = m_shuffleboardTab.add("Yaw PID kD",
-                m_yawGains.kD).withSize(1, 1).withPosition(0, 3).getEntry();
+                m_yawGains.kD).withSize(1, 1).withPosition(4, 3).getEntry();
         m_yaw_pid_kI = m_shuffleboardTab.add("Yaw PID kI",
-                m_yawGains.kI).withSize(1, 1).withPosition(0, 4).getEntry();
+                m_yawGains.kI).withSize(1, 1).withPosition(3, 4).getEntry();
 
         m_pitch_pid_kFF = m_shuffleboardTab.add("Pitch PID kFF",
-                m_pitchGains.kF).withSize(1, 1).withPosition(1, 1).getEntry();
+                m_pitchGains.kF).withSize(1, 1).withPosition(5, 3).getEntry();
         m_pitch_pid_kP = m_shuffleboardTab.add("Pitch PID kP",
-                m_pitchGains.kP).withSize(1, 1).withPosition(1, 2).getEntry();
+                m_pitchGains.kP).withSize(1, 1).withPosition(6, 3).getEntry();
         m_pitch_pid_kD = m_shuffleboardTab.add("Pitch PID kD",
-                m_pitchGains.kD).withSize(1, 1).withPosition(1, 3).getEntry();
+                m_pitchGains.kD).withSize(1, 1).withPosition(7, 3).getEntry();
         m_pitch_pid_kI = m_shuffleboardTab.add("Pitch PID kI",
-                m_pitchGains.kI).withSize(1, 1).withPosition(1, 4).getEntry();
+                m_pitchGains.kI).withSize(1, 1).withPosition(6, 4).getEntry();
 
     }
 

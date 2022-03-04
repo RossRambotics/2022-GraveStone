@@ -81,13 +81,11 @@ public class RobotContainer {
                 () -> -modifyAxis(m_controller.getRightX())
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
-        m_Turret.setDefaultCommand(new TrackTarget());
-
         // Configure the button bindings
         configureButtonBindings();
 
         // Configure auton shuffleboard panel
-        createShuffleBoardTab();
+        // createShuffleBoardTab();
 
         // disable Live Window per recommendations by WPILIB team to reduce network
         // overhead
@@ -207,6 +205,15 @@ public class RobotContainer {
         autoCmd.setName("Drive And Shoot");
         m_autoChooser.addOption("Drive And Shoot", autoCmd);
         tab.add("Autonomous", m_autoChooser).withSize(2, 1);
+
+        this.m_Shooter.createShuffleBoardTab();
+        this.m_Tracking.createShuffleBoardTab();
+        this.m_Indexer.createShuffleBoardTab();
+        this.m_Intake.createShuffleBoardTab();
+        this.m_Turret.createShuffleBoardTab();
+
+        // m_Turret.setDefaultCommand(new TrackTarget());
+
     }
 
 }

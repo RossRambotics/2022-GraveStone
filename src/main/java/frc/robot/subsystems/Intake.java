@@ -87,7 +87,7 @@ public class Intake extends SubsystemBase {
         m_extensionMotor.config_kI(IntakeConstants.kPIDLoopIdx, m_gainsVelocity.kI, IntakeConstants.kTimeoutMs);
         m_extensionMotor.config_kD(IntakeConstants.kPIDLoopIdx, m_gainsVelocity.kD, IntakeConstants.kTimeoutMs);
 
-        this.createShuffleBoardTab();
+        // this.createShuffleBoardTab();
     }
 
     @Override

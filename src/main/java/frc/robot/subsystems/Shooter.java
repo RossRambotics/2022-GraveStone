@@ -25,8 +25,8 @@ import frc.robot.TalonFX_Gains;
 import frc.robot.RobotContainer;
 
 public class Shooter extends SubsystemBase {
-    WPI_TalonFX m_frontMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_FRONT);
-    WPI_TalonFX m_backMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_BACK);
+    WPI_TalonFX m_frontMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_FRONT, "usb");
+    WPI_TalonFX m_backMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_BACK, "usb");
 
     /**
      * PID Gains may have to be adjusted based on the responsiveness of control
@@ -74,8 +74,8 @@ public class Shooter extends SubsystemBase {
                 ShooterConstants.kTimeoutMs);
 
         // Reverse the back motor
-        m_backMotor.setInverted(TalonFXInvertType.Clockwise);
-        m_frontMotor.setInverted(TalonFXInvertType.CounterClockwise);
+        m_backMotor.setInverted(TalonFXInvertType.CounterClockwise);
+        m_frontMotor.setInverted(TalonFXInvertType.Clockwise);
 
         /* Config the peak and nominal outputs */
         m_frontMotor.configNominalOutputForward(0, ShooterConstants.kTimeoutMs);
@@ -99,7 +99,7 @@ public class Shooter extends SubsystemBase {
         m_backMotor.config_kI(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kI, ShooterConstants.kTimeoutMs);
         m_backMotor.config_kD(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kD, ShooterConstants.kTimeoutMs);
 
-        this.createShuffleBoardTab();
+        // this.createShuffleBoardTab();
     }
 
     @Override
@@ -125,7 +125,7 @@ public class Shooter extends SubsystemBase {
         } else if (m_distance >= 1 && m_distance < 30) {
             m_interpolated_RPM = (1000 * m_distance);
         }
-        System.out.println(m_distance + " " + m_interpolated_RPM);
+        // System.out.println(m_distance + " " + m_interpolated_RPM);
         // SmartDashboard.putNumber("Shooter/RPM Return", m_interpolated_RPM);
         m_nt_rpmreturn.setDouble(m_interpolated_RPM);
     }
@@ -152,23 +152,25 @@ public class Shooter extends SubsystemBase {
 
         m_testRPM = m_shuffleboardTab.add("Shooter Test RPM", 4000).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
-                .withPosition(2, 0).withProperties(Map.of("min", 0, "max", 10000)).getEntry();
+                .withPosition(2, 0).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
 
-        m_actualFrontRPM = m_shuffleboardTab.add("Shooter Front Actual RPM", 4000).withWidget(BuiltInWidgets.kGraph)
-                .withSize(4, 3)
-                .withPosition(0, 2).getEntry();
+        m_actualFrontRPM = m_shuffleboardTab.add("Shooter Front Actual RPM", 4000)
+                .withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(0, 2).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
 
-        m_diffFrontRPM = m_shuffleboardTab.add("Shooter Front Diff RPM", 4000).withWidget(BuiltInWidgets.kGraph)
-                .withSize(4, 3)
-                .withPosition(0, 2).getEntry();
+        m_diffFrontRPM = m_shuffleboardTab.add("Shooter Front Diff RPM", 4000).withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(0, 3).withProperties(Map.of("min", -100, "max", 100)).getEntry();
 
-        m_actualBackRPM = m_shuffleboardTab.add("Shooter Back Actual RPM", 4000).withWidget(BuiltInWidgets.kGraph)
-                .withSize(4, 3)
-                .withPosition(4, 2).getEntry();
+        m_actualBackRPM = m_shuffleboardTab.add("Shooter Back Actual RPM", 4000)
+                .withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(4, 2).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
 
-        m_diffBackRPM = m_shuffleboardTab.add("Shooter Back Diff RPM", 4000).withWidget(BuiltInWidgets.kGraph)
-                .withSize(4, 3)
-                .withPosition(4, 2).getEntry();
+        m_diffBackRPM = m_shuffleboardTab.add("Shooter Back Diff RPM", 4000).withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(4, 3).withProperties(Map.of("min", -100, "max", 100)).getEntry();
 
         // "Y-axis/Automatic bounds": false,
         // "Y-axis/Upper bound": 7000.0,

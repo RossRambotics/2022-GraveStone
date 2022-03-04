@@ -43,8 +43,8 @@ public class Tracking extends SubsystemBase {
         m_camera = new PhotonCamera("photonvision");
 
         // set the appropriate pipeline for the color of the ball based
-        createShuffleBoardTab();
-        m_testTargetYaw.setDouble(45);
+        // createShuffleBoardTab();
+
     }
 
     @Override
@@ -138,7 +138,7 @@ public class Tracking extends SubsystemBase {
         m_dEntry = m_shuffleboardTab.add("Angle D", 0.001)
                 .withSize(1, 1)
                 .withPosition(6, 1).getEntry();
-
+        m_testTargetYaw.setDouble(45);
     }
 
     public double getAngleP() {

@@ -67,7 +67,7 @@ public class Indexer extends SubsystemBase {
         m_frontwheels.setInverted(TalonFXInvertType.Clockwise);
         m_backwheels.setInverted(TalonFXInvertType.Clockwise);
 
-        this.createShuffleBoardTab();
+        // this.createShuffleBoardTab();
     }
 
     @Override
@@ -81,6 +81,11 @@ public class Indexer extends SubsystemBase {
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
         CommandBase c = new frc.robot.commands.Indexer.ShootCargo();
+        c.setName("Shoot Speed");
+        // SmartDashboard.putData(c);
+        indexerCommands.add(c);
+
+        c = new frc.robot.commands.Indexer.StartWheels();
         c.setName("Start Indexer");
         // SmartDashboard.putData(c);
         indexerCommands.add(c);
@@ -119,9 +124,17 @@ public class Indexer extends SubsystemBase {
 
     }
 
-    public void shoot() {
+    public void start() {
         // Start intake
         double p = 0.25;
+
+        m_frontwheels.set(TalonFXControlMode.PercentOutput, p);
+        m_backwheels.set(TalonFXControlMode.PercentOutput, -p);
+    }
+
+    public void shoot() {
+        // Start intake
+        double p = 0.35;
 
         m_frontwheels.set(TalonFXControlMode.PercentOutput, p);
         m_backwheels.set(TalonFXControlMode.PercentOutput, -p);

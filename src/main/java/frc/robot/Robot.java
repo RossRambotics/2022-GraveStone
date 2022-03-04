@@ -34,6 +34,7 @@ public class Robot extends TimedRobot {
         // autonomous chooser on the dashboard.
         m_robotContainer = new RobotContainer();
         RobotContainer.setTheRobot(m_robotContainer);
+        m_robotContainer.createShuffleBoardTab();
     }
 
     /**
