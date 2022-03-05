@@ -4,13 +4,13 @@
 
 package frc.robot.subsystems;
 
-// ID 41 for arm ID 42 for Intake motor
+// ID 41 for Indexer front (5 sets of green wheels) ID 42 for Indexer back (3 green & 1 gray)
 
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -30,13 +30,13 @@ import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Indexer extends SubsystemBase {
+
     WPI_TalonFX m_frontwheels = new WPI_TalonFX(Constants.INDEXER_MOTOR_FRONT, "usb");
     WPI_TalonFX m_backwheels = new WPI_TalonFX(Constants.INDEXER_MOTOR_BACK, "usb");
 
     public AnalogInput m_Sensor_IndexerEntry = new AnalogInput(Constants.INDEXER_ENTRY);
     public AnalogInput m_Sensor_IndexerMiddle = new AnalogInput(Constants.INDEXER_MIDDLE);
     public AnalogInput m_Sensor_IndexerExit = new AnalogInput(Constants.INDEXER_EXIT);
-
     /**
      * PID Gains may have to be adjusted based on the responsiveness of control
      * loop.
@@ -45,7 +45,7 @@ public class Indexer extends SubsystemBase {
      * 
      * kP kI kD kF Iz PeakOut
      */
-    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Indexer");
+    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Intake");
 
     /** Creates a new Intake. */
     public Indexer() {
@@ -67,13 +67,16 @@ public class Indexer extends SubsystemBase {
         m_backwheels.configNominalOutputReverse(0, IndexerConstants.kTimeoutMs);
         m_backwheels.configPeakOutputForward(1, IndexerConstants.kTimeoutMs);
         m_backwheels.configPeakOutputReverse(-1, IndexerConstants.kTimeoutMs);
-
-        // set orientation
-        m_frontwheels.setInverted(TalonFXInvertType.Clockwise);
-        m_backwheels.setInverted(TalonFXInvertType.Clockwise);
-
-        // this.createShuffleBoardTab();
     }
+
+    /**
+     * PID Gains may have to be adjusted based on the responsiveness of control
+     * loop.
+     * kF: 1023 represents output value to Talon at 100%, 20660 represents Velocity
+     * units at 100% output
+     * 
+     * kP kI kD kF Iz PeakOut
+     */
 
     @Override
     public void periodic() {

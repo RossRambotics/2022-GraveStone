@@ -4,13 +4,15 @@
 
 package frc.robot.subsystems;
 
-// ID 41 for arm ID 42 for Intake motor
+// ID 46 for arm ID 45 for Intake motor
 
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;

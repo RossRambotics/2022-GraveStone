@@ -3,6 +3,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
+
       "/LiveWindow/Indexer": "Subsystem",
       "/LiveWindow/Intake": "Subsystem",
       "/LiveWindow/Shooter": "Subsystem",
@@ -51,7 +52,9 @@
       "/SmartDashboard/Start Indexer": "Command",
       "/SmartDashboard/Start Intake": "Command",
       "/SmartDashboard/Start Shooter": "Command",
+
       "/SmartDashboard/Stop Indexer": "Command",
+
       "/SmartDashboard/Stop Intake": "Command",
       "/SmartDashboard/Stop Shooter": "Command",
       "/SmartDashboard/Test Mode": "Command",
