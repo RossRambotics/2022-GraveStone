@@ -19,6 +19,8 @@ public class Targeting extends SubsystemBase {
     private double m_targetArea = 0.0;
     private double m_targetSkew = 0.0;
     private boolean m_hasTarget = false;
+    private double[] m_yawHistory = new double[3];
+    private double[] m_distanceHistory = new double[3];
 
     /** Creates a new Targeting. */
     public Targeting() {
@@ -48,6 +50,14 @@ public class Targeting extends SubsystemBase {
         // calculate the distance
         m_distanceToTarget = 0.0; // TODO
 
+        // save off the history
+        for (int c = 0; c < 2; c++) {
+            m_distanceHistory[c] = m_distanceHistory[c + 1];
+            m_yawHistory[c] = m_yawHistory[c + 1];
+        }
+        m_distanceHistory[2] = m_distanceToTarget;
+        m_yawHistory[2] = m_targetOffsetAngle_Horizontal;
+
     }
 
     public double getTargetDistance() {
@@ -63,6 +73,24 @@ public class Targeting extends SubsystemBase {
         // get result from camera
 
         return m_targetOffsetAngle_Horizontal;
+    }
+
+    // returns the predicted yaw of the target given a time in seconds into the
+    // future
+    // so, if the time of flight (TOF) of the cargo is 2s in the future, pass in 2.0
+    public double getPredictedTargetOffsetYaw(double time) {
+        double v = m_yawHistory[2] - m_yawHistory[1];
+
+        return m_yawHistory[2] + (v * time);
+    }
+
+    // returns the predicted distance of the target given a time in seconds into the
+    // future
+    // so, if the time of flight (TOF) of the cargo is 2s in the future, pass in 2.0
+    public double getPredictedDistance(double time) {
+        double v = m_distanceHistory[2] - m_distanceHistory[1];
+
+        return m_distanceHistory[2] + (v * time);
     }
 
     public double getTargetOffsetPitch() {

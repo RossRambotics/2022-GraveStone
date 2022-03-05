@@ -5,38 +5,39 @@
 package frc.robot.commands.Indexer;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Indexer;
 
 public class ReverseWheels extends CommandBase {
-  private Indexer m_indexer = null;
+    private Indexer m_indexer = null;
 
-  /** Creates a new ShootCargo. */
-  public ReverseWheels(Indexer indexer) {
-    m_indexer = indexer;
+    /** Creates a new ShootCargo. */
+    public ReverseWheels() {
+        m_indexer = RobotContainer.m_Indexer;
 
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.addRequirements(m_indexer);
-  }
+        // Use addRequirements() here to declare subsystem dependencies.
+        this.addRequirements(m_indexer);
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    m_indexer.reverse();
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        m_indexer.reverse();
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return true;
-  }
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }

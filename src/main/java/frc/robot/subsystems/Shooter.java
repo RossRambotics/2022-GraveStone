@@ -25,10 +25,8 @@ import frc.robot.TalonFX_Gains;
 import frc.robot.RobotContainer;
 
 public class Shooter extends SubsystemBase {
-
-    WPI_TalonFX m_frontMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_FRONT);
-    WPI_TalonFX m_backMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_BACK);
-
+    WPI_TalonFX m_frontMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_FRONT, "usb");
+    WPI_TalonFX m_backMotor = new WPI_TalonFX(Constants.SHOOTER_MOTOR_BACK, "usb");
 
     /**
      * PID Gains may have to be adjusted based on the responsiveness of control
@@ -51,6 +49,7 @@ public class Shooter extends SubsystemBase {
     private NetworkTableEntry m_pid_kFF = null;
     private NetworkTableEntry m_nt_distance = null;
     private NetworkTableEntry m_nt_rpmreturn = null;
+    private NetworkTableEntry m_spinPercent = null;
 
     private double m_FrontRPM_shooter = 0;
     private double m_BackRPM_shooter = 0;
@@ -76,8 +75,8 @@ public class Shooter extends SubsystemBase {
                 ShooterConstants.kTimeoutMs);
 
         // Reverse the back motor
-        m_backMotor.setInverted(TalonFXInvertType.Clockwise);
-        m_frontMotor.setInverted(TalonFXInvertType.CounterClockwise);
+        m_backMotor.setInverted(TalonFXInvertType.CounterClockwise);
+        m_frontMotor.setInverted(TalonFXInvertType.Clockwise);
 
         /* Config the peak and nominal outputs */
         m_frontMotor.configNominalOutputForward(0, ShooterConstants.kTimeoutMs);
@@ -101,7 +100,7 @@ public class Shooter extends SubsystemBase {
         m_backMotor.config_kI(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kI, ShooterConstants.kTimeoutMs);
         m_backMotor.config_kD(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kD, ShooterConstants.kTimeoutMs);
 
-        this.createShuffleBoardTab();
+        // this.createShuffleBoardTab();
     }
 
     @Override
@@ -127,7 +126,7 @@ public class Shooter extends SubsystemBase {
         } else if (m_distance >= 1 && m_distance < 30) {
             m_interpolated_RPM = (1000 * m_distance);
         }
-        System.out.println(m_distance + " " + m_interpolated_RPM);
+        // System.out.println(m_distance + " " + m_interpolated_RPM);
         // SmartDashboard.putNumber("Shooter/RPM Return", m_interpolated_RPM);
         m_nt_rpmreturn.setDouble(m_interpolated_RPM);
     }
@@ -137,40 +136,46 @@ public class Shooter extends SubsystemBase {
         ShuffleboardLayout shooterCommands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 2)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
-        CommandBase c = new frc.robot.commands.Test.Shooter.StartShooter(this);
+        CommandBase c = new frc.robot.commands.Shooter.StartShooter();
         c.setName("Start Shooter");
         // SmartDashboard.putData(c);
         shooterCommands.add(c);
 
-        c = new frc.robot.commands.Test.Shooter.StopShooter(this);
+        c = new frc.robot.commands.Shooter.StopShooter();
         c.setName("Stop Shooter");
         // SmartDashboard.putData(c);
         shooterCommands.add(c);
 
-        c = new frc.robot.commands.Test.Shooter.UpdatePIDF(this);
+        c = new frc.robot.commands.Shooter.UpdatePIDF();
         c.setName("Update PIDF");
         // SmartDashboard.putData(c);
         shooterCommands.add(c);
 
         m_testRPM = m_shuffleboardTab.add("Shooter Test RPM", 4000).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
-                .withPosition(2, 0).withProperties(Map.of("min", 0, "max", 10000)).getEntry();
+                .withPosition(2, 0).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
 
-        m_actualFrontRPM = m_shuffleboardTab.add("Shooter Front Actual RPM", 4000).withWidget(BuiltInWidgets.kGraph)
-                .withSize(4, 3)
-                .withPosition(0, 2).getEntry();
+        m_spinPercent = m_shuffleboardTab.add("Spin Percent", 0).withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(2, 1).withProperties(Map.of("min", -100, "max", 100)).getEntry();
 
-        m_diffFrontRPM = m_shuffleboardTab.add("Shooter Front Diff RPM", 4000).withWidget(BuiltInWidgets.kGraph)
-                .withSize(4, 3)
-                .withPosition(0, 2).getEntry();
+        m_actualFrontRPM = m_shuffleboardTab.add("Shooter Front Actual RPM", 4000)
+                .withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(0, 2).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
 
-        m_actualBackRPM = m_shuffleboardTab.add("Shooter Back Actual RPM", 4000).withWidget(BuiltInWidgets.kGraph)
-                .withSize(4, 3)
-                .withPosition(4, 2).getEntry();
+        m_diffFrontRPM = m_shuffleboardTab.add("Shooter Front Diff RPM", 4000).withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(0, 3).withProperties(Map.of("min", -100, "max", 100)).getEntry();
 
-        m_diffBackRPM = m_shuffleboardTab.add("Shooter Back Diff RPM", 4000).withWidget(BuiltInWidgets.kGraph)
-                .withSize(4, 3)
-                .withPosition(4, 2).getEntry();
+        m_actualBackRPM = m_shuffleboardTab.add("Shooter Back Actual RPM", 4000)
+                .withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(4, 2).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
+
+        m_diffBackRPM = m_shuffleboardTab.add("Shooter Back Diff RPM", 4000).withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(4, 3).withProperties(Map.of("min", -100, "max", 100)).getEntry();
 
         // "Y-axis/Automatic bounds": false,
         // "Y-axis/Upper bound": 7000.0,
@@ -223,8 +228,15 @@ public class Shooter extends SubsystemBase {
          */
         double targetVelocity_UnitsPer100ms = m_testRPM.getDouble(0) * 2048.0 / 600.0;
         /* 2000 RPM in either direction */
-        m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
-        m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
+
+        if (m_spinPercent.getDouble(0) == 0) {
+            m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
+            m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
+        } else {
+            double spin = m_spinPercent.getDouble(0);
+            m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms * (100 + spin) / 100);
+            m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms * Math.abs(100 - spin) / 100);
+        }
     }
 
     public void stop() {
@@ -253,6 +265,16 @@ public class Shooter extends SubsystemBase {
         m_backMotor.config_kP(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kP, ShooterConstants.kTimeoutMs);
         m_backMotor.config_kI(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kI, ShooterConstants.kTimeoutMs);
         m_backMotor.config_kD(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kD, ShooterConstants.kTimeoutMs);
+    }
+
+    public boolean isSpunUp() {
+        double error = m_diffBackRPM.getDouble(0) + m_diffFrontRPM.getDouble(0);
+
+        if (error < 200) {
+            return true;
+        }
+
+        return false;
     }
 
 }

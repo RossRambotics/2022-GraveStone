@@ -2,32 +2,33 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.Intake;
+package frc.robot.commands.Turret;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Turret;
 
-public class RetractIntake extends CommandBase {
-    private Intake m_intake = null;
+public class EnablePitch extends CommandBase {
+    private Turret m_Turret = null;
 
-    /** Creates a new StartIntake. */
-    public RetractIntake() {
-        m_intake = RobotContainer.m_Intake;
-        ;
+    /** Creates a new EnablePitch. */
+    public EnablePitch() {
+        m_Turret = RobotContainer.m_Turret;
+
         // Use addRequirements() here to declare subsystem dependencies.
-        this.addRequirements(m_intake);
+        addRequirements(m_Turret);
+
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        m_Turret.setPitchToGoal();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_intake.retract();
     }
 
     // Called once the command ends or is interrupted.

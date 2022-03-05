@@ -10,9 +10,9 @@ import frc.robot.subsystems.Turret;
 
 public class TrackTarget extends CommandBase {
     /** Creates a new TrackTarget. */
-    public TrackTarget(Turret t) {
+    public TrackTarget() {
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(t);
+        addRequirements(RobotContainer.m_Turret);
     }
 
     // Called when the command is initially scheduled.
@@ -23,18 +23,18 @@ public class TrackTarget extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (RobotContainer.getTheRobot().m_Targeting.isTrackingTarget()) {
+        if (RobotContainer.m_Targeting.isTrackingTarget()) {
             // Get the Yaw to the target from the targeting subsystem
             // and send it to the turret subsystem
-            RobotContainer.getTheRobot().m_Turret.setYawDegreesRelative(
-                    RobotContainer.getTheRobot().m_Targeting.getTargetOffsetYaw());
+            RobotContainer.m_Turret.setYawDegreesRelative(
+                    RobotContainer.m_Targeting.getTargetOffsetYaw());
 
             // this is commented out because we don't want the turret pitch to adjust
             // to follow the pitch of the target.
             // we will use the distance calculation to determine the appropriate pitch
             // to adjust the turret
-            // RobotContainer.getTheRobot().m_Turret.setPitchDegreesRelative(
-            // RobotContainer.getTheRobot().m_Targeting.getTargetOffsetPitch());
+            // RobotContainer.m_Turret.setPitchDegreesRelative(
+            // RobotContainer.m_Targeting.getTargetOffsetPitch());
 
         } else {
             // we have lost the target so hold steady for a bit and see if we get it back

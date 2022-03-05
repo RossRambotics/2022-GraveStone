@@ -5,14 +5,15 @@
 package frc.robot.commands.Turret;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Turret;
 
 public class EnableTestMode extends CommandBase {
     private Turret m_turret = null;
 
     /** Creates a new EnableTestMode. */
-    public EnableTestMode(Turret t) {
-        m_turret = t;
+    public EnableTestMode() {
+        m_turret = RobotContainer.m_Turret;
         // Use addRequirements() here to declare subsystem dependencies.
     }
 

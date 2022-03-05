@@ -5,31 +5,43 @@
 package frc.robot.commands.Turret;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.Turret;
 
-public class UpdatePIDF extends CommandBase {
-    private Turret m_turret = null;
+public class LockTurret extends CommandBase {
+    private boolean m_isTurretInitialized = false;
+    private boolean m_isTurretInLockPosition = false;
+    private boolean m_isTurretLocked = false;
 
-    /** Creates a new UpdatePIDF. */
-    public UpdatePIDF() {
-        // Use addRequirements() here to declare subsystem dependencies.
-        m_turret = RobotContainer.m_Turret;
-        ;
+    private Turret m_Turret = null;
 
+    /** Creates a new LockTurret. */
+    public LockTurret() {
         // Use addRequirements() here to declare subsystem dependencies.
-        this.addRequirements(m_turret);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        m_turret.updatePIDF();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        // initialize the turret
+        if (!m_isTurretInitialized) {
+            m_isTurretInitialized = m_Turret.initializeTurretLock();
+            return;
+        }
+
+        // find the lock position
+        if (!m_isTurretInLockPosition) {
+            m_isTurretInLockPosition = m_Turret.searchTurretLock();
+            return;
+        }
+
+        // lock the turret
+        m_isTurretLocked = true;
+        m_Turret.lockTurret();
 
     }
 
@@ -41,6 +53,6 @@ public class UpdatePIDF extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return true;
+        return m_isTurretLocked;
     }
 }

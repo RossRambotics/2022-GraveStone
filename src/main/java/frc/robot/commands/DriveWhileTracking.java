@@ -38,8 +38,8 @@ public class DriveWhileTracking extends CommandBase {
     @Override
     public void initialize() {
 
-        final double ANGULAR_P = RobotContainer.getTheRobot().m_Tracking.getAngleP();
-        final double ANGULAR_D = RobotContainer.getTheRobot().m_Tracking.getAngleD();
+        final double ANGULAR_P = RobotContainer.m_Tracking.getAngleP();
+        final double ANGULAR_D = RobotContainer.m_Tracking.getAngleD();
         m_PIDTracking = new PIDController(ANGULAR_P, 0, ANGULAR_D);
 
     }
@@ -49,21 +49,21 @@ public class DriveWhileTracking extends CommandBase {
     public void execute() {
         // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of
         // field-oriented movement
-        if (RobotContainer.getTheRobot().m_Tracking.isTrackingTarget()) {
+        if (RobotContainer.m_Tracking.isTrackingTarget()) {
             // since we are tracking a target use the targets Yaw to spin the robot towards
             // the target
             // gets the offset in degrees
-            double p = RobotContainer.getTheRobot().m_Tracking.getHeadingOffset();
+            double p = RobotContainer.m_Tracking.getHeadingOffset();
 
             // convert p from degrees to motor power
             double rotationSpeed = m_PIDTracking.calculate(p, 0);
 
             // System.out.println(
             // "auto turning to target: " + p + " offset error: "
-            // + RobotContainer.getTheRobot().m_Tracking.getHeadingOffset()
+            // + RobotContainer.m_Tracking.getHeadingOffset()
             // + " Gyro: "
             // +
-            // RobotContainer.getTheRobot().m_drivetrainSubsystem.getGyroHeading().getDegrees());
+            // RobotContainer.m_drivetrainSubsystem.getGyroHeading().getDegrees());
 
             m_drivetrainSubsystem.drive(
                     ChassisSpeeds.fromFieldRelativeSpeeds(

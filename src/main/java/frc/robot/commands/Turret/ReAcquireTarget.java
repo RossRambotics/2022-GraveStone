@@ -11,7 +11,7 @@ public class ReAcquireTarget extends CommandBase {
     /** Creates a new ReAcquireTarget. */
     public ReAcquireTarget() {
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(RobotContainer.getTheRobot().m_Turret);
+        addRequirements(RobotContainer.m_Turret);
     }
 
     // Called when the command is initially scheduled.
@@ -22,9 +22,9 @@ public class ReAcquireTarget extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (RobotContainer.getTheRobot().m_Targeting.isTrackingTarget()) {
+        if (RobotContainer.m_Targeting.isTrackingTarget()) {
             // we have found the target again so go back to tracking the target
-            CommandBase cmd = new TrackTarget(RobotContainer.getTheRobot().m_Turret);
+            CommandBase cmd = new TrackTarget();
             cmd.schedule();
         }
     }

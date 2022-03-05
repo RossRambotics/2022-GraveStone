@@ -12,6 +12,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.commands.DriveWhileTracking;
@@ -42,18 +43,22 @@ public class Tracking extends SubsystemBase {
         m_camera = new PhotonCamera("photonvision");
 
         // set the appropriate pipeline for the color of the ball based
-        createShuffleBoardTab();
-        m_testTargetYaw.setDouble(45);
+        // createShuffleBoardTab();
+
     }
 
     @Override
     public void periodic() {
 
         // This method will be called once per scheduler run
-        m_currentYaw.setDouble(RobotContainer.getTheRobot().m_drivetrainSubsystem.getGyroHeading()
+        m_currentYaw.setDouble(RobotContainer.m_drivetrainSubsystem.getGyroHeading()
                 .getDegrees());
         m_goalYaw.setDouble(m_currentYaw.getDouble(0) + getHeadingOffset());
         this.setTestTarget(m_testTargetYaw.getDouble(0));
+
+        if (m_isTesting) {
+            return;
+        }
 
         PhotonPipelineResult result = m_camera.getLatestResult();
 
@@ -108,13 +113,13 @@ public class Tracking extends SubsystemBase {
         ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 2)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
-        // CommandBase c = new frc.robot.commands.Turret.UpdatePIDF(this);
-        // c.setName("Update PIDF");
-        // commands.add(c);
+        CommandBase c = new frc.robot.commands.Tracking.UpdatePIDF();
+        c.setName("Update PIDF");
+        commands.add(c);
 
-        // c = new frc.robot.commands.Turret.EnableTestMode(this);
-        // c.setName("Test Mode");
-        // commands.add(c);
+        c = new frc.robot.commands.Tracking.EnableTestMode();
+        c.setName("Test Mode");
+        commands.add(c);
 
         m_testTargetYaw = m_shuffleboardTab.add("Test Target Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
@@ -133,7 +138,7 @@ public class Tracking extends SubsystemBase {
         m_dEntry = m_shuffleboardTab.add("Angle D", 0.001)
                 .withSize(1, 1)
                 .withPosition(6, 1).getEntry();
-
+        m_testTargetYaw.setDouble(45);
     }
 
     public double getAngleP() {
@@ -142,5 +147,9 @@ public class Tracking extends SubsystemBase {
 
     public double getAngleD() {
         return m_dEntry.getDouble(0);
+    }
+
+    public void EnableTestMode() {
+        m_isTesting = true;
     }
 }
