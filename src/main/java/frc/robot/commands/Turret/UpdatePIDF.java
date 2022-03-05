@@ -14,7 +14,7 @@ public class UpdatePIDF extends CommandBase {
     /** Creates a new UpdatePIDF. */
     public UpdatePIDF() {
         // Use addRequirements() here to declare subsystem dependencies.
-        m_turret = RobotContainer.getTheRobot().m_Turret;
+        m_turret = RobotContainer.m_Turret;
         ;
 
         // Use addRequirements() here to declare subsystem dependencies.

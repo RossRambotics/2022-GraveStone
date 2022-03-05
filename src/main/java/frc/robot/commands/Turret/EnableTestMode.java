@@ -13,7 +13,7 @@ public class EnableTestMode extends CommandBase {
 
     /** Creates a new EnableTestMode. */
     public EnableTestMode() {
-        m_turret = RobotContainer.getTheRobot().m_Turret;
+        m_turret = RobotContainer.m_Turret;
         // Use addRequirements() here to declare subsystem dependencies.
     }
 

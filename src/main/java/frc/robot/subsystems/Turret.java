@@ -129,17 +129,17 @@ public class Turret extends SubsystemBase {
 
         // update testing angles if in test mode
         if (m_testMode.getBoolean(false)) {
-            RobotContainer.getTheRobot().m_Targeting.setTestTargetYaw(m_testTargetYaw.getDouble(0)
+            RobotContainer.m_Targeting.setTestTargetYaw(m_testTargetYaw.getDouble(0)
                     - m_currentYaw.getDouble(0));
 
             // this is commented out because the camera's pitch doesn't adjust based on the
             // the pitch of the target. we are using the distance instead
-            // RobotContainer.getTheRobot().m_Targeting.setTestTargetPitch(m_testTargetPitch.getDouble(0)
+            // RobotContainer.m_Targeting.setTestTargetPitch(m_testTargetPitch.getDouble(0)
             // - m_currentPitch.getDouble(0));
         }
 
         // update pitch of turret/shooter based on the distance
-        if (RobotContainer.getTheRobot().m_Targeting.isTrackingTarget()) {
+        if (RobotContainer.m_Targeting.isTrackingTarget()) {
             this.updatePitchUsingDistance();
         }
 
@@ -171,7 +171,7 @@ public class Turret extends SubsystemBase {
 
     private void updatePitchUsingDistance() {
 
-        double distance = RobotContainer.getTheRobot().m_Targeting.getTargetDistance();
+        double distance = RobotContainer.m_Targeting.getTargetDistance();
 
         // translate from distance to pitch
         double pitch = 5; // TODO
@@ -336,7 +336,7 @@ public class Turret extends SubsystemBase {
         RobotContainer.getTheRobot().m_PhysicsSim.getInstance().addTalonFX(m_pitchMotor, 0.75, 20660);
         RobotContainer.getTheRobot().m_PhysicsSim.getInstance().addTalonFX(m_yawMotor, 0.75, 20660);
 
-        RobotContainer.getTheRobot().m_Targeting.setTestMode(true);
+        RobotContainer.m_Targeting.setTestMode(true);
     }
 
     public void createShuffleBoardTab() {
@@ -443,7 +443,7 @@ public class Turret extends SubsystemBase {
 
     public void EnableTestMode() {
         m_testMode.setBoolean(true);
-        RobotContainer.getTheRobot().m_Targeting.setTestMode(true);
+        RobotContainer.m_Targeting.setTestMode(true);
     }
 
 }

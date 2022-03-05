@@ -13,7 +13,7 @@ public class ReverseIntake extends CommandBase {
 
     /** Creates a new StartIntake. */
     public ReverseIntake() {
-        m_intake = RobotContainer.getTheRobot().m_Intake;
+        m_intake = RobotContainer.m_Intake;
         ;
         // Use addRequirements() here to declare subsystem dependencies.
         this.addRequirements(m_intake);

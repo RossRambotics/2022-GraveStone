@@ -13,7 +13,7 @@ public class StartShooter extends CommandBase {
 
     /** Creates a new StartShooter. */
     public StartShooter() {
-        m_shooter = RobotContainer.getTheRobot().m_Shooter;
+        m_shooter = RobotContainer.m_Shooter;
 
         // Use addRequirements() here to declare subsystem dependencies.
         this.addRequirements(m_shooter);

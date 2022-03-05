@@ -14,7 +14,7 @@ public class EnableTestMode extends CommandBase {
     /** Creates a new EnableTestMode. */
     public EnableTestMode() {
         // Use addRequirements() here to declare subsystem dependencies.
-        m_tracking = RobotContainer.getTheRobot().m_Tracking;
+        m_tracking = RobotContainer.m_Tracking;
     }
 
     // Called when the command is initially scheduled.
@@ -36,6 +36,6 @@ public class EnableTestMode extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return true;
     }
 }

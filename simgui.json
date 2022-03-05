@@ -24,6 +24,7 @@
       "/Shuffleboard/Sub.Auto/Autonomous": "String Chooser",
       "/Shuffleboard/Sub.Auto/Commands/Example Path": "Command",
       "/Shuffleboard/Sub.Indexer/Commands/Reverse Indexer": "Command",
+      "/Shuffleboard/Sub.Indexer/Commands/Shoot Speed": "Command",
       "/Shuffleboard/Sub.Indexer/Commands/Start Indexer": "Command",
       "/Shuffleboard/Sub.Indexer/Commands/Stop Indexer": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Extend Arm": "Command",

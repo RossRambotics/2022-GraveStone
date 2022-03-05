@@ -13,7 +13,7 @@ public class StopWheels extends CommandBase {
 
     /** Creates a new ShootCargo. */
     public StopWheels() {
-        m_indexer = RobotContainer.getTheRobot().m_Indexer;
+        m_indexer = RobotContainer.m_Indexer;
 
         // Use addRequirements() here to declare subsystem dependencies.
         this.addRequirements(m_indexer);

@@ -54,15 +54,15 @@ public class RobotContainer {
 
     private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Auto");
 
-    public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+    static public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
-    public final Shooter m_Shooter = new Shooter();
-    public final Tracking m_Tracking = new Tracking();
-    public final Turret m_Turret = new Turret();
+    static public final Shooter m_Shooter = new Shooter();
+    static public final Tracking m_Tracking = new Tracking();
+    static public final Turret m_Turret = new Turret();
     // public final Turret m_Turret = null;
-    public final Targeting m_Targeting = new Targeting();
-    public final Intake m_Intake = new Intake();
-    public final Indexer m_Indexer = new Indexer();
+    static public final Targeting m_Targeting = new Targeting();
+    static public final Intake m_Intake = new Intake();
+    static public final Indexer m_Indexer = new Indexer();
 
     private final XboxController m_controller = new XboxController(0);
 

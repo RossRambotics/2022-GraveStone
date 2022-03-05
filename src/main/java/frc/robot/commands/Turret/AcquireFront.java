@@ -12,14 +12,14 @@ public class AcquireFront extends CommandBase {
     /** Creates a new AcquireFront. */
     public AcquireFront() {
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(RobotContainer.getTheRobot().m_Turret);
+        addRequirements(RobotContainer.m_Turret);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
         // Move the turret to zero yaw
-        RobotContainer.getTheRobot().m_Turret.setYawDegreesFront(0);
+        RobotContainer.m_Turret.setYawDegreesFront(0);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -27,7 +27,7 @@ public class AcquireFront extends CommandBase {
     public void execute() {
         // if the targeting camera has found the target transition to the TrackTarget
         // command
-        if (RobotContainer.getTheRobot().m_Targeting.isTrackingTarget()) {
+        if (RobotContainer.m_Targeting.isTrackingTarget()) {
             CommandBase cmd = new TrackTarget();
             cmd.schedule();
         }

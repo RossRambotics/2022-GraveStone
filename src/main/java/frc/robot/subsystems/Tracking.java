@@ -51,7 +51,7 @@ public class Tracking extends SubsystemBase {
     public void periodic() {
 
         // This method will be called once per scheduler run
-        m_currentYaw.setDouble(RobotContainer.getTheRobot().m_drivetrainSubsystem.getGyroHeading()
+        m_currentYaw.setDouble(RobotContainer.m_drivetrainSubsystem.getGyroHeading()
                 .getDegrees());
         m_goalYaw.setDouble(m_currentYaw.getDouble(0) + getHeadingOffset());
         this.setTestTarget(m_testTargetYaw.getDouble(0));

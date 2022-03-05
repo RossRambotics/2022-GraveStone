@@ -49,6 +49,7 @@ public class Shooter extends SubsystemBase {
     private NetworkTableEntry m_pid_kFF = null;
     private NetworkTableEntry m_nt_distance = null;
     private NetworkTableEntry m_nt_rpmreturn = null;
+    private NetworkTableEntry m_spinPercent = null;
 
     private double m_FrontRPM_shooter = 0;
     private double m_BackRPM_shooter = 0;
@@ -154,6 +155,10 @@ public class Shooter extends SubsystemBase {
                 .withSize(4, 1)
                 .withPosition(2, 0).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
 
+        m_spinPercent = m_shuffleboardTab.add("Spin Percent", 0).withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(2, 1).withProperties(Map.of("min", -100, "max", 100)).getEntry();
+
         m_actualFrontRPM = m_shuffleboardTab.add("Shooter Front Actual RPM", 4000)
                 .withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
@@ -223,8 +228,15 @@ public class Shooter extends SubsystemBase {
          */
         double targetVelocity_UnitsPer100ms = m_testRPM.getDouble(0) * 2048.0 / 600.0;
         /* 2000 RPM in either direction */
-        m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
-        m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
+
+        if (m_spinPercent.getDouble(0) == 0) {
+            m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
+            m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
+        } else {
+            double spin = m_spinPercent.getDouble(0);
+            m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms * (100 + spin) / 100);
+            m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms * Math.abs(100 - spin) / 100);
+        }
     }
 
     public void stop() {
@@ -253,6 +265,16 @@ public class Shooter extends SubsystemBase {
         m_backMotor.config_kP(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kP, ShooterConstants.kTimeoutMs);
         m_backMotor.config_kI(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kI, ShooterConstants.kTimeoutMs);
         m_backMotor.config_kD(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kD, ShooterConstants.kTimeoutMs);
+    }
+
+    public boolean isSpunUp() {
+        double error = m_diffBackRPM.getDouble(0) + m_diffFrontRPM.getDouble(0);
+
+        if (error < 200) {
+            return true;
+        }
+
+        return false;
     }
 
 }

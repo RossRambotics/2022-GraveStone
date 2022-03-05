@@ -13,7 +13,7 @@ public class UnlockTurret extends CommandBase {
 
     /** Creates a new UnlockTurret. */
     public UnlockTurret() {
-        m_Turret = RobotContainer.getTheRobot().m_Turret;
+        m_Turret = RobotContainer.m_Turret;
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(m_Turret);

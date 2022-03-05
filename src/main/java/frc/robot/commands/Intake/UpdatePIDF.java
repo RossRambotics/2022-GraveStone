@@ -15,7 +15,7 @@ public class UpdatePIDF extends CommandBase {
     /** Creates a new UpdatePIDF. */
     public UpdatePIDF() {
         // Use addRequirements() here to declare subsystem dependencies.
-        m_intake = RobotContainer.getTheRobot().m_Intake;
+        m_intake = RobotContainer.m_Intake;
         ;
 
         // Use addRequirements() here to declare subsystem dependencies.
@@ -41,6 +41,6 @@ public class UpdatePIDF extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return true;
     }
 }
