@@ -3,7 +3,6 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
-
       "/LiveWindow/Indexer": "Subsystem",
       "/LiveWindow/Intake": "Subsystem",
       "/LiveWindow/Shooter": "Subsystem",
@@ -30,8 +29,12 @@
       "/Shuffleboard/Sub.Indexer/Commands/Stop Indexer": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Extend Arm": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Retract Arm": "Command",
+      "/Shuffleboard/Sub.Intake/Commands/Reverse Indexer": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Reverse Intake": "Command",
+      "/Shuffleboard/Sub.Intake/Commands/Shoot Speed": "Command",
+      "/Shuffleboard/Sub.Intake/Commands/Start Indexer": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Start Intake": "Command",
+      "/Shuffleboard/Sub.Intake/Commands/Stop Indexer": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Stop Intake": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Update PIDF": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Start Shooter": "Command",
@@ -52,9 +55,7 @@
       "/SmartDashboard/Start Indexer": "Command",
       "/SmartDashboard/Start Intake": "Command",
       "/SmartDashboard/Start Shooter": "Command",
-
       "/SmartDashboard/Stop Indexer": "Command",
-
       "/SmartDashboard/Stop Intake": "Command",
       "/SmartDashboard/Stop Shooter": "Command",
       "/SmartDashboard/Test Mode": "Command",

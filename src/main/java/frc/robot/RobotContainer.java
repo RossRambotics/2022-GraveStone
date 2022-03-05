@@ -13,6 +13,7 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -66,7 +67,8 @@ public class RobotContainer {
     static public final Intake m_Intake = new Intake();
     static public final Indexer m_Indexer = new Indexer();
 
-    private final XboxController m_controller = new XboxController(0);
+    private final XboxController m_controllerDriver = new XboxController(0);
+    // private final XboxController m_controllerOperator = new XboxController(1);
 
     public PhysicsSim m_PhysicsSim;
 
@@ -78,9 +80,12 @@ public class RobotContainer {
         // Right stick X axis -> rotation
         m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
                 m_drivetrainSubsystem,
-                () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -modifyAxis(m_controller.getRightX())
+                () -> -modifyAxis(
+                        getInputLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> -modifyAxis(
+                        getInputLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> -modifyAxis(
+                        getInputLeftX())
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
         // Configure the button bindings
@@ -95,6 +100,46 @@ public class RobotContainer {
         // LiveWindow.disableAllTelemetry();
     }
 
+    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(1.0);
+
+    private double getInputLeftY() {
+        double driverLeftY = m_controllerDriver.getLeftY();
+        // double operatorLeftY = m_controllerOperator.getLeftY() / m_weakPower;
+        double operatorLeftY = 0;
+        double leftY = operatorLeftY;
+        if (Math.abs(leftY) > 0.1) {
+            leftY = driverLeftY;
+        }
+        return m_slewLeftY.calculate(leftY);
+
+    }
+
+    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(1.0);
+
+    private double getInputLeftX() {
+        double driverLeftX = m_controllerDriver.getLeftX();
+        // double operatorLeftX = m_controllerOperator.getLeftX() / m_weakPower;
+        double operatorLeftX = 0;
+        double leftX = operatorLeftX;
+        if (Math.abs(leftX) > 0.1) {
+            leftX = driverLeftX;
+        }
+        return m_slewLeftX.calculate(leftX);
+    }
+
+    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(1.0);
+
+    private double getInputRightX() {
+        double driverRightX = m_controllerDriver.getRightX();
+        // double operatorRightX = m_controllerOperator.getRightX() / m_weakPower;
+        double operatorRightX = 0;
+        double rightX = operatorRightX;
+        if (Math.abs(rightX) > 0.1) {
+            rightX = driverRightX;
+        }
+        return m_slewRightX.calculate(rightX);
+    }
+
     /**
      * Use this method to define your button->command mappings. Buttons can be
      * created by
@@ -105,19 +150,78 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         // Back button zeros the gyroscope
-        new Button(m_controller::getBackButton)
+        new Button(m_controllerDriver::getBackButton)
                 // No requirements because we don't need to interrupt anything
                 .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
 
         // map button for tracking cargo
         // create tracking cargo drive command
         CommandBase cmd = new DriveWhileTracking(m_drivetrainSubsystem,
-                () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -modifyAxis(m_controller.getRightX())
+                () -> -modifyAxis(
+                        getInputLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> -modifyAxis(
+                        getInputLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> -modifyAxis(
+                        getInputLeftX())
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
-        new Button(m_controller::getLeftBumper)
+        new Button(m_controllerDriver::getLeftBumper)
                 .whenHeld(cmd, true);
+
+        // extends the intake and turns on the intake wheels Driver
+        // new Button(m_controllerDriver::getAButton)
+        // .whenReleased(command);
+
+        // // retracts the intake and turns off the intake wheels
+        // new Button(m_controllerDriver::getBButton)
+        // .whenPressed(command);
+
+        // // shotes into the lower hub at low RPM Driver
+        // new Button(m_controllerDriver::getYButton)
+        // .whenPressed(command);
+
+        // // targets to target
+        // new Button(m_controllerDriver::getRightBumperPressed)
+        // .whileHeld(command);
+
+        // // climb goes up operator
+        // new Button(m_controllerOperator::getAButtonPressed)
+        // .whileHeld(command);
+
+        // // climb goes down operator
+        // new Button(m_controllerOperator::getYButton)
+        // .whenPressed(command);
+
+        // // aim at the target
+        // new Button(m_controllerDriver::getRightTriggerAxis)
+        // .whileHeld(command);
+
+        // how long move turrent is
+        var spinTurret = 1;
+        var angleTurret = 1;
+
+        // // turret go up
+        // POVButton operatorTurretUp = new POVButton(m_controllerOperator, 0);
+        // operatorTurretUp.whenPressed(new DefaultDriveCommand(
+
+        // .withTimeout(angleTurret));
+
+        // // turret go down
+        // POVButton operatorTurretDown = new POVButton(m_controllerOperator, 180);
+        // operatorTurretDown.whenPressed(new DefaultDriveCommand(
+
+        // .withTimeout(angleTurret));
+
+        // // turret go right
+        // POVButton operatorTurretRight = new POVButton(m_controllerOperator, 90);
+        // operatorTurretRight.whenPressed(new DefaultDriveCommand(
+
+        // .withTimeout(spinTurret));
+
+        // // turret go up
+        // POVButton operatorTurretleft = new POVButton(m_controllerOperator, 0);
+        // operatorTurretleft.whenPressed(new DefaultDriveCommand(
+
+        // .withTimeout(spinTurret));
     }
 
     /**
