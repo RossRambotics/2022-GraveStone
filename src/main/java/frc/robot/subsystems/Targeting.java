@@ -24,7 +24,7 @@ public class Targeting extends SubsystemBase {
 
     /** Creates a new Targeting. */
     public Targeting() {
-        table = NetworkTableInstance.getDefault().getTable("limelight");
+        table = NetworkTableInstance.getDefault().getTable("limelight-rambot");
 
     }
 
@@ -109,9 +109,6 @@ public class Targeting extends SubsystemBase {
         if (m_isTestMode) {
             return true;
         }
-
-        // TODO implement this
-        // get result from camera
 
         return m_hasTarget;
     }

@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
@@ -44,7 +45,7 @@ public class Turret extends SubsystemBase {
     private NetworkTableEntry m_goalYaw = null;
     private NetworkTableEntry m_testTargetYaw = null;
 
-    private TalonFX_Gains m_yawGains = new TalonFX_Gains(0.05, 0, 0.5, 0, 300, 1.00);
+    private TalonFX_Gains m_yawGains = new TalonFX_Gains(0.7, 0, 0.0, 0, 300, 1.00);
     private NetworkTableEntry m_yaw_pid_kP = null;
     private NetworkTableEntry m_yaw_pid_kI = null;
     private NetworkTableEntry m_yaw_pid_kD = null;
@@ -58,11 +59,13 @@ public class Turret extends SubsystemBase {
     private NetworkTableEntry m_goalPitch = null;
     private NetworkTableEntry m_testTargetPitch = null;
 
-    private TalonFX_Gains m_pitchGains = new TalonFX_Gains(0.2, 0, 0.5, 0, 300, 1.00);
+    private TalonFX_Gains m_pitchGains = new TalonFX_Gains(2.0, 0, 2.0, 0, 300, 1.00);
     private NetworkTableEntry m_pitch_pid_kP = null;
     private NetworkTableEntry m_pitch_pid_kI = null;
     private NetworkTableEntry m_pitch_pid_kD = null;
     private NetworkTableEntry m_pitch_pid_kFF = null;
+    private NetworkTableEntry m_pitchError = null;
+    private NetworkTableEntry m_yawError = null;
     private boolean m_isTurretLocked = false;
 
     WPI_TalonFX m_pitchMotor = new WPI_TalonFX(Constants.ANGULAR_MOTOR, "usb");
@@ -88,6 +91,7 @@ public class Turret extends SubsystemBase {
         // Set motor directions
         m_yawMotor.setInverted(TalonFXInvertType.CounterClockwise);
         m_pitchMotor.setInverted(TalonFXInvertType.CounterClockwise);
+        m_pitchMotor.setNeutralMode(NeutralMode.Brake);
 
         /* Config the peak and nominal outputs */
         m_yawMotor.configNominalOutputForward(0, m_kTimeoutMs);
@@ -96,8 +100,8 @@ public class Turret extends SubsystemBase {
         m_yawMotor.configPeakOutputReverse(-0.1, m_kTimeoutMs);
         m_pitchMotor.configNominalOutputForward(0, m_kTimeoutMs);
         m_pitchMotor.configNominalOutputReverse(0, m_kTimeoutMs);
-        m_pitchMotor.configPeakOutputForward(0.3, m_kTimeoutMs);
-        m_pitchMotor.configPeakOutputReverse(-0.3, m_kTimeoutMs);
+        m_pitchMotor.configPeakOutputForward(0.5, m_kTimeoutMs);
+        m_pitchMotor.configPeakOutputReverse(-0.1, m_kTimeoutMs);
 
         /* Config the position closed loop gains in slot0 */
         m_yawMotor.config_kF(m_kPIDLoopIdx, m_yawGains.kF, m_kTimeoutMs);
@@ -126,6 +130,10 @@ public class Turret extends SubsystemBase {
         // update angles
         m_currentYaw.setDouble(m_yawMotor.getSelectedSensorPosition(0) / kYAW_TICKS_PER_DEGREE);
         m_currentPitch.setDouble(m_pitchMotor.getSelectedSensorPosition(0) / kPITCH_TICKS_PER_DEGREE);
+        m_pitchError.setDouble(m_pitchMotor.getSelectedSensorPosition(0)
+                - (m_goalPitch.getDouble(0) * kPITCH_TICKS_PER_DEGREE));
+        m_yawError.setDouble(m_yawMotor.getSelectedSensorPosition(0)
+                - (m_goalYaw.getDouble(0) * kPITCH_TICKS_PER_DEGREE));
 
         // update testing angles if in test mode
         if (m_testMode.getBoolean(false)) {
@@ -155,8 +163,8 @@ public class Turret extends SubsystemBase {
         if (m_goalPitch.getDouble(0) < 0) {
             m_goalPitch.setDouble(0.0);
         }
-        if (m_goalPitch.getDouble(0) > 35.0) {
-            m_goalPitch.setDouble(35.0);
+        if (m_goalPitch.getDouble(0) > 23.0) {
+            m_goalPitch.setDouble(23.0);
         }
 
         // TODO check if hard limit
@@ -341,7 +349,7 @@ public class Turret extends SubsystemBase {
 
     public void createShuffleBoardTab() {
         ShuffleboardTab tab = m_shuffleboardTab;
-        ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 5)
+        ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 3)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
         CommandBase c = new frc.robot.commands.Turret.UpdatePIDF();
@@ -368,6 +376,10 @@ public class Turret extends SubsystemBase {
         c.setName("Enable Yaw");
         commands.add(c);
 
+        c = new frc.robot.commands.Turret.TrackTarget();
+        c.setName("Track Target");
+        commands.add(c);
+
         m_testTargetYaw = m_shuffleboardTab.add("Test Target Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(3, 1)
                 .withPosition(2, 0).withProperties(Map.of("min", -100.0, "max", 100.0)).getEntry();
@@ -382,36 +394,42 @@ public class Turret extends SubsystemBase {
 
         m_testTargetPitch = m_shuffleboardTab.add("Test Target Pitch", 0).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(3, 1)
-                .withPosition(5, 0).withProperties(Map.of("min", 0, "max", 45.0)).getEntry();
+                .withPosition(5, 0).withProperties(Map.of("min", 0, "max", 23.0)).getEntry();
 
         m_currentPitch = m_shuffleboardTab.add("Current Pitch", 0).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(3, 1)
-                .withPosition(5, 1).withProperties(Map.of("min", 0, "max", 45.0)).getEntry();
+                .withPosition(5, 1).withProperties(Map.of("min", 0, "max", 23.0)).getEntry();
 
         m_goalPitch = m_shuffleboardTab.add("Goal Pitch", 0).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(3, 1)
-                .withPosition(5, 2).withProperties(Map.of("min", 0.0, "max", 45.0)).getEntry();
+                .withPosition(5, 2).withProperties(Map.of("min", 0.0, "max", 23.0)).getEntry();
 
         m_testMode = m_shuffleboardTab.add("Turret Test Mode",
                 false).withSize(2, 1).withPosition(8, 0).getEntry();
 
+        m_pitchError = m_shuffleboardTab.add("Pitch Error",
+                0).withSize(1, 1).withPosition(8, 1).getEntry();
+
+        m_yawError = m_shuffleboardTab.add("Yaw Error",
+                0).withSize(1, 1).withPosition(8, 2).getEntry();
+
         m_yaw_pid_kFF = m_shuffleboardTab.add("Yaw PID kFF",
-                m_yawGains.kF).withSize(1, 1).withPosition(2, 3).getEntry();
+                m_yawGains.kF).withSize(1, 1).withPosition(3, 4).getEntry();
         m_yaw_pid_kP = m_shuffleboardTab.add("Yaw PID kP",
                 m_yawGains.kP).withSize(1, 1).withPosition(3, 3).getEntry();
         m_yaw_pid_kD = m_shuffleboardTab.add("Yaw PID kD",
                 m_yawGains.kD).withSize(1, 1).withPosition(4, 3).getEntry();
         m_yaw_pid_kI = m_shuffleboardTab.add("Yaw PID kI",
-                m_yawGains.kI).withSize(1, 1).withPosition(3, 4).getEntry();
+                m_yawGains.kI).withSize(1, 1).withPosition(2, 3).getEntry();
 
         m_pitch_pid_kFF = m_shuffleboardTab.add("Pitch PID kFF",
-                m_pitchGains.kF).withSize(1, 1).withPosition(5, 3).getEntry();
+                m_pitchGains.kF).withSize(1, 1).withPosition(6, 4).getEntry();
         m_pitch_pid_kP = m_shuffleboardTab.add("Pitch PID kP",
                 m_pitchGains.kP).withSize(1, 1).withPosition(6, 3).getEntry();
         m_pitch_pid_kD = m_shuffleboardTab.add("Pitch PID kD",
                 m_pitchGains.kD).withSize(1, 1).withPosition(7, 3).getEntry();
         m_pitch_pid_kI = m_shuffleboardTab.add("Pitch PID kI",
-                m_pitchGains.kI).withSize(1, 1).withPosition(6, 4).getEntry();
+                m_pitchGains.kI).withSize(1, 1).withPosition(5, 3).getEntry();
 
     }
 

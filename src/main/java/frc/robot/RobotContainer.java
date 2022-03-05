@@ -85,7 +85,7 @@ public class RobotContainer {
                 () -> -modifyAxis(
                         getInputLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
                 () -> -modifyAxis(
-                        getInputLeftX())
+                        getInputRightX())
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
         // Configure the button bindings
@@ -100,44 +100,45 @@ public class RobotContainer {
         // LiveWindow.disableAllTelemetry();
     }
 
-    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(1.0);
+    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(2.0);
 
     private double getInputLeftY() {
         double driverLeftY = m_controllerDriver.getLeftY();
         // double operatorLeftY = m_controllerOperator.getLeftY() / m_weakPower;
         double operatorLeftY = 0;
         double leftY = operatorLeftY;
-        if (Math.abs(leftY) > 0.1) {
+        if (Math.abs(leftY) < 0.01) {
             leftY = driverLeftY;
         }
         return m_slewLeftY.calculate(leftY);
 
     }
 
-    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(1.0);
+    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(2.0);
 
     private double getInputLeftX() {
         double driverLeftX = m_controllerDriver.getLeftX();
         // double operatorLeftX = m_controllerOperator.getLeftX() / m_weakPower;
         double operatorLeftX = 0;
         double leftX = operatorLeftX;
-        if (Math.abs(leftX) > 0.1) {
+        if (Math.abs(leftX) < 0.01) {
             leftX = driverLeftX;
         }
         return m_slewLeftX.calculate(leftX);
     }
 
-    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(1.0);
+    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(2.0);
 
     private double getInputRightX() {
         double driverRightX = m_controllerDriver.getRightX();
         // double operatorRightX = m_controllerOperator.getRightX() / m_weakPower;
         double operatorRightX = 0;
         double rightX = operatorRightX;
-        if (Math.abs(rightX) > 0.1) {
+        if (Math.abs(rightX) < 0.01) {
             rightX = driverRightX;
         }
-        return m_slewRightX.calculate(rightX);
+        // return m_slewRightX.calculate(rightX);
+        return rightX;
     }
 
     /**

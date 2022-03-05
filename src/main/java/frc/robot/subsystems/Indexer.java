@@ -10,7 +10,7 @@ import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
-
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -45,7 +45,7 @@ public class Indexer extends SubsystemBase {
      * 
      * kP kI kD kF Iz PeakOut
      */
-    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Intake");
+    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Indexer");
 
     /** Creates a new Intake. */
     public Indexer() {
@@ -67,6 +67,21 @@ public class Indexer extends SubsystemBase {
         m_backwheels.configNominalOutputReverse(0, IndexerConstants.kTimeoutMs);
         m_backwheels.configPeakOutputForward(1, IndexerConstants.kTimeoutMs);
         m_backwheels.configPeakOutputReverse(-1, IndexerConstants.kTimeoutMs);
+
+        m_frontwheels.setInverted(TalonFXInvertType.Clockwise);
+        m_backwheels.setInverted(TalonFXInvertType.CounterClockwise);
+
+        /* Config the Velocity closed loop gains in slot0 */
+        // m_frontMotor.config_kF(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kF, 30;
+        // m_frontMotor.config_kP(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kP, 30);
+        // m_frontMotor.config_kI(ShooterConstants.kPIDLoopIdx, 0, 30);
+        // m_frontMotor.config_kD(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kD, 30);
+
+        // m_backMotor.config_kF(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kF, 30);
+        // m_backMotor.config_kP(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kP, 30);
+        // m_backMotor.config_kI(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kI, 30);
+        // m_backMotor.config_kD(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kD, 30);
+
     }
 
     /**
@@ -161,15 +176,17 @@ public class Indexer extends SubsystemBase {
         double p = 0.25;
 
         m_frontwheels.set(TalonFXControlMode.PercentOutput, p);
-        m_backwheels.set(TalonFXControlMode.PercentOutput, -p);
+        m_backwheels.set(TalonFXControlMode.PercentOutput, p);
     }
 
     public void shoot() {
         // Start intake
-        double p = 0.35;
+        double p = 0.5;
 
-        m_frontwheels.set(TalonFXControlMode.PercentOutput, p);
-        m_backwheels.set(TalonFXControlMode.PercentOutput, -p);
+        // m_frontwheels.set(TalonFXControlMode.PercentOutput, p);
+        // m_backwheels.set(TalonFXControlMode.PercentOutput, p);
+        m_frontwheels.setVoltage(5.0);
+        m_backwheels.setVoltage(5.0);
     }
 
     public void stop() {
@@ -181,7 +198,7 @@ public class Indexer extends SubsystemBase {
     public void reverse() {
         // Reverse intake
         m_frontwheels.set(TalonFXControlMode.PercentOutput, -0.25);
-        m_backwheels.set(TalonFXControlMode.PercentOutput, 0.25);
+        m_backwheels.set(TalonFXControlMode.PercentOutput, -0.25);
     }
 
 }
