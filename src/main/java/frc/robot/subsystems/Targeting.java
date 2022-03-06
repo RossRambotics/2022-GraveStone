@@ -7,6 +7,10 @@ package frc.robot.subsystems;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
+import frc.robot.commands.LEDStrip.HubFound;
+import frc.robot.commands.LEDStrip.HubNotFound;
+import frc.robot.commands.LEDStrip.HubTargeted;
 
 public class Targeting extends SubsystemBase {
     private double m_testTargetYaw = 0.0;
@@ -21,6 +25,9 @@ public class Targeting extends SubsystemBase {
     private boolean m_hasTarget = false;
     private double[] m_yawHistory = new double[3];
     private double[] m_distanceHistory = new double[3];
+    private HubFound m_cmdHubFound = new HubFound();
+    private HubNotFound m_cmdHubNotFound = new HubNotFound();
+    private HubTargeted m_cmdHubTargeted = new HubTargeted();
 
     /** Creates a new Targeting. */
     public Targeting() {
@@ -38,7 +45,14 @@ public class Targeting extends SubsystemBase {
             m_hasTarget = true;
         } else {
             m_hasTarget = false;
+            m_cmdHubNotFound.schedule();
             return;
+        }
+
+        if (RobotContainer.m_Turret.getIsOnTarget()) {
+            m_cmdHubTargeted.schedule();
+        } else {
+            m_cmdHubFound.schedule();
         }
 
         m_targetOffsetAngle_Horizontal = -table.getEntry("tx").getDouble(0);

@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.TalonFX_Gains;
+import frc.util.FiringCalculator.FiringCalculator;
+import frc.util.FiringCalculator.FiringSolution;
 import frc.robot.RobotContainer;
 
 public class Shooter extends SubsystemBase {
@@ -55,6 +57,8 @@ public class Shooter extends SubsystemBase {
     private double m_BackRPM_shooter = 0;
     private double m_distance = 0;
     private double m_interpolated_RPM = 0;
+
+    private FiringCalculator m_firingCalculator = new FiringCalculator();
 
     /** Creates a new Shooter. */
     public Shooter() {
@@ -100,6 +104,15 @@ public class Shooter extends SubsystemBase {
         m_backMotor.config_kI(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kI, ShooterConstants.kTimeoutMs);
         m_backMotor.config_kD(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kD, ShooterConstants.kTimeoutMs);
 
+        m_firingCalculator.addSolution(new FiringSolution(1, 7.5, 1700));
+        m_firingCalculator.addSolution(new FiringSolution(2, 11.26, 1706));
+        m_firingCalculator.addSolution(new FiringSolution(3, 13.14, 2069));
+        m_firingCalculator.addSolution(new FiringSolution(4, 15, 2337));
+        m_firingCalculator.addSolution(new FiringSolution(5, 16.8, 2500));
+        // m_firingCalculator.addSolution(new FiringSolution(6, , 1700));
+        // m_firingCalculator.addSolution(new FiringSolution(7, 7.5, 1700));
+        // m_firingCalculator.addSolution(new FiringSolution(8, 7.5, 1700));
+
         // this.createShuffleBoardTab();
     }
 
@@ -118,17 +131,18 @@ public class Shooter extends SubsystemBase {
         m_diffBackRPM.setDouble(m_BackRPM_shooter - m_testRPM.getDouble(0));
 
         m_distance = m_nt_distance.getDouble(0);
+        FiringSolution fs = m_firingCalculator.compute(m_distance);
 
-        if (m_distance <= 0) {
-            m_interpolated_RPM = 200;
-        } else if (m_distance > 0 && m_distance < 1) {
-            m_interpolated_RPM = (800 * m_distance);
-        } else if (m_distance >= 1 && m_distance < 30) {
-            m_interpolated_RPM = (1000 * m_distance);
-        }
+        // if (m_distance <= 0) {
+        // m_interpolated_RPM = 200;
+        // } else if (m_distance > 0 && m_distance < 1) {
+        // m_interpolated_RPM = (800 * m_distance);
+        // } else if (m_distance >= 1 && m_distance < 30) {
+        // m_interpolated_RPM = (1000 * m_distance);
+        // }
         // System.out.println(m_distance + " " + m_interpolated_RPM);
         // SmartDashboard.putNumber("Shooter/RPM Return", m_interpolated_RPM);
-        m_nt_rpmreturn.setDouble(m_interpolated_RPM);
+        m_nt_rpmreturn.setDouble(fs.m_speed);
     }
 
     public void createShuffleBoardTab() {
@@ -183,10 +197,10 @@ public class Shooter extends SubsystemBase {
         // "Y-axis/Unit": "RPM",
         m_nt_distance = m_shuffleboardTab.add("Shooter Distance", m_distance).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(2, 1)
-                .withPosition(7, 0).withProperties(Map.of("min", 0, "max", 30)).getEntry();
+                .withPosition(7, 0).withProperties(Map.of("min", 0, "max", 10)).getEntry();
         m_nt_rpmreturn = m_shuffleboardTab.add("Shooter/RPM Return", 0.0)
                 .withSize(1, 1)
-                .withPosition(6, 0).getEntry();
+                .withPosition(6, 1).getEntry();
         m_pid_kFF = m_shuffleboardTab.add("Shooter PID kFF",
                 m_gainsVelocity.kF).withSize(2, 1).withPosition(8, 1).getEntry();
         m_pid_kP = m_shuffleboardTab.add("Shooter PID kP",

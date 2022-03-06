@@ -67,6 +67,7 @@ public class Turret extends SubsystemBase {
     private NetworkTableEntry m_pitchError = null;
     private NetworkTableEntry m_yawError = null;
     private boolean m_isTurretLocked = false;
+    private boolean m_isOnTarget = false;
 
     WPI_TalonFX m_pitchMotor = new WPI_TalonFX(Constants.ANGULAR_MOTOR, "usb");
 
@@ -117,6 +118,10 @@ public class Turret extends SubsystemBase {
         // createShuffleBoardTab();
     }
 
+    public boolean getIsOnTarget() {
+        return m_isOnTarget;
+    }
+
     public void setPitchToGoal() {
         setPitchDegrees(m_goalPitch.getDouble(0));
     }
@@ -134,6 +139,15 @@ public class Turret extends SubsystemBase {
                 - (m_goalPitch.getDouble(0) * kPITCH_TICKS_PER_DEGREE));
         m_yawError.setDouble(m_yawMotor.getSelectedSensorPosition(0)
                 - (m_goalYaw.getDouble(0) * kPITCH_TICKS_PER_DEGREE));
+
+        // get the total error
+        double error = Math.abs(m_pitchError.getDouble(0)) + Math.abs(m_yawError.getDouble(0));
+
+        if (error < 50) {
+            m_isOnTarget = true;
+        } else {
+            m_isOnTarget = false;
+        }
 
         // update testing angles if in test mode
         if (m_testMode.getBoolean(false)) {
