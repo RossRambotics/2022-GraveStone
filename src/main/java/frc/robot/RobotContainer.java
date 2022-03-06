@@ -36,6 +36,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Targeting;
 import frc.robot.subsystems.Tracking;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.LEDStrip.LEDStrip;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -66,6 +67,7 @@ public class RobotContainer {
     static public final Targeting m_Targeting = new Targeting();
     static public final Intake m_Intake = new Intake();
     static public final Indexer m_Indexer = new Indexer();
+    static public final LEDStrip m_LEDStrip = new LEDStrip();
 
     private final XboxController m_controllerDriver = new XboxController(0);
     // private final XboxController m_controllerOperator = new XboxController(1);
