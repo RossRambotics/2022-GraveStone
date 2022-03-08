@@ -26,12 +26,17 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWhileTracking;
+import frc.robot.commands.Intake.ExtendIntake;
+import frc.robot.commands.Intake.RetractIntake;
+import frc.robot.commands.Intake.ReverseIntake;
+import frc.robot.commands.Intake.StartIntake;
 import frc.robot.commands.Turret.TrackTarget;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.Indexer;
 
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.RioLEDs;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Targeting;
 import frc.robot.subsystems.Tracking;
@@ -63,10 +68,12 @@ public class RobotContainer {
     static public final Shooter m_Shooter = new Shooter();
     static public final Tracking m_Tracking = new Tracking();
     static public final Turret m_Turret = new Turret();
-    // public final Turret m_Turret = null;
+
     static public final Targeting m_Targeting = new Targeting();
     static public final Intake m_Intake = new Intake();
     static public final Indexer m_Indexer = new Indexer();
+    static public final RioLEDs m_RioLEDs = new RioLEDs();
+
     static public final LEDStrip m_LEDStrip = new LEDStrip();
 
     private final XboxController m_controllerDriver = new XboxController(0);
@@ -171,14 +178,15 @@ public class RobotContainer {
                 .whenHeld(cmd, true);
 
         // extends the intake and turns on the intake wheels Driver
-        // new Button(m_controllerDriver::getAButton)
-        // .whenReleased(command);
+        new Button(m_controllerDriver::getAButton)
+                .whenHeld(new ExtendIntake())
+                .whenHeld(new StartIntake());
 
-        // // retracts the intake and turns off the intake wheels
-        // new Button(m_controllerDriver::getBButton)
-        // .whenPressed(command);
+        // // reverse the intake
+        new Button(m_controllerDriver::getBButton)
+                .whenHeld(new ReverseIntake());
 
-        // // shotes into the lower hub at low RPM Driver
+        // // shootes into the lower hub at low RPM Driver
         // new Button(m_controllerDriver::getYButton)
         // .whenPressed(command);
 
@@ -322,6 +330,7 @@ public class RobotContainer {
         this.m_Turret.createShuffleBoardTab();
 
         // m_Turret.setDefaultCommand(new TrackTarget());
+        m_Intake.setDefaultCommand(new RetractIntake());
 
     }
 }

@@ -4,35 +4,31 @@
 
 package frc.robot.subsystems.LEDStrip;
 
-/** Add your docs here. */
-import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.LEDStrip.Input;
+import frc.robot.RobotContainer;
 
 public class LEDStrip extends SubsystemBase {
-    private AddressableLED m_led = null;
+
     private AddressableLEDBuffer m_ledBuffer = null;
-    private final int kLED_COLUMNS = 32;
-    private final int kLED_ROWS = 1;
+    static private final int kLED_COLUMNS = 32;
+    static private final int kLED_ROWS = 1;
     // number of LEDs
-    private final int m_noLEDs = kLED_ROWS * kLED_COLUMNS;
+    static public final int m_noLEDs = kLED_ROWS * kLED_COLUMNS;
 
     /** Creates a new LEDPanel. */
     public LEDStrip() {
 
         // PWM port 7
         // Must be a PWM header, not MXP or DIO
-        m_led = new AddressableLED(7);
+        // Moved to Robot Container
+        // m_RioLEDs = new AddressableLED(7);
 
         // Reuse buffer
         // Default to a length the size of LED Panel, start empty output
         // Length is expensive to set, so only set it once, then just update data
         m_ledBuffer = new AddressableLEDBuffer(m_noLEDs);
-        m_led.setLength(m_ledBuffer.getLength());
-
     }
 
     public void setBallWhite() {
@@ -326,8 +322,7 @@ public class LEDStrip extends SubsystemBase {
          * 
          * }
          */
-        m_led.setData(m_ledBuffer);
-        m_led.start();
+        RobotContainer.m_RioLEDs.setDataStrip(m_ledBuffer);
 
         // m_timer.start();
 
@@ -347,9 +342,7 @@ public class LEDStrip extends SubsystemBase {
 
         }
 
-        m_led.setData(m_ledBuffer);
-        m_led.start();
-
+        RobotContainer.m_RioLEDs.setDataStrip(m_ledBuffer);
     }
 
     public void setHubRed() {
@@ -364,9 +357,7 @@ public class LEDStrip extends SubsystemBase {
 
         }
 
-        m_led.setData(m_ledBuffer);
-        m_led.start();
-
+        RobotContainer.m_RioLEDs.setDataStrip(m_ledBuffer);
     }
 
     public void setHubYellow() {
@@ -381,9 +372,7 @@ public class LEDStrip extends SubsystemBase {
 
         }
 
-        m_led.setData(m_ledBuffer);
-        m_led.start();
-
+        RobotContainer.m_RioLEDs.setDataStrip(m_ledBuffer);
     }
 
     public void setHubGreen() {
@@ -398,9 +387,7 @@ public class LEDStrip extends SubsystemBase {
 
         }
 
-        m_led.setData(m_ledBuffer);
-        m_led.start();
-
+        RobotContainer.m_RioLEDs.setDataStrip(m_ledBuffer);
     }
 
 }
