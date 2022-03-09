@@ -12,7 +12,7 @@ import frc.robot.RobotContainer;
 public class LEDStrip extends SubsystemBase {
 
     private AddressableLEDBuffer m_ledBuffer = null;
-    static private final int kLED_COLUMNS = 32;
+    static private final int kLED_COLUMNS = 127;
     static private final int kLED_ROWS = 1;
     // number of LEDs
     static public final int m_noLEDs = kLED_ROWS * kLED_COLUMNS;
@@ -29,6 +29,16 @@ public class LEDStrip extends SubsystemBase {
         // Default to a length the size of LED Panel, start empty output
         // Length is expensive to set, so only set it once, then just update data
         m_ledBuffer = new AddressableLEDBuffer(m_noLEDs);
+    }
+
+    @Override
+    public void periodic() {
+        if (getCurrentCommand() == null) {
+            for (int c = 0; c < m_noLEDs; c++) {
+                m_ledBuffer.setHSV(c, 0, 100, 100);
+            }
+            RobotContainer.m_RioLEDs.setDataStrip(m_ledBuffer);
+        }
     }
 
     public void setBallWhite() {

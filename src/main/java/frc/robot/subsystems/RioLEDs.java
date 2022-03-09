@@ -29,7 +29,7 @@ public class RioLEDs {
         for (int c1 = m_LEDStripOffset, c2 = 0; c2 < LEDStrip.m_noLEDs; c1++, c2++) {
             m_ledBuffer.setLED(c1, buff.getLED(c2));
         }
-
+        m_RioLEDs.setData(m_ledBuffer);
         m_RioLEDs.start();
     }
 
@@ -37,7 +37,7 @@ public class RioLEDs {
         for (int c1 = m_LEDPanelOffset, c2 = 0; c2 < LEDPanel.m_noLEDs; c1++, c2++) {
             m_ledBuffer.setLED(c1, buff.getLED(c2));
         }
-
+        m_RioLEDs.setData(m_ledBuffer);
         m_RioLEDs.start();
     }
 }

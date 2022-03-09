@@ -1,10 +1,23 @@
 {
+  "HALProvider": {
+    "Addressable LEDs": {
+      "0": {
+        "columns": 48,
+        "order": 1,
+        "serpentine": true
+      },
+      "window": {
+        "visible": true
+      }
+    }
+  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
       "/LiveWindow/Indexer": "Subsystem",
       "/LiveWindow/Intake": "Subsystem",
+      "/LiveWindow/LEDPanel": "Subsystem",
       "/LiveWindow/LEDStrip": "Subsystem",
       "/LiveWindow/Shooter": "Subsystem",
       "/LiveWindow/Targeting": "Subsystem",
@@ -22,6 +35,8 @@
       "/LiveWindow/Ungrouped/Talon FX [42]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [45]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [46]": "Motor Controller",
+      "/Shuffleboard/Match.Auto/Autonomous": "String Chooser",
+      "/Shuffleboard/Match.Auto/Commands/Example Path": "Command",
       "/Shuffleboard/Sub.Auto/Autonomous": "String Chooser",
       "/Shuffleboard/Sub.Auto/Commands/Example Path": "Command",
       "/Shuffleboard/Sub.Indexer/Commands/Reverse Indexer": "Command",
@@ -38,6 +53,7 @@
       "/Shuffleboard/Sub.Intake/Commands/Stop Indexer": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Stop Intake": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Update PIDF": "Command",
+      "/Shuffleboard/Sub.Shooter/Commands/Enable Test Mode": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Start Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Stop Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Update PIDF": "Command",

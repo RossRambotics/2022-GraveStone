@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PerpetualCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWhileTracking;
@@ -30,6 +31,7 @@ import frc.robot.commands.Intake.ExtendIntake;
 import frc.robot.commands.Intake.RetractIntake;
 import frc.robot.commands.Intake.ReverseIntake;
 import frc.robot.commands.Intake.StartIntake;
+import frc.robot.commands.Intake.StopIntake;
 import frc.robot.commands.Turret.TrackTarget;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -41,6 +43,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Targeting;
 import frc.robot.subsystems.Tracking;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.LEDPanel.LEDPanel;
 import frc.robot.subsystems.LEDStrip.LEDStrip;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -61,7 +64,8 @@ public class RobotContainer {
         return m_theRobot;
     }
 
-    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Auto");
+    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Match.Auto");
+    static public final ShuffleboardTab m_TuningTab = Shuffleboard.getTab("Match.Tuning");
 
     static public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
@@ -75,6 +79,7 @@ public class RobotContainer {
     static public final RioLEDs m_RioLEDs = new RioLEDs();
 
     static public final LEDStrip m_LEDStrip = new LEDStrip();
+    // static public final LEDPanel m_LEDPanel = new LEDPanel();
 
     private final XboxController m_controllerDriver = new XboxController(0);
     // private final XboxController m_controllerOperator = new XboxController(1);
@@ -114,7 +119,7 @@ public class RobotContainer {
     private double getInputLeftY() {
         double driverLeftY = m_controllerDriver.getLeftY();
         // double operatorLeftY = m_controllerOperator.getLeftY() / m_weakPower;
-        double operatorLeftY = 0;
+        double operatorLeftY = 0.0;
         double leftY = operatorLeftY;
         if (Math.abs(leftY) < 0.01) {
             leftY = driverLeftY;
@@ -128,7 +133,7 @@ public class RobotContainer {
     private double getInputLeftX() {
         double driverLeftX = m_controllerDriver.getLeftX();
         // double operatorLeftX = m_controllerOperator.getLeftX() / m_weakPower;
-        double operatorLeftX = 0;
+        double operatorLeftX = 0.0;
         double leftX = operatorLeftX;
         if (Math.abs(leftX) < 0.01) {
             leftX = driverLeftX;
@@ -141,13 +146,13 @@ public class RobotContainer {
     private double getInputRightX() {
         double driverRightX = m_controllerDriver.getRightX();
         // double operatorRightX = m_controllerOperator.getRightX() / m_weakPower;
-        double operatorRightX = 0;
+        double operatorRightX = 0.0;
         double rightX = operatorRightX;
         if (Math.abs(rightX) < 0.01) {
             rightX = driverRightX;
         }
-        // return m_slewRightX.calculate(rightX);
-        return rightX;
+        return m_slewRightX.calculate(rightX);
+        // return rightX;
     }
 
     /**
@@ -178,9 +183,9 @@ public class RobotContainer {
                 .whenHeld(cmd, true);
 
         // extends the intake and turns on the intake wheels Driver
+
         new Button(m_controllerDriver::getAButton)
-                .whenHeld(new ExtendIntake())
-                .whenHeld(new StartIntake());
+                .whenHeld(new ExtendIntake().andThen(new StartIntake()));
 
         // // reverse the intake
         new Button(m_controllerDriver::getBButton)
@@ -328,9 +333,13 @@ public class RobotContainer {
         this.m_Indexer.createShuffleBoardTab();
         this.m_Intake.createShuffleBoardTab();
         this.m_Turret.createShuffleBoardTab();
+        this.m_Targeting.createShuffleBoardTab();
 
         // m_Turret.setDefaultCommand(new TrackTarget());
-        m_Intake.setDefaultCommand(new RetractIntake());
+        CommandBase cmd = new StopIntake();
+        cmd = cmd.andThen(new RetractIntake());
+        cmd.setName("Default RetractIntake Cmd");
+        m_Intake.setDefaultCommand(cmd);
 
     }
 }

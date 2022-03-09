@@ -157,7 +157,7 @@ public class Indexer extends SubsystemBase {
                 .withSize(4, 1)
                 .withPosition(2, 0).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
 
-        m_diffWheelSpeed = m_shuffleboardTab.add("Shooter Front Diff RPM", 0).withWidget(BuiltInWidgets.kNumberSlider)
+        m_diffWheelSpeed = m_shuffleboardTab.add("Indexer Error RPM", 0).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
                 .withPosition(2, 1).withProperties(Map.of("min", -100, "max", 100)).getEntry();
 

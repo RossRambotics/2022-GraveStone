@@ -58,6 +58,8 @@ public class Turret extends SubsystemBase {
     private NetworkTableEntry m_currentPitch = null; // updated by calaculating it back from the turret motor encoder
     private NetworkTableEntry m_goalPitch = null;
     private NetworkTableEntry m_testTargetPitch = null;
+    private NetworkTableEntry m_tuning_percent_pitch = null;
+    private NetworkTableEntry m_tuning_offset_yaw = null;
 
     private TalonFX_Gains m_pitchGains = new TalonFX_Gains(2.0, 0, 2.0, 0, 300, 1.00);
     private NetworkTableEntry m_pitch_pid_kP = null;
@@ -160,10 +162,11 @@ public class Turret extends SubsystemBase {
             // - m_currentPitch.getDouble(0));
         }
 
+        // *** Taking care of this in the shooter
         // update pitch of turret/shooter based on the distance
-        if (RobotContainer.m_Targeting.isTrackingTarget()) {
-            this.updatePitchUsingDistance();
-        }
+        // if (RobotContainer.m_Targeting.isTrackingTarget()) {
+        // this.updatePitchUsingDistance();
+        // }
 
         // check if a soft limit is triggered?
         // TODO update soft limits
@@ -191,23 +194,23 @@ public class Turret extends SubsystemBase {
         return m_currentYaw.getDouble(0);
     }
 
-    private void updatePitchUsingDistance() {
+    // private void updatePitchUsingDistance() {
 
-        double distance = RobotContainer.m_Targeting.getTargetDistance();
+    // double distance = RobotContainer.m_Targeting.getTargetDistance();
 
-        // translate from distance to pitch
-        double pitch = 5; // TODO
+    // // translate from distance to pitch
+    // double pitch = 5; // TODO
 
-        // make sure pitch is in range
+    // // make sure pitch is in range
 
-        m_goalPitch.setDouble(pitch);
+    // m_goalPitch.setDouble(pitch);
 
-        if (isTurretLocked()) {
-            return;
-        }
-        m_pitchMotor.set(TalonFXControlMode.Position, m_goalPitch.getDouble(0) *
-                kPITCH_TICKS_PER_DEGREE);
-    }
+    // if (isTurretLocked()) {
+    // return;
+    // }
+    // m_pitchMotor.set(TalonFXControlMode.Position, m_goalPitch.getDouble(0) *
+    // kPITCH_TICKS_PER_DEGREE);
+    // }
 
     // sets the yaw of the turret
     // this is relative to the front of the robot
@@ -298,29 +301,40 @@ public class Turret extends SubsystemBase {
     }
 
     public void setPitchDegrees(double goal) {
+
         m_goalPitch.setDouble(goal);
         if (isTurretLocked()) {
             return;
         }
-        System.out.println("**** Setting Pitch to goal: " + goal + " " + m_goalPitch.getDouble(0) *
+
+        // apply tunning percentage
+        goal *= 1.0 + (m_tuning_percent_pitch.getDouble(0) / 100.0);
+
+        m_pitchMotor.set(TalonFXControlMode.Position, goal *
                 kPITCH_TICKS_PER_DEGREE);
-        m_pitchMotor.set(TalonFXControlMode.Position, m_goalPitch.getDouble(0) *
-                kPITCH_TICKS_PER_DEGREE);
+    }
+
+    public boolean isTestMode() {
+        return m_testMode.getBoolean(false);
+    }
+
+    public double getTuningYawOffset() {
+        return m_tuning_offset_yaw.getDouble(0);
     }
 
     // set the pitch of the turret
     // this method is relative to the current pitch of the turret
-    public void setPitchDegreesRelative(double goal) {
-        // convert to ptich that is relative to the current position
-        goal += m_currentPitch.getDouble(0);
-        m_goalPitch.setDouble(goal);
+    // public void setPitchDegreesRelative(double goal) {
+    // // convert to ptich that is relative to the current position
+    // goal += m_currentPitch.getDouble(0);
+    // m_goalPitch.setDouble(goal);
 
-        if (isTurretLocked()) {
-            return;
-        }
-        m_pitchMotor.set(TalonFXControlMode.Position, m_goalPitch.getDouble(0) *
-                kPITCH_TICKS_PER_DEGREE);
-    }
+    // if (isTurretLocked()) {
+    // return;
+    // }
+    // m_pitchMotor.set(TalonFXControlMode.Position, m_goalPitch.getDouble(0) *
+    // kPITCH_TICKS_PER_DEGREE);
+    // }
 
     // this sets that yaw of the turret to a known position
     // intended to be used if a limit switch is hit
@@ -444,6 +458,18 @@ public class Turret extends SubsystemBase {
                 m_pitchGains.kD).withSize(1, 1).withPosition(7, 3).getEntry();
         m_pitch_pid_kI = m_shuffleboardTab.add("Pitch PID kI",
                 m_pitchGains.kI).withSize(1, 1).withPosition(5, 3).getEntry();
+
+        // Add tuning for during Match
+        // Pitch Tuning
+        m_tuning_percent_pitch = RobotContainer.m_TuningTab.add("Tune Pitch %", 0)
+                .withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(2, 1).withProperties(Map.of("min", -100, "max", 100)).getEntry();
+
+        m_tuning_offset_yaw = RobotContainer.m_TuningTab.add("Tune Offset Yaw", 0)
+                .withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(2, 2).withProperties(Map.of("min", -10, "max", 10)).getEntry();
 
     }
 

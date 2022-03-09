@@ -40,7 +40,7 @@ public class Shooter extends SubsystemBase {
      */
     private TalonFX_Gains m_gainsVelocity = new TalonFX_Gains(0.1, 0, 5, 1023.0 / 20660.0, 300, 1.00);
     private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Shooter");
-    private NetworkTableEntry m_testRPM = null;
+    private NetworkTableEntry m_goalRPM = null;
     private NetworkTableEntry m_actualFrontRPM = null;
     private NetworkTableEntry m_actualBackRPM = null;
     private NetworkTableEntry m_diffFrontRPM = null;
@@ -52,6 +52,7 @@ public class Shooter extends SubsystemBase {
     private NetworkTableEntry m_nt_distance = null;
     private NetworkTableEntry m_nt_rpmreturn = null;
     private NetworkTableEntry m_spinPercent = null;
+    private NetworkTableEntry m_tuning_percent_RPM = null;
 
     private double m_FrontRPM_shooter = 0;
     private double m_BackRPM_shooter = 0;
@@ -59,6 +60,15 @@ public class Shooter extends SubsystemBase {
     private double m_interpolated_RPM = 0;
 
     private FiringCalculator m_firingCalculator = new FiringCalculator();
+    private boolean m_bTestMode = false;
+
+    public boolean isTestMode() {
+        return m_bTestMode;
+    }
+
+    public void setTestMode(boolean m_bTestMode) {
+        this.m_bTestMode = m_bTestMode;
+    }
 
     /** Creates a new Shooter. */
     public Shooter() {
@@ -123,26 +133,39 @@ public class Shooter extends SubsystemBase {
         m_FrontRPM_shooter = Math.abs(m_frontMotor.getSelectedSensorVelocity(ShooterConstants.kPIDLoopIdx));
         m_FrontRPM_shooter = m_FrontRPM_shooter / 2048 * 600;
         m_actualFrontRPM.setDouble(m_FrontRPM_shooter);
-        m_diffFrontRPM.setDouble(m_FrontRPM_shooter - m_testRPM.getDouble(0));
+        m_diffFrontRPM.setDouble(m_FrontRPM_shooter - m_goalRPM.getDouble(0));
 
         m_BackRPM_shooter = Math.abs(m_backMotor.getSelectedSensorVelocity(ShooterConstants.kPIDLoopIdx));
         m_BackRPM_shooter = m_BackRPM_shooter / 2048 * 600;
         m_actualBackRPM.setDouble(m_BackRPM_shooter);
-        m_diffBackRPM.setDouble(m_BackRPM_shooter - m_testRPM.getDouble(0));
+        m_diffBackRPM.setDouble(m_BackRPM_shooter - m_goalRPM.getDouble(0));
 
-        m_distance = m_nt_distance.getDouble(0);
+        // if we are in test mode use the distance provided by shuffleboard
+        if (m_bTestMode) {
+            m_distance = m_nt_distance.getDouble(0);
+        } else {
+            // see if we are targeting object and calculate firing solution
+            if (!RobotContainer.m_Targeting.isTrackingTarget()) {
+                return;
+            }
+            m_distance = RobotContainer.m_Targeting.getTargetDistance();
+        }
+
+        // only do the following if the shooter has a target and is not in test mode
         FiringSolution fs = m_firingCalculator.compute(m_distance);
 
-        // if (m_distance <= 0) {
-        // m_interpolated_RPM = 200;
-        // } else if (m_distance > 0 && m_distance < 1) {
-        // m_interpolated_RPM = (800 * m_distance);
-        // } else if (m_distance >= 1 && m_distance < 30) {
-        // m_interpolated_RPM = (1000 * m_distance);
-        // }
-        // System.out.println(m_distance + " " + m_interpolated_RPM);
-        // SmartDashboard.putNumber("Shooter/RPM Return", m_interpolated_RPM);
         m_nt_rpmreturn.setDouble(fs.m_speed);
+
+        if (!m_bTestMode) {
+            m_goalRPM.setDouble(fs.m_speed);
+
+            // update Turret pitch for firing solution unless in test mode
+            if (!RobotContainer.m_Turret.isTestMode()) {
+
+                RobotContainer.m_Turret.setPitchDegrees(fs.m_pitch);
+            }
+        }
+
     }
 
     public void createShuffleBoardTab() {
@@ -165,7 +188,11 @@ public class Shooter extends SubsystemBase {
         // SmartDashboard.putData(c);
         shooterCommands.add(c);
 
-        m_testRPM = m_shuffleboardTab.add("Shooter Test RPM", 4000).withWidget(BuiltInWidgets.kNumberSlider)
+        c = new frc.robot.commands.Shooter.EnableTestMode();
+        c.setName("Enable Test Mode");
+        shooterCommands.add(c);
+
+        m_goalRPM = m_shuffleboardTab.add("Shooter Test RPM", 4000).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
                 .withPosition(2, 0).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
 
@@ -210,6 +237,12 @@ public class Shooter extends SubsystemBase {
         m_pid_kI = m_shuffleboardTab.add("Shooter PID kI",
                 m_gainsVelocity.kI).withSize(2, 1).withPosition(8, 4).getEntry();
 
+        // Add tuning for during Match
+        // Adjust Shooter RPM
+        m_tuning_percent_RPM = RobotContainer.m_TuningTab.add("Tune RPM %", 0).withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(2, 0).withProperties(Map.of("min", -100, "max", 100)).getEntry();
+
     }
 
     // constants
@@ -240,7 +273,11 @@ public class Shooter extends SubsystemBase {
          * 2048 Units/Rev * RPM / 600 100ms/min in either direction:
          * velocity setpoint is in units/100ms
          */
-        double targetVelocity_UnitsPer100ms = m_testRPM.getDouble(0) * 2048.0 / 600.0;
+        double targetVelocity_UnitsPer100ms = m_goalRPM.getDouble(0) * 2048.0 / 600.0;
+
+        // apply tunning percentage
+        targetVelocity_UnitsPer100ms *= 1.0 + (m_tuning_percent_RPM.getDouble(0) / 100.0);
+
         /* 2000 RPM in either direction */
 
         if (m_spinPercent.getDouble(0) == 0) {
@@ -248,8 +285,8 @@ public class Shooter extends SubsystemBase {
             m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
         } else {
             double spin = m_spinPercent.getDouble(0);
-            m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms * (100 + spin) / 100);
-            m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms * Math.abs(100 - spin) / 100);
+            m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms * (100.0 + spin) / 100.0);
+            m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms * Math.abs(100.0 - spin) / 100.0);
         }
     }
 
