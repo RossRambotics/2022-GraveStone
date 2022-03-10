@@ -34,6 +34,9 @@ public class Intake extends SubsystemBase {
     WPI_TalonFX m_rollerMotor = new WPI_TalonFX(Constants.INTAKE_MOTOR_ROLLER, "usb");
     WPI_TalonFX m_extensionMotor = new WPI_TalonFX(Constants.INTAKE_MOTOR_EXTENSION, "usb");
 
+    static public final Intake_extension m_extension = new Intake_extension();
+    static public final Intake_roller m_roller = new Intake_roller();
+
     // Default Intake Extension
     private double m_extensionTargetDegrees = 120;
 
@@ -221,4 +224,15 @@ public class Intake extends SubsystemBase {
         m_extensionMotor.config_kD(IntakeConstants.kPIDLoopIdx, m_gainsVelocity.kD, IntakeConstants.kTimeoutMs);
     }
 
+    /**
+     * Dummy classes use for requirements...
+     * You can use AddRequirements(Intake_roller) if you need the roller motor
+     * (wheels) and
+     * AddRequirements(Intake_extension) if you need the extension motor (arm)
+     */
+    static private class Intake_roller extends SubsystemBase {
+    }
+
+    static private class Intake_extension extends SubsystemBase {
+    }
 }

@@ -5,6 +5,7 @@
 package frc.robot.commands.Intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Intake;
 
@@ -19,18 +20,19 @@ public class UpdatePIDF extends CommandBase {
         ;
 
         // Use addRequirements() here to declare subsystem dependencies.
-        this.addRequirements(m_intake);
+        this.addRequirements(m_intake, RobotContainer.m_Intake.m_extension, RobotContainer.m_Intake.m_roller);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        m_intake.updatePIDF();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_intake.updatePIDF();
+
     }
 
     // Called once the command ends or is interrupted.

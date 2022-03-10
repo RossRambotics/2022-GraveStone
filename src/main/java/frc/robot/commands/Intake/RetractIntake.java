@@ -14,20 +14,21 @@ public class RetractIntake extends CommandBase {
     /** Creates a new StartIntake. */
     public RetractIntake() {
         m_intake = RobotContainer.m_Intake;
-        ;
+
         // Use addRequirements() here to declare subsystem dependencies.
-        this.addRequirements(m_intake);
+        this.addRequirements(RobotContainer.m_Intake.m_extension);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        m_intake.retract();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_intake.retract();
+
     }
 
     // Called once the command ends or is interrupted.
