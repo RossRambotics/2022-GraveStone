@@ -7,9 +7,11 @@ package frc.robot.commands.Indexer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class EmptyCheck extends CommandBase {
-    /** Creates a new EmptyCheck. */
-    public EmptyCheck() {
+public class PrepareFirstCargo extends CommandBase {
+    boolean m_isFinished = false;
+
+    /** Creates a new PrepareFirstCargo. */
+    public PrepareFirstCargo() {
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(RobotContainer.m_Indexer);
     }
@@ -22,20 +24,24 @@ public class EmptyCheck extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (RobotContainer.getTheRobot().m_Indexer.getSensorIndexerEntry()) {
-            CommandBase cmd = new PrepareFirstCargo();
-            cmd.schedule();
+        // move the ball forward until the 2nd sensor sees it
+        if (!RobotContainer.m_Indexer.getSensorIndexerMiddle()) {
+            RobotContainer.m_Indexer.start();
+        } else {
+            RobotContainer.m_Indexer.stop();
+            m_isFinished = true;
         }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        RobotContainer.m_Indexer.stop();
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return m_isFinished;
     }
 }

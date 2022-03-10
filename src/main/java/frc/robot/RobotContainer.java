@@ -23,7 +23,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PerpetualCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWhileTracking;
@@ -197,6 +199,12 @@ public class RobotContainer {
                 .whenHeld(cmd, true);
 
         // extends the intake and turns on the intake wheels Driver
+        cmd = new ParallelCommandGroup(
+                new ExtendIntake(),
+                new StartIntake());
+
+        cmd.setName("A Button - Intake Cargo");
+        m_Intake.setDefaultCommand(cmd);
 
         new Button(m_controllerDriver::getAButton)
                 .whenHeld(new ExtendIntake().andThen(new StartIntake()));
@@ -350,8 +358,10 @@ public class RobotContainer {
         this.m_Targeting.createShuffleBoardTab();
 
         // m_Turret.setDefaultCommand(new TrackTarget());
-        CommandBase cmd = new StopIntake();
-        cmd = cmd.andThen(new RetractIntake());
+        CommandBase cmd = new ParallelCommandGroup(
+                new StopIntake(),
+                new RetractIntake());
+
         cmd.setName("Default RetractIntake Cmd");
         m_Intake.setDefaultCommand(cmd);
 
