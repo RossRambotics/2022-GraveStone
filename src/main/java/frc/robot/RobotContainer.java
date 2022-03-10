@@ -204,10 +204,9 @@ public class RobotContainer {
                 new StartIntake());
 
         cmd.setName("A Button - Intake Cargo");
-        m_Intake.setDefaultCommand(cmd);
 
         new Button(m_controllerDriver::getAButton)
-                .whenHeld(new ExtendIntake().andThen(new StartIntake()));
+                .whenHeld(cmd);
 
         // // reverse the intake
         new Button(m_controllerDriver::getBButton)
@@ -358,11 +357,10 @@ public class RobotContainer {
         this.m_Targeting.createShuffleBoardTab();
 
         // m_Turret.setDefaultCommand(new TrackTarget());
-        CommandBase cmd = new ParallelCommandGroup(
-                new StopIntake(),
-                new RetractIntake());
+        CommandBase cmd = new frc.robot.commands.Intake.DefCommand();
 
         cmd.setName("Default RetractIntake Cmd");
+        cmd.addRequirements(m_Intake);
         m_Intake.setDefaultCommand(cmd);
 
     }
