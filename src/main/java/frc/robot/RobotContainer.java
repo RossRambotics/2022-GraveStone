@@ -111,24 +111,38 @@ public class RobotContainer {
         // disable Live Window per recommendations by WPILIB team to reduce network
         // overhead
         // remove this line if stuff is missing from shuffleboard that we need.
-        // LiveWindow.disableAllTelemetry();
+        LiveWindow.disableAllTelemetry();
     }
 
-    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(2.0);
+    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(0.6);
 
     private double getInputLeftY() {
-        double driverLeftY = m_controllerDriver.getLeftY();
+        double kDEAD_SLEW = 0.08;
+        double driverLeftY = deadband(m_controllerDriver.getLeftY(), 0.5);
         // double operatorLeftY = m_controllerOperator.getLeftY() / m_weakPower;
         double operatorLeftY = 0.0;
         double leftY = operatorLeftY;
         if (Math.abs(leftY) < 0.01) {
             leftY = driverLeftY;
         }
-        return m_slewLeftY.calculate(leftY);
+
+        double slew = m_slewLeftY.calculate(leftY);
+        if (Math.abs(slew) < kDEAD_SLEW) {
+            if (driverLeftY == 0) {
+                slew = 0.0;
+            } else if (driverLeftY > 0) {
+                slew = kDEAD_SLEW;
+            } else {
+                slew = -kDEAD_SLEW;
+            }
+            m_slewLeftY.reset(slew);
+        }
+
+        return slew;
 
     }
 
-    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(2.0);
+    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(0.6);
 
     private double getInputLeftX() {
         double driverLeftX = m_controllerDriver.getLeftX();
@@ -141,7 +155,7 @@ public class RobotContainer {
         return m_slewLeftX.calculate(leftX);
     }
 
-    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(2.0);
+    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(0.6);
 
     private double getInputRightX() {
         double driverRightX = m_controllerDriver.getRightX();

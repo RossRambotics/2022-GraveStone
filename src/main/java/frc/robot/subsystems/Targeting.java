@@ -94,7 +94,9 @@ public class Targeting extends SubsystemBase {
     }
 
     public double getTargetDistance() {
-        return this.getPredictedDistance(m_pred_distance.getDouble(0.0));
+        // TODO fix this
+        return 0.0;
+        // return this.getPredictedDistance(m_pred_distance.getDouble(0.0));
     }
 
     public double getTargetOffsetYaw() {

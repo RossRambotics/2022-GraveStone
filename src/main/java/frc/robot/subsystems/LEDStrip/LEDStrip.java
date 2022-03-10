@@ -13,9 +13,13 @@ public class LEDStrip extends SubsystemBase {
 
     private AddressableLEDBuffer m_ledBuffer = null;
     static private final int kLED_COLUMNS = 127;
+    // static private final int kLED_COLUMNS = 2;
     static private final int kLED_ROWS = 1;
     // number of LEDs
     static public final int m_noLEDs = kLED_ROWS * kLED_COLUMNS;
+
+    static public final LEDStrip_targeting m_targeting = new LEDStrip_targeting();
+    static public final LEDStrip_tracking m_tracking = new LEDStrip_tracking();
 
     /** Creates a new LEDPanel. */
     public LEDStrip() {
@@ -400,4 +404,15 @@ public class LEDStrip extends SubsystemBase {
         RobotContainer.m_RioLEDs.setDataStrip(m_ledBuffer);
     }
 
+    /**
+     * Dummy classes use for requirements...
+     * You can use AddRequirements(LEDStrip_targeting) if you need the targeting
+     * LEDs or
+     * AddRequirements(LEDStrip_tracking) if you need the tracking LEDS
+     */
+    static private class LEDStrip_targeting extends SubsystemBase {
+    }
+
+    static private class LEDStrip_tracking extends SubsystemBase {
+    }
 }

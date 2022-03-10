@@ -49,7 +49,8 @@ public class Tracking extends SubsystemBase {
 
     @Override
     public void periodic() {
-
+        if (true)
+            return;
         // This method will be called once per scheduler run
         m_currentYaw.setDouble(RobotContainer.m_drivetrainSubsystem.getGyroHeading()
                 .getDegrees());
