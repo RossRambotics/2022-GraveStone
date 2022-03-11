@@ -12,8 +12,7 @@ public class DefCommand extends CommandBase {
     public DefCommand() {
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(RobotContainer.m_Intake,
-                RobotContainer.m_Intake.m_extension,
-                RobotContainer.m_Intake.m_roller);
+                RobotContainer.m_Intake.m_extension);
     }
 
     // Called when the command is initially scheduled.

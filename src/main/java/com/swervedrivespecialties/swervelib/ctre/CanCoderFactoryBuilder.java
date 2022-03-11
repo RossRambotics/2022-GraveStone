@@ -33,14 +33,16 @@ public class CanCoderFactoryBuilder {
             CANCoder encoder = new CANCoder(configuration.getId());
             CtreUtils.checkCtreError(encoder.configAllSettings(config, 250), "Failed to configure CANCoder");
 
-            CtreUtils.checkCtreError(encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, periodMilliseconds, 250), "Failed to configure CANCoder update rate");
+            CtreUtils.checkCtreError(
+                    encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, periodMilliseconds, 250),
+                    "Failed to configure CANCoder update rate");
 
             return new EncoderImplementation(encoder);
         };
     }
 
     private static class EncoderImplementation implements AbsoluteEncoder {
-        private final int ATTEMPTS = 3; // TODO: Allow changing number of tries for getting correct position
+        private final int ATTEMPTS = 6; // TODO: Allow changing number of tries for getting correct position
 
         private final CANCoder encoder;
 
@@ -55,12 +57,14 @@ public class CanCoderFactoryBuilder {
             ErrorCode code = encoder.getLastError();
 
             for (int i = 0; i < ATTEMPTS; i++) {
-                if (code == ErrorCode.OK) break;
+                if (code == ErrorCode.OK)
+                    break;
                 angle = Math.toRadians(encoder.getAbsolutePosition());
                 code = encoder.getLastError();
             }
 
-            CtreUtils.checkCtreError(code, "Failed to retrieve CANcoder "+encoder.getDeviceID()+" absolute position after "+ATTEMPTS+" tries");
+            CtreUtils.checkCtreError(code, "Failed to retrieve CANcoder " + encoder.getDeviceID()
+                    + " absolute position after " + ATTEMPTS + " tries");
 
             angle %= 2.0 * Math.PI;
             if (angle < 0.0) {

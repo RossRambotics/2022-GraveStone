@@ -96,10 +96,8 @@ public class RobotContainer {
         // Right stick X axis -> rotation
         m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
                 m_drivetrainSubsystem,
-                () -> -modifyAxis(
-                        getInputLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -modifyAxis(
-                        getInputLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
                 () -> -modifyAxis(
                         getInputRightX())
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
@@ -113,14 +111,15 @@ public class RobotContainer {
         // disable Live Window per recommendations by WPILIB team to reduce network
         // overhead
         // remove this line if stuff is missing from shuffleboard that we need.
-        LiveWindow.disableAllTelemetry();
+        // LiveWindow.disableAllTelemetry();
     }
 
     private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(0.6);
 
     private double getInputLeftY() {
-        double kDEAD_SLEW = 0.08;
-        double driverLeftY = deadband(m_controllerDriver.getLeftY(), 0.5);
+        double kDEAD_SLEW = 0.2;
+        double driverLeftY = modifyAxis(m_controllerDriver.getLeftY()
+                * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND);
         // double operatorLeftY = m_controllerOperator.getLeftY() / m_weakPower;
         double operatorLeftY = 0.0;
         double leftY = operatorLeftY;
@@ -147,27 +146,55 @@ public class RobotContainer {
     private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(0.6);
 
     private double getInputLeftX() {
-        double driverLeftX = m_controllerDriver.getLeftX();
+        double kDEAD_SLEW = 0.2;
+        double driverLeftX = modifyAxis(
+                m_controllerDriver.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
         // double operatorLeftX = m_controllerOperator.getLeftX() / m_weakPower;
         double operatorLeftX = 0.0;
         double leftX = operatorLeftX;
         if (Math.abs(leftX) < 0.01) {
             leftX = driverLeftX;
         }
-        return m_slewLeftX.calculate(leftX);
+
+        double slew = m_slewLeftX.calculate(leftX);
+        if (Math.abs(slew) < kDEAD_SLEW) {
+            if (driverLeftX == 0) {
+                slew = 0.0;
+            } else if (driverLeftX > 0) {
+                slew = kDEAD_SLEW;
+            } else {
+                slew = -kDEAD_SLEW;
+            }
+            m_slewLeftX.reset(slew);
+        }
+        return slew;
     }
 
     private SlewRateLimiter m_slewRightX = new SlewRateLimiter(0.6);
 
     private double getInputRightX() {
-        double driverRightX = m_controllerDriver.getRightX();
+        double kDEAD_SLEW = 0.2;
+        double driverRightX = modifyAxis(
+                m_controllerDriver.getRightX()
+                        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
         // double operatorRightX = m_controllerOperator.getRightX() / m_weakPower;
         double operatorRightX = 0.0;
         double rightX = operatorRightX;
         if (Math.abs(rightX) < 0.01) {
             rightX = driverRightX;
         }
-        return m_slewRightX.calculate(rightX);
+        double slew = m_slewRightX.calculate(rightX);
+        if (Math.abs(slew) < kDEAD_SLEW) {
+            if (driverRightX == 0) {
+                slew = 0.0;
+            } else if (driverRightX > 0) {
+                slew = kDEAD_SLEW;
+            } else {
+                slew = -kDEAD_SLEW;
+            }
+            m_slewRightX.reset(slew);
+        }
+        return slew;
         // return rightX;
     }
 
@@ -362,6 +389,8 @@ public class RobotContainer {
         cmd.setName("Default RetractIntake Cmd");
         cmd.addRequirements(m_Intake);
         m_Intake.setDefaultCommand(cmd);
+
+        // DataLogManager.start();
 
     }
 }
