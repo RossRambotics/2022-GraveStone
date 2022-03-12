@@ -193,6 +193,11 @@ public class Indexer extends SubsystemBase {
         m_backwheels.set(TalonFXControlMode.PercentOutput, p);
     }
 
+    public void slow() {
+        m_frontwheels.setVoltage(2.0);
+        m_backwheels.setVoltage(2.0);
+    }
+
     public void shoot() {
         /**
          * Convert RPM to units / 100ms.

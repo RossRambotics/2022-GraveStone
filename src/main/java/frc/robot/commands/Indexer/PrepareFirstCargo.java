@@ -26,7 +26,7 @@ public class PrepareFirstCargo extends CommandBase {
     public void execute() {
         // move the ball forward until the 2nd sensor sees it
         if (!RobotContainer.m_Indexer.getSensorIndexerMiddle()) {
-            RobotContainer.m_Indexer.start();
+            RobotContainer.m_Indexer.slow();
         } else {
             RobotContainer.m_Indexer.stop();
             m_isFinished = true;

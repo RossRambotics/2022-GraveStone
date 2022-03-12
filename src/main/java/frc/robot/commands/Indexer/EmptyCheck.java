@@ -24,6 +24,7 @@ public class EmptyCheck extends CommandBase {
     public void execute() {
         if (RobotContainer.getTheRobot().m_Indexer.getSensorIndexerEntry()) {
             CommandBase cmd = new PrepareFirstCargo();
+            cmd = cmd.withTimeout(1.0);
             cmd.schedule();
         }
     }
