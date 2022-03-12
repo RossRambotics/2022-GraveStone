@@ -194,6 +194,9 @@ public class Turret extends SubsystemBase {
         return m_currentYaw.getDouble(0);
     }
 
+    public double getPitch() {
+        return m_currentPitch.getDouble(0);
+    }
     // private void updatePitchUsingDistance() {
 
     // double distance = RobotContainer.m_Targeting.getTargetDistance();

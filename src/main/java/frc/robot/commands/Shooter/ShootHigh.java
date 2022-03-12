@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Shooter;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
@@ -20,6 +21,13 @@ public class ShootHigh extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        DataLogManager.log("ShootHigh Initialize:" +
+                " Target Yaw: " + RobotContainer.m_Targeting.getTargetOffsetYaw() +
+                " Target Distance: " + RobotContainer.m_Targeting.getTargetDistance() +
+                " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
+                " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
+                " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
+                " Shooter RPM: " + RobotContainer.m_Shooter.getRPM());
         RobotContainer.m_Intake.retract();
         RobotContainer.m_Shooter.start();
     }
@@ -30,12 +38,28 @@ public class ShootHigh extends CommandBase {
         if (RobotContainer.m_Shooter.isSpunUp()) {
             RobotContainer.m_Indexer.shoot();
             m_timer.start();
+
+            DataLogManager.log("ShootHigh Shoot1:" +
+                    " Target Yaw: " + RobotContainer.m_Targeting.getTargetOffsetYaw() +
+                    " Target Distance: " + RobotContainer.m_Targeting.getTargetDistance() +
+                    " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
+                    " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
+                    " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
+                    " Shooter RPM: " + RobotContainer.m_Shooter.getRPM());
         }
 
         // pause briefly then turn on the intake
         if (m_timer.advanceIfElapsed(0.5) == false) {
             return;
         }
+
+        DataLogManager.log("ShootHigh Shoot2:" +
+                " Target Yaw: " + RobotContainer.m_Targeting.getTargetOffsetYaw() +
+                " Target Distance: " + RobotContainer.m_Targeting.getTargetDistance() +
+                " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
+                " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
+                " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
+                " Shooter RPM: " + RobotContainer.m_Shooter.getRPM());
 
         RobotContainer.m_Intake.start();
     }

@@ -105,7 +105,7 @@ public class Indexer extends SubsystemBase {
     }
 
     public boolean getSensorIndexerEntry() {
-        if (m_Sensor_IndexerEntry.getValue() > 10) {
+        if (m_Sensor_IndexerEntry.getValue() < 10) {
             return true;
         } else {
             return false;
@@ -113,7 +113,7 @@ public class Indexer extends SubsystemBase {
     }
 
     public boolean getSensorIndexerMiddle() {
-        if (m_Sensor_IndexerMiddle.getValue() > 10) {
+        if (m_Sensor_IndexerMiddle.getValue() < 10) {
             return true;
         } else {
             return false;
@@ -121,7 +121,7 @@ public class Indexer extends SubsystemBase {
     }
 
     public boolean getSensorIndexerExit() {
-        if (m_Sensor_IndexerExit.getValue() > 10) {
+        if (m_Sensor_IndexerExit.getValue() < 10) {
             return true;
         } else {
             return false;

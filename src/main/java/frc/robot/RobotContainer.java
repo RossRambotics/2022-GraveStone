@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -390,7 +391,11 @@ public class RobotContainer {
         cmd.addRequirements(m_Intake);
         m_Intake.setDefaultCommand(cmd);
 
-        // DataLogManager.start();
+        cmd = new frc.robot.commands.Indexer.EmptyCheck();
+        m_Indexer.setDefaultCommand(cmd);
+
+        DataLogManager.start();
+        DataLogManager.log("Log Started.");
 
     }
 }

@@ -318,6 +318,12 @@ public class Shooter extends SubsystemBase {
         m_backMotor.config_kD(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kD, ShooterConstants.kTimeoutMs);
     }
 
+    public double getRPM() {
+        double ave = (m_BackRPM_shooter + m_FrontRPM_shooter) / 2;
+
+        return ave;
+    }
+
     public boolean isSpunUp() {
         double error = m_diffBackRPM.getDouble(0) + m_diffFrontRPM.getDouble(0);
 
