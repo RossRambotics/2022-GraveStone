@@ -229,24 +229,8 @@ public class Turret extends SubsystemBase {
         }
         m_yawMotor.set(TalonFXControlMode.Position, m_goalYaw.getDouble(0) *
                 kYAW_TICKS_PER_DEGREE);
-    }
 
-    // moves the turret to the beginning of the turret lock/sensor search range
-    // returns true if we are close to search start angle
-    // returns false if we are still moving
-    public boolean initializeTurretLock() {
-        // if we are within 5 degrees true true
-        if (Math.abs(this.getYaw() - kTURRET_LOCK_SEARCH_START) < 2) {
-            // stop spinning the turret
-            m_yawMotor.set(ControlMode.PercentOutput, 0);
-            return true;
-        }
-
-        m_goalYaw.setDouble(kTURRET_LOCK_SEARCH_START);
-        m_yawMotor.set(TalonFXControlMode.Position, m_goalYaw.getDouble(0) *
-                kYAW_TICKS_PER_DEGREE);
-
-        return false;
+        return;
     }
 
     // returns true if the sensor indicates the turret is in the lock position
@@ -293,6 +277,24 @@ public class Turret extends SubsystemBase {
 
     public boolean isTurretLocked() {
         return m_isTurretLocked;
+    }
+
+    // moves the turret to the beginning of the turret lock/sensor search range
+    // returns true if we are close to search start angle
+    // returns false if we are still moving
+    public boolean initializeTurretLock() {
+        // if we are within 5 degrees true true
+        if (Math.abs(this.getYaw() - kTURRET_LOCK_SEARCH_START) < 2) {
+            // stop spinning the turret
+            m_yawMotor.set(ControlMode.PercentOutput, 0);
+            return true;
+        }
+
+        m_goalYaw.setDouble(kTURRET_LOCK_SEARCH_START);
+        m_yawMotor.set(TalonFXControlMode.Position, m_goalYaw.getDouble(0) *
+                kYAW_TICKS_PER_DEGREE);
+
+        return false;
     }
 
     // set the yaw of the turret

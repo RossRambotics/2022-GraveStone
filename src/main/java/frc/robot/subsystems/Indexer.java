@@ -50,7 +50,7 @@ public class Indexer extends SubsystemBase {
      * 
      * kP kI kD kF Iz PeakOut
      */
-    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Indexer");
+    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Intake");
 
     /** Creates a new Intake. */
     public Indexer() {
@@ -213,6 +213,14 @@ public class Indexer extends SubsystemBase {
         // m_frontwheels.setVoltage(5.0);
         // m_backwheels.setVoltage(5.0);
     }
+
+    // public void shoot() {
+    // // Start intake
+    // double p = 0.35;
+
+    // m_frontwheels.set(TalonFXControlMode.PercentOutput, p);
+    // m_backwheels.set(TalonFXControlMode.PercentOutput, -p);
+    // }
 
     public void stop() {
         // Stop intake

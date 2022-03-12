@@ -166,7 +166,6 @@ public class Shooter extends SubsystemBase {
                 RobotContainer.m_Turret.setPitchDegrees(fs.m_pitch);
             }
         }
-
     }
 
     public void createShuffleBoardTab() {

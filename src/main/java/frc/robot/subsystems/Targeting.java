@@ -91,6 +91,14 @@ public class Targeting extends SubsystemBase {
         m_distanceHistory[2] = m_distanceToTarget;
         m_yawHistory[2] = m_targetOffsetAngle_Horizontal;
 
+        // save off the history
+        for (int c = 0; c < 2; c++) {
+            m_distanceHistory[c] = m_distanceHistory[c + 1];
+            m_yawHistory[c] = m_yawHistory[c + 1];
+        }
+        m_distanceHistory[2] = m_distanceToTarget;
+        m_yawHistory[2] = m_targetOffsetAngle_Horizontal;
+
     }
 
     public double getTargetDistance() {
