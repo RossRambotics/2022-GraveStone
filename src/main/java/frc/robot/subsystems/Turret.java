@@ -33,7 +33,7 @@ public class Turret extends SubsystemBase {
     private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Turret");
 
     // yaw related member variables
-    private final double kYAW_TICKS_PER_DEGREE = (20 * 2048.0) / 360; // TODO update with gear
+    private final double kYAW_TICKS_PER_DEGREE = (54 * 2048.0) / 360; // TODO update with gear
     private final double kTURRET_LOCK_SEARCH_START = 70; // angle the turret moves to start search for lock sensor
     private final double kTURRET_LOCK_SEARCH_END = 120; // maximum angle the turret will look for the lock sensor
     private final double kTURRET_LOCK_SEARCH_SPEED = 0.1; // the speed the turret will move while searching for the
@@ -92,7 +92,7 @@ public class Turret extends SubsystemBase {
                 m_kTimeoutMs);
 
         // Set motor directions
-        m_yawMotor.setInverted(TalonFXInvertType.CounterClockwise);
+        m_yawMotor.setInverted(TalonFXInvertType.Clockwise);
         m_pitchMotor.setInverted(TalonFXInvertType.CounterClockwise);
         m_pitchMotor.setNeutralMode(NeutralMode.Brake);
 
@@ -170,11 +170,11 @@ public class Turret extends SubsystemBase {
 
         // check if a soft limit is triggered?
         // TODO update soft limits
-        if (m_goalYaw.getDouble(0) < -90.0) {
+        if (m_goalYaw.getDouble(0) < -44.0) {
             m_goalYaw.setDouble(90.0);
         }
-        if (m_goalYaw.getDouble(0) > 90.0) {
-            m_goalYaw.setDouble(90.0);
+        if (m_goalYaw.getDouble(0) > 100.0) {
+            m_goalYaw.setDouble(100.0);
         }
 
         if (m_goalPitch.getDouble(0) < 0) {
@@ -463,6 +463,8 @@ public class Turret extends SubsystemBase {
                 m_pitchGains.kD).withSize(1, 1).withPosition(7, 3).getEntry();
         m_pitch_pid_kI = m_shuffleboardTab.add("Pitch PID kI",
                 m_pitchGains.kI).withSize(1, 1).withPosition(5, 3).getEntry();
+
+        resetYawDegressAbs(0);
 
         // Add tuning for during Match
         // Pitch Tuning

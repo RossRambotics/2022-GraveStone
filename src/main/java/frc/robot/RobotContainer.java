@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWhileTracking;
+import frc.robot.commands.Indexer.ReverseWheels;
 import frc.robot.commands.Intake.ExtendIntake;
 import frc.robot.commands.Intake.RetractIntake;
 import frc.robot.commands.Intake.ReverseIntake;
@@ -99,9 +100,7 @@ public class RobotContainer {
                 m_drivetrainSubsystem,
                 () -> -getInputLeftY(),
                 () -> -getInputLeftX(),
-                () -> -modifyAxis(
-                        getInputRightX())
-                        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+                () -> getInputRightX()));
 
         // Configure the button bindings
         configureButtonBindings();
@@ -115,7 +114,7 @@ public class RobotContainer {
         // LiveWindow.disableAllTelemetry();
     }
 
-    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(0.6);
+    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(2.0);
 
     private double getInputLeftY() {
         double kDEAD_SLEW = 0.2;
@@ -144,7 +143,7 @@ public class RobotContainer {
 
     }
 
-    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(0.6);
+    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(2.0);
 
     private double getInputLeftX() {
         double kDEAD_SLEW = 0.2;
@@ -171,7 +170,7 @@ public class RobotContainer {
         return slew;
     }
 
-    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(0.6);
+    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(3.0);
 
     private double getInputRightX() {
         double kDEAD_SLEW = 0.2;
@@ -237,13 +236,16 @@ public class RobotContainer {
                 .whenHeld(cmd);
 
         // // reverse the intake
+        cmd = new ParallelCommandGroup(
+                new ReverseIntake(),
+                new ReverseWheels());
         new Button(m_controllerDriver::getBButton)
-                .whenHeld(new ReverseIntake());
+                .whenHeld(cmd);
 
         // // shootes into the lower hub at low RPM Driver
         new Button(m_controllerDriver::getYButton)
                 .whenPressed(new frc.robot.commands.Shooter.ShootLow()
-                        .withTimeout(20.0));
+                        .withTimeout(2.0));
 
         // // targets to target
         // new Button(m_controllerDriver::getRightBumperPressed)
@@ -392,7 +394,7 @@ public class RobotContainer {
         cmd.addRequirements(m_Intake);
         m_Intake.setDefaultCommand(cmd);
 
-        cmd = new frc.robot.commands.Indexer.EmptyCheck();
+        cmd = new frc.robot.commands.Indexer.DefaultIndexer();
         m_Indexer.setDefaultCommand(cmd);
 
         DataLogManager.start();

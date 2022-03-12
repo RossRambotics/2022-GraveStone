@@ -66,7 +66,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // MAX_VELOCITY_METERS_PER_SECOND /
     // Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS /
     // 2.0); // This formula for our setup is ~13.2
-    public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = 13.2;
+    public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = 6.0;
 
     private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
             // Front left

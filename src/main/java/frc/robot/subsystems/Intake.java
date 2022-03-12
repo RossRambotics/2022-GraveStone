@@ -38,7 +38,7 @@ public class Intake extends SubsystemBase {
     static public final Intake_roller m_roller = new Intake_roller();
 
     // Default Intake Extension
-    private double m_extensionTargetDegrees = 120;
+    private double m_extensionTargetDegrees = 130;
 
     /**
      * PID Gains may have to be adjusted based on the responsiveness of control

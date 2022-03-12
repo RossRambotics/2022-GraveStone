@@ -67,7 +67,7 @@ public class Targeting extends SubsystemBase {
             m_cmdHubFound.schedule();
         }
 
-        m_targetOffsetAngle_Horizontal = -table.getEntry("tx").getDouble(0);
+        m_targetOffsetAngle_Horizontal = table.getEntry("tx").getDouble(0);
         m_targetOffsetAngle_Vertical = table.getEntry("ty").getDouble(0);
         m_targetArea = table.getEntry("ta").getDouble(0);
         m_targetSkew = table.getEntry("ts").getDouble(0);
