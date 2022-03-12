@@ -10,7 +10,7 @@ import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
-
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -33,10 +33,15 @@ public class Indexer extends SubsystemBase {
 
     WPI_TalonFX m_frontwheels = new WPI_TalonFX(Constants.INDEXER_MOTOR_FRONT, "usb");
     WPI_TalonFX m_backwheels = new WPI_TalonFX(Constants.INDEXER_MOTOR_BACK, "usb");
+    private TalonFX_Gains m_gainsVelocity = new TalonFX_Gains(0.1, 0, 5, 1023.0 / 20660.0, 300, 1.00);
 
     public AnalogInput m_Sensor_IndexerEntry = new AnalogInput(Constants.INDEXER_ENTRY);
     public AnalogInput m_Sensor_IndexerMiddle = new AnalogInput(Constants.INDEXER_MIDDLE);
     public AnalogInput m_Sensor_IndexerExit = new AnalogInput(Constants.INDEXER_EXIT);
+
+    private NetworkTableEntry m_wheelSpeed = null;
+    private NetworkTableEntry m_diffWheelSpeed = null;
+
     /**
      * PID Gains may have to be adjusted based on the responsiveness of control
      * loop.
@@ -67,6 +72,21 @@ public class Indexer extends SubsystemBase {
         m_backwheels.configNominalOutputReverse(0, IndexerConstants.kTimeoutMs);
         m_backwheels.configPeakOutputForward(1, IndexerConstants.kTimeoutMs);
         m_backwheels.configPeakOutputReverse(-1, IndexerConstants.kTimeoutMs);
+
+        m_frontwheels.setInverted(TalonFXInvertType.Clockwise);
+        m_backwheels.setInverted(TalonFXInvertType.CounterClockwise);
+
+        /* Config the Velocity closed loop gains in slot0 */
+        m_frontwheels.config_kF(0, m_gainsVelocity.kF, 30);
+        m_frontwheels.config_kP(0, m_gainsVelocity.kP, 30);
+        m_frontwheels.config_kI(0, m_gainsVelocity.kI, 30);
+        m_frontwheels.config_kD(0, m_gainsVelocity.kD, 30);
+
+        m_backwheels.config_kF(0, m_gainsVelocity.kF, 30);
+        m_backwheels.config_kP(0, m_gainsVelocity.kP, 30);
+        m_backwheels.config_kI(0, m_gainsVelocity.kI, 30);
+        m_backwheels.config_kD(0, m_gainsVelocity.kD, 30);
+
     }
 
     /**
@@ -81,10 +101,11 @@ public class Indexer extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+        m_diffWheelSpeed.setDouble(m_frontwheels.getSelectedSensorVelocity(0) - m_wheelSpeed.getDouble(0));
     }
 
     public boolean getSensorIndexerEntry() {
-        if (m_Sensor_IndexerEntry.getValue() > 10) {
+        if (m_Sensor_IndexerEntry.getValue() < 10) {
             return true;
         } else {
             return false;
@@ -92,7 +113,7 @@ public class Indexer extends SubsystemBase {
     }
 
     public boolean getSensorIndexerMiddle() {
-        if (m_Sensor_IndexerMiddle.getValue() > 10) {
+        if (m_Sensor_IndexerMiddle.getValue() < 10) {
             return true;
         } else {
             return false;
@@ -100,7 +121,7 @@ public class Indexer extends SubsystemBase {
     }
 
     public boolean getSensorIndexerExit() {
-        if (m_Sensor_IndexerExit.getValue() > 10) {
+        if (m_Sensor_IndexerExit.getValue() < 10) {
             return true;
         } else {
             return false;
@@ -132,6 +153,14 @@ public class Indexer extends SubsystemBase {
         // SmartDashboard.putData(c);
         indexerCommands.add(c);
 
+        m_wheelSpeed = m_shuffleboardTab.add("Indexer Shoot RPM", 2000).withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(2, 0).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
+
+        m_diffWheelSpeed = m_shuffleboardTab.add("Indexer Error RPM", 0).withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(4, 1)
+                .withPosition(2, 1).withProperties(Map.of("min", -100, "max", 100)).getEntry();
+
     }
 
     class IndexerConstants {
@@ -161,16 +190,37 @@ public class Indexer extends SubsystemBase {
         double p = 0.25;
 
         m_frontwheels.set(TalonFXControlMode.PercentOutput, p);
-        m_backwheels.set(TalonFXControlMode.PercentOutput, -p);
+        m_backwheels.set(TalonFXControlMode.PercentOutput, p);
+    }
+
+    public void slow() {
+        m_frontwheels.setVoltage(2.0);
+        m_backwheels.setVoltage(2.0);
     }
 
     public void shoot() {
-        // Start intake
-        double p = 0.35;
+        /**
+         * Convert RPM to units / 100ms.
+         * 2048 Units/Rev * RPM / 600 100ms/min in either direction:
+         * velocity setpoint is in units/100ms
+         */
+        double targetVelocity_UnitsPer100ms = m_wheelSpeed.getDouble(2000) * 2048.0 / 600.0;
+        /* 2000 RPM in either direction */
 
-        m_frontwheels.set(TalonFXControlMode.PercentOutput, p);
-        m_backwheels.set(TalonFXControlMode.PercentOutput, -p);
+        m_frontwheels.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
+        m_backwheels.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
+
+        // m_frontwheels.setVoltage(5.0);
+        // m_backwheels.setVoltage(5.0);
     }
+
+    // public void shoot() {
+    // // Start intake
+    // double p = 0.35;
+
+    // m_frontwheels.set(TalonFXControlMode.PercentOutput, p);
+    // m_backwheels.set(TalonFXControlMode.PercentOutput, -p);
+    // }
 
     public void stop() {
         // Stop intake
@@ -181,7 +231,7 @@ public class Indexer extends SubsystemBase {
     public void reverse() {
         // Reverse intake
         m_frontwheels.set(TalonFXControlMode.PercentOutput, -0.25);
-        m_backwheels.set(TalonFXControlMode.PercentOutput, 0.25);
+        m_backwheels.set(TalonFXControlMode.PercentOutput, -0.25);
     }
 
 }

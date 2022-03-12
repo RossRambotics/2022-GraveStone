@@ -17,18 +17,18 @@ public class StopIntake extends CommandBase {
         ;
 
         // Use addRequirements() here to declare subsystem dependencies.
-        this.addRequirements(m_intake);
+        this.addRequirements(RobotContainer.m_Intake.m_roller);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        m_intake.stop();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_intake.stop();
     }
 
     // Called once the command ends or is interrupted.
@@ -39,6 +39,6 @@ public class StopIntake extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return true;
+        return false;
     }
 }

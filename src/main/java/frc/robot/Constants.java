@@ -41,41 +41,39 @@ public final class Constants {
     public static final int INTAKE_MOTOR_ROLLER = 45; // CAN ID of the roll intake motor
     public static final int INTAKE_MOTOR_EXTENSION = 46; // CAN ID of the extension intake motor
 
-    public static final int MASTER_STEER_OFFSET = 0; // additional offset to true up robot travel direction
-
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 3; // FIXME Set front left module drive motor ID
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 2; // FIXME Set front left module steer motor ID
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 5; // FIXME Set front left steer encoder ID
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(201.6129 + MASTER_STEER_OFFSET);
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(22.5);
 
     // front
     // left steer offset
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 1; // FIXME Set front right drive motor ID
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 16; // FIXME Set front right steer motor ID
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 4; // FIXME Set front right steer encoder ID
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(150.4578 + MASTER_STEER_OFFSET);
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(319.82);
 
     // front
     // right steer offset
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 13; // FIXME Set back left drive motor ID
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 12; // FIXME Set back left steer motor ID
     public static final int BACK_LEFT_MODULE_STEER_ENCODER = 6; // FIXME Set back left steer encoder ID
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(193.6203 + MASTER_STEER_OFFSET);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(12.46);
 
     // left
     // steer offset
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 15; // FIXME Set back right drive motor ID
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 14; // FIXME Set back right steer motor ID
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 7; // FIXME Set back right steer encoder ID
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(171.6339 + MASTER_STEER_OFFSET);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(349.32);
 
     // right steer offset
 
     public static final int TURRET_MOTOR = 35; // CAN ID of the yaw turret motor
     public static final int ANGULAR_MOTOR = 36; // CAN ID of the angular (pitch) motor on the turret
-    public static final int TURRET_SENSOR = 1; // Analog IN port for light beam sensor
+    public static final int TURRET_SENSOR = 0; // Analog IN port for light beam sensor
 
-    public static final int INDEXER_ENTRY = 2; // Sensor ID for the Indexer Entry
-    public static final int INDEXER_MIDDLE = 3; // Sensor ID for the Indexer Middle
-    public static final int INDEXER_EXIT = 4; // Sensor ID for the Indexer Exit
+    public static final int INDEXER_ENTRY = 1; // Sensor ID for the Indexer Entry
+    public static final int INDEXER_MIDDLE = 2; // Sensor ID for the Indexer Middle
+    public static final int INDEXER_EXIT = 3; // Sensor ID for the Indexer Exit
 }

@@ -8,32 +8,35 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
 public class EmptyCheck extends CommandBase {
-  /** Creates a new EmptyCheck. */
-  public EmptyCheck() {
-    // Use addRequirements() here to declare subsystem dependencies.
-  }
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-  }
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    if (RobotContainer.getTheRobot().m_Indexer.getSensorIndexerEntry()) {
-      // CommandBase cmd = new
+    /** Creates a new EmptyCheck. */
+    public EmptyCheck() {
+        // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements(RobotContainer.m_Indexer);
     }
-  }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        if (RobotContainer.getTheRobot().m_Indexer.getSensorIndexerEntry()) {
+            CommandBase cmd = new PrepareFirstCargo();
+            cmd = cmd.withTimeout(1.0);
+            cmd.schedule();
+        }
+    }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

@@ -1,11 +1,28 @@
 {
+  "HALProvider": {
+    "Addressable LEDs": {
+      "0": {
+        "columns": 48,
+        "order": 1,
+        "serpentine": true
+      },
+      "window": {
+        "visible": true
+      }
+    }
+  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
-
       "/LiveWindow/Indexer": "Subsystem",
       "/LiveWindow/Intake": "Subsystem",
+      "/LiveWindow/Intake_extension": "Subsystem",
+      "/LiveWindow/Intake_roller": "Subsystem",
+      "/LiveWindow/LEDPanel": "Subsystem",
+      "/LiveWindow/LEDStrip": "Subsystem",
+      "/LiveWindow/LEDStrip_targeting": "Subsystem",
+      "/LiveWindow/LEDStrip_tracking": "Subsystem",
       "/LiveWindow/Shooter": "Subsystem",
       "/LiveWindow/Targeting": "Subsystem",
       "/LiveWindow/Tracking": "Subsystem",
@@ -22,6 +39,8 @@
       "/LiveWindow/Ungrouped/Talon FX [42]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [45]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [46]": "Motor Controller",
+      "/Shuffleboard/Match.Auto/Autonomous": "String Chooser",
+      "/Shuffleboard/Match.Auto/Commands/Example Path": "Command",
       "/Shuffleboard/Sub.Auto/Autonomous": "String Chooser",
       "/Shuffleboard/Sub.Auto/Commands/Example Path": "Command",
       "/Shuffleboard/Sub.Indexer/Commands/Reverse Indexer": "Command",
@@ -30,10 +49,15 @@
       "/Shuffleboard/Sub.Indexer/Commands/Stop Indexer": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Extend Arm": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Retract Arm": "Command",
+      "/Shuffleboard/Sub.Intake/Commands/Reverse Indexer": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Reverse Intake": "Command",
+      "/Shuffleboard/Sub.Intake/Commands/Shoot Speed": "Command",
+      "/Shuffleboard/Sub.Intake/Commands/Start Indexer": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Start Intake": "Command",
+      "/Shuffleboard/Sub.Intake/Commands/Stop Indexer": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Stop Intake": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Update PIDF": "Command",
+      "/Shuffleboard/Sub.Shooter/Commands/Enable Test Mode": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Start Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Stop Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Update PIDF": "Command",
@@ -43,6 +67,7 @@
       "/Shuffleboard/Sub.Turret/Commands/Enable Yaw": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Lock Turret": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Test Mode": "Command",
+      "/Shuffleboard/Sub.Turret/Commands/Track Target": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Unlock Turret": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Update PIDF": "Command",
       "/SmartDashboard/Extend Arm": "Command",
@@ -52,9 +77,7 @@
       "/SmartDashboard/Start Indexer": "Command",
       "/SmartDashboard/Start Intake": "Command",
       "/SmartDashboard/Start Shooter": "Command",
-
       "/SmartDashboard/Stop Indexer": "Command",
-
       "/SmartDashboard/Stop Intake": "Command",
       "/SmartDashboard/Stop Shooter": "Command",
       "/SmartDashboard/Test Mode": "Command",

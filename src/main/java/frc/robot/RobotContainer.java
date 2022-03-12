@@ -13,28 +13,41 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.PerpetualCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWhileTracking;
+import frc.robot.commands.Intake.ExtendIntake;
+import frc.robot.commands.Intake.RetractIntake;
+import frc.robot.commands.Intake.ReverseIntake;
+import frc.robot.commands.Intake.StartIntake;
+import frc.robot.commands.Intake.StopIntake;
 import frc.robot.commands.Turret.TrackTarget;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.Indexer;
 
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.RioLEDs;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Targeting;
 import frc.robot.subsystems.Tracking;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.LEDPanel.LEDPanel;
+import frc.robot.subsystems.LEDStrip.LEDStrip;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -54,19 +67,25 @@ public class RobotContainer {
         return m_theRobot;
     }
 
-    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Auto");
+    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Match.Auto");
+    static public final ShuffleboardTab m_TuningTab = Shuffleboard.getTab("Match.Tuning");
 
     static public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
 
     static public final Shooter m_Shooter = new Shooter();
     static public final Tracking m_Tracking = new Tracking();
     static public final Turret m_Turret = new Turret();
-    // public final Turret m_Turret = null;
+
     static public final Targeting m_Targeting = new Targeting();
     static public final Intake m_Intake = new Intake();
     static public final Indexer m_Indexer = new Indexer();
+    static public final RioLEDs m_RioLEDs = new RioLEDs();
 
-    private final XboxController m_controller = new XboxController(0);
+    static public final LEDStrip m_LEDStrip = new LEDStrip();
+    // static public final LEDPanel m_LEDPanel = new LEDPanel();
+
+    private final XboxController m_controllerDriver = new XboxController(0);
+    // private final XboxController m_controllerOperator = new XboxController(1);
 
     public PhysicsSim m_PhysicsSim;
 
@@ -78,9 +97,10 @@ public class RobotContainer {
         // Right stick X axis -> rotation
         m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
                 m_drivetrainSubsystem,
-                () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -modifyAxis(m_controller.getRightX())
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                () -> -modifyAxis(
+                        getInputRightX())
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
         // Configure the button bindings
@@ -95,6 +115,90 @@ public class RobotContainer {
         // LiveWindow.disableAllTelemetry();
     }
 
+    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(0.6);
+
+    private double getInputLeftY() {
+        double kDEAD_SLEW = 0.2;
+        double driverLeftY = modifyAxis(m_controllerDriver.getLeftY()
+                * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND);
+        // double operatorLeftY = m_controllerOperator.getLeftY() / m_weakPower;
+        double operatorLeftY = 0.0;
+        double leftY = operatorLeftY;
+        if (Math.abs(leftY) < 0.01) {
+            leftY = driverLeftY;
+        }
+
+        double slew = m_slewLeftY.calculate(leftY);
+        if (Math.abs(slew) < kDEAD_SLEW) {
+            if (driverLeftY == 0) {
+                slew = 0.0;
+            } else if (driverLeftY > 0) {
+                slew = kDEAD_SLEW;
+            } else {
+                slew = -kDEAD_SLEW;
+            }
+            m_slewLeftY.reset(slew);
+        }
+
+        return slew;
+
+    }
+
+    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(0.6);
+
+    private double getInputLeftX() {
+        double kDEAD_SLEW = 0.2;
+        double driverLeftX = modifyAxis(
+                m_controllerDriver.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+        // double operatorLeftX = m_controllerOperator.getLeftX() / m_weakPower;
+        double operatorLeftX = 0.0;
+        double leftX = operatorLeftX;
+        if (Math.abs(leftX) < 0.01) {
+            leftX = driverLeftX;
+        }
+
+        double slew = m_slewLeftX.calculate(leftX);
+        if (Math.abs(slew) < kDEAD_SLEW) {
+            if (driverLeftX == 0) {
+                slew = 0.0;
+            } else if (driverLeftX > 0) {
+                slew = kDEAD_SLEW;
+            } else {
+                slew = -kDEAD_SLEW;
+            }
+            m_slewLeftX.reset(slew);
+        }
+        return slew;
+    }
+
+    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(0.6);
+
+    private double getInputRightX() {
+        double kDEAD_SLEW = 0.2;
+        double driverRightX = modifyAxis(
+                m_controllerDriver.getRightX()
+                        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
+        // double operatorRightX = m_controllerOperator.getRightX() / m_weakPower;
+        double operatorRightX = 0.0;
+        double rightX = operatorRightX;
+        if (Math.abs(rightX) < 0.01) {
+            rightX = driverRightX;
+        }
+        double slew = m_slewRightX.calculate(rightX);
+        if (Math.abs(slew) < kDEAD_SLEW) {
+            if (driverRightX == 0) {
+                slew = 0.0;
+            } else if (driverRightX > 0) {
+                slew = kDEAD_SLEW;
+            } else {
+                slew = -kDEAD_SLEW;
+            }
+            m_slewRightX.reset(slew);
+        }
+        return slew;
+        // return rightX;
+    }
+
     /**
      * Use this method to define your button->command mappings. Buttons can be
      * created by
@@ -105,19 +209,85 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         // Back button zeros the gyroscope
-        new Button(m_controller::getBackButton)
+        new Button(m_controllerDriver::getBackButton)
                 // No requirements because we don't need to interrupt anything
                 .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
 
         // map button for tracking cargo
         // create tracking cargo drive command
         CommandBase cmd = new DriveWhileTracking(m_drivetrainSubsystem,
-                () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -modifyAxis(m_controller.getRightX())
+                () -> -modifyAxis(
+                        getInputLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> -modifyAxis(
+                        getInputLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+                () -> -modifyAxis(
+                        getInputLeftX())
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
-        new Button(m_controller::getLeftBumper)
+        new Button(m_controllerDriver::getLeftBumper)
                 .whenHeld(cmd, true);
+
+        // extends the intake and turns on the intake wheels Driver
+        cmd = new ParallelCommandGroup(
+                new ExtendIntake(),
+                new StartIntake());
+
+        cmd.setName("A Button - Intake Cargo");
+
+        new Button(m_controllerDriver::getAButton)
+                .whenHeld(cmd);
+
+        // // reverse the intake
+        new Button(m_controllerDriver::getBButton)
+                .whenHeld(new ReverseIntake());
+
+        // // shootes into the lower hub at low RPM Driver
+        new Button(m_controllerDriver::getYButton)
+                .whenPressed(new frc.robot.commands.Shooter.ShootLow()
+                        .withTimeout(20.0));
+
+        // // targets to target
+        // new Button(m_controllerDriver::getRightBumperPressed)
+        // .whileHeld(command);
+
+        // // climb goes up operator
+        // new Button(m_controllerOperator::getAButtonPressed)
+        // .whileHeld(command);
+
+        // // climb goes down operator
+        // new Button(m_controllerOperator::getYButton)
+        // .whenPressed(command);
+
+        // // aim at the target
+        // new Button(m_controllerDriver::getRightTriggerAxis)
+        // .whileHeld(command);
+
+        // how long move turrent is
+        var spinTurret = 1;
+        var angleTurret = 1;
+
+        // // turret go up
+        // POVButton operatorTurretUp = new POVButton(m_controllerOperator, 0);
+        // operatorTurretUp.whenPressed(new DefaultDriveCommand(
+
+        // .withTimeout(angleTurret));
+
+        // // turret go down
+        // POVButton operatorTurretDown = new POVButton(m_controllerOperator, 180);
+        // operatorTurretDown.whenPressed(new DefaultDriveCommand(
+
+        // .withTimeout(angleTurret));
+
+        // // turret go right
+        // POVButton operatorTurretRight = new POVButton(m_controllerOperator, 90);
+        // operatorTurretRight.whenPressed(new DefaultDriveCommand(
+
+        // .withTimeout(spinTurret));
+
+        // // turret go up
+        // POVButton operatorTurretleft = new POVButton(m_controllerOperator, 0);
+        // operatorTurretleft.whenPressed(new DefaultDriveCommand(
+
+        // .withTimeout(spinTurret));
     }
 
     /**
@@ -213,8 +383,20 @@ public class RobotContainer {
         this.m_Indexer.createShuffleBoardTab();
         this.m_Intake.createShuffleBoardTab();
         this.m_Turret.createShuffleBoardTab();
+        this.m_Targeting.createShuffleBoardTab();
 
         // m_Turret.setDefaultCommand(new TrackTarget());
+        CommandBase cmd = new frc.robot.commands.Intake.DefCommand();
+
+        cmd.setName("Default RetractIntake Cmd");
+        cmd.addRequirements(m_Intake);
+        m_Intake.setDefaultCommand(cmd);
+
+        cmd = new frc.robot.commands.Indexer.EmptyCheck();
+        m_Indexer.setDefaultCommand(cmd);
+
+        DataLogManager.start();
+        DataLogManager.log("Log Started.");
 
     }
 }

@@ -14,19 +14,20 @@ public class ExtendIntake extends CommandBase {
     /** Creates a new StartIntake. */
     public ExtendIntake() {
         m_intake = RobotContainer.m_Intake;
+
         // Use addRequirements() here to declare subsystem dependencies.
-        this.addRequirements(m_intake);
+        this.addRequirements(RobotContainer.m_Intake.m_extension, RobotContainer.m_Intake);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        m_intake.extend();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        m_intake.extend();
     }
 
     // Called once the command ends or is interrupted.
@@ -37,6 +38,6 @@ public class ExtendIntake extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return true;
+        return false;
     }
 }
