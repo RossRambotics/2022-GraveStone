@@ -241,8 +241,9 @@ public class RobotContainer {
                 .whenHeld(new ReverseIntake());
 
         // // shootes into the lower hub at low RPM Driver
-        // new Button(m_controllerDriver::getYButton)
-        // .whenPressed(command);
+        new Button(m_controllerDriver::getYButton)
+                .whenPressed(new frc.robot.commands.Shooter.ShootLow()
+                        .withTimeout(20.0));
 
         // // targets to target
         // new Button(m_controllerDriver::getRightBumperPressed)

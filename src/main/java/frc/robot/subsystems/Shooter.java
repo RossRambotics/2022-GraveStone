@@ -119,6 +119,7 @@ public class Shooter extends SubsystemBase {
         m_firingCalculator.addSolution(new FiringSolution(3, 13.14, 2069));
         m_firingCalculator.addSolution(new FiringSolution(4, 15, 2337));
         m_firingCalculator.addSolution(new FiringSolution(5, 16.8, 2500));
+
         // m_firingCalculator.addSolution(new FiringSolution(6, , 1700));
         // m_firingCalculator.addSolution(new FiringSolution(7, 7.5, 1700));
         // m_firingCalculator.addSolution(new FiringSolution(8, 7.5, 1700));
@@ -265,6 +266,19 @@ public class Shooter extends SubsystemBase {
          * report to DS if action fails.
          */
         public static final int kTimeoutMs = 30;
+    }
+
+    public void shootLow() {
+        /**
+         * Convert RPM to units / 100ms.
+         * 2048 Units/Rev * RPM / 600 100ms/min in either direction:
+         * velocity setpoint is in units/100ms
+         */
+        double targetVelocity_UnitsPer100ms = 250 * 2048.0 / 600.0;
+
+        m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
+        m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
+
     }
 
     public void start() {

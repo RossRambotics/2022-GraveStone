@@ -11,11 +11,13 @@ import frc.robot.RobotContainer;
 
 public class ShootHigh extends CommandBase {
     private Timer m_timer = new Timer();
+    private boolean m_isShooting = false;
 
     /** Creates a new Shoot. */
     public ShootHigh() {
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(RobotContainer.m_Shooter, RobotContainer.m_Indexer, RobotContainer.m_Intake);
+        addRequirements(RobotContainer.m_Shooter, RobotContainer.m_Indexer,
+                RobotContainer.m_Intake, RobotContainer.m_Intake.m_roller);
     }
 
     // Called when the command is initially scheduled.
@@ -30,13 +32,16 @@ public class ShootHigh extends CommandBase {
                 " Shooter RPM: " + RobotContainer.m_Shooter.getRPM());
         RobotContainer.m_Intake.retract();
         RobotContainer.m_Shooter.start();
+        m_isShooting = false;
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        if (RobotContainer.m_Shooter.isSpunUp()) {
+        if (!m_isShooting && RobotContainer.m_Shooter.isSpunUp()) {
+            m_isShooting = true;
             RobotContainer.m_Indexer.shoot();
+            m_timer.reset();
             m_timer.start();
 
             DataLogManager.log("ShootHigh Shoot1:" +
@@ -46,10 +51,12 @@ public class ShootHigh extends CommandBase {
                     " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
                     " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
                     " Shooter RPM: " + RobotContainer.m_Shooter.getRPM());
+        } else {
+            return;
         }
 
         // pause briefly then turn on the intake
-        if (m_timer.advanceIfElapsed(0.5) == false) {
+        if (m_timer.hasElapsed(0.5) == false) {
             return;
         }
 
