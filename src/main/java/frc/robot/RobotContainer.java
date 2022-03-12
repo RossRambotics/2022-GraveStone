@@ -215,7 +215,7 @@ public class RobotContainer {
             operatorRightY = m_controllerOperator.getRightY();
 
         }
-        System.out.println("Running Climb Default:" + operatorRightY);
+        
         return operatorRightY;
     }
 

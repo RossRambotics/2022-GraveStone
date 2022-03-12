@@ -35,8 +35,22 @@ public class DefaultClimb extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double power = m_AxisSupplier.getAsDouble();
 
-    m_Climb.setClimbPower(m_AxisSupplier.getAsDouble());
+    if (power > 0){
+      if (m_Climb.getClimbEncoderPosition() < m_Climb.getMaxClimbPosition()){
+        m_Climb.setClimbPower(power);
+      } else {
+        m_Climb.setClimbPower(0);
+      }
+    } else {
+      if (m_Climb.getClimbEncoderPosition() > m_Climb.getMinClimbPosition()){
+        m_Climb.setClimbPower(power);
+      } else  {
+        m_Climb.setClimbPower(0);
+      }
+    }
+   
    
 
   }
