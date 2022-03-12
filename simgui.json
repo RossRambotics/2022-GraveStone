@@ -9,11 +9,24 @@
       "window": {
         "visible": true
       }
+    },
+    "Other Devices": {
+      "Talon FX[50]": {
+        "header": {
+          "open": true
+        }
+      },
+      "Talon FX[50]/Integrated Sensor": {
+        "header": {
+          "open": true
+        }
+      }
     }
   },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Climb": "Subsystem",
       "/LiveWindow/DrivetrainSubsystem": "Subsystem",
       "/LiveWindow/Indexer": "Subsystem",
       "/LiveWindow/Intake": "Subsystem",
@@ -39,6 +52,7 @@
       "/LiveWindow/Ungrouped/Talon FX [42]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [45]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [46]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Talon FX [50]": "Motor Controller",
       "/Shuffleboard/Match.Auto/Autonomous": "String Chooser",
       "/Shuffleboard/Match.Auto/Commands/Example Path": "Command",
       "/Shuffleboard/Sub.Auto/Autonomous": "String Chooser",
