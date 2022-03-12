@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWhileTracking;
+import frc.robot.commands.Climb.DefaultClimb;
 import frc.robot.commands.Intake.ExtendIntake;
 import frc.robot.commands.Intake.RetractIntake;
 import frc.robot.commands.Intake.ReverseIntake;
@@ -37,6 +38,7 @@ import frc.robot.commands.Intake.StartIntake;
 import frc.robot.commands.Intake.StopIntake;
 import frc.robot.commands.Turret.TrackTarget;
 import frc.robot.sim.PhysicsSim;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.Indexer;
 
@@ -76,6 +78,8 @@ public class RobotContainer {
     static public final Tracking m_Tracking = new Tracking();
     static public final Turret m_Turret = new Turret();
 
+    static public final Climb m_Climb = new Climb();
+
     static public final Targeting m_Targeting = new Targeting();
     static public final Intake m_Intake = new Intake();
     static public final Indexer m_Indexer = new Indexer();
@@ -85,7 +89,7 @@ public class RobotContainer {
     // static public final LEDPanel m_LEDPanel = new LEDPanel();
 
     private final XboxController m_controllerDriver = new XboxController(0);
-    // private final XboxController m_controllerOperator = new XboxController(1);
+    private final XboxController m_controllerOperator = new XboxController(1);
 
     public PhysicsSim m_PhysicsSim;
 
@@ -102,6 +106,10 @@ public class RobotContainer {
                 () -> -modifyAxis(
                         getInputRightX())
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+
+
+        //Climb Default Command
+        m_Climb.setDefaultCommand(new DefaultClimb(m_Climb, () -> getOperatorRightY()));
 
         // Configure the button bindings
         configureButtonBindings();
@@ -197,6 +205,18 @@ public class RobotContainer {
         }
         return slew;
         // return rightX;
+    }
+
+    private double getOperatorRightY(){
+        double operatorRightY = 0;
+
+        //implement Joystick Deadzone
+        if (Math.abs(m_controllerOperator.getRightY()) > 0.01){
+            operatorRightY = m_controllerOperator.getRightY();
+
+        }
+        System.out.println("Running Climb Default:" + operatorRightY);
+        return operatorRightY;
     }
 
     /**
