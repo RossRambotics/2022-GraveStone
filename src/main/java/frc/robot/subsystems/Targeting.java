@@ -53,6 +53,10 @@ public class Targeting extends SubsystemBase {
         int tv = table.getEntry("tv").getNumber(0).intValue();
 
         // if the target isn't found don't update the values
+        if (RobotContainer.m_Turret.isTurretLocked()) {
+            return;
+        }
+
         if (tv == 1) {
             m_hasTarget = true;
         } else {
