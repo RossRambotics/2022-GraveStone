@@ -72,7 +72,7 @@ public class Turret extends SubsystemBase {
     private boolean m_isTurretLocked = false;
     private boolean m_isOnTarget = false;
 
-    WPI_TalonFX m_pitchMotor = new WPI_TalonFX(Constants.ANGULAR_MOTOR, "usb2");
+    WPI_TalonFX m_pitchMotor = new WPI_TalonFX(Constants.ANGULAR_MOTOR, "usb");
 
     /** Creates a new Turret. */
     public Turret() {
