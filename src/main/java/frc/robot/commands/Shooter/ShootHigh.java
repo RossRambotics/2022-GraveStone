@@ -29,7 +29,9 @@ public class ShootHigh extends CommandBase {
                 " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
                 " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
                 " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
-                " Shooter RPM: " + RobotContainer.m_Shooter.getRPM());
+                " Indexer (e) RPM: " + RobotContainer.m_Indexer.getIndexError() +
+                " Shooter (a) RPM: " + RobotContainer.m_Shooter.getRPM() +
+                " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
         RobotContainer.m_Intake.retract();
         RobotContainer.m_Shooter.start();
         m_isShooting = false;
@@ -50,7 +52,9 @@ public class ShootHigh extends CommandBase {
                     " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
                     " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
                     " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
-                    " Shooter RPM: " + RobotContainer.m_Shooter.getRPM());
+                    " Indexer (e) RPM: " + RobotContainer.m_Indexer.getIndexError() +
+                    " Shooter (a) RPM: " + RobotContainer.m_Shooter.getRPM() +
+                    " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
         } else {
             return;
         }
@@ -66,7 +70,9 @@ public class ShootHigh extends CommandBase {
                 " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
                 " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
                 " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
-                " Shooter RPM: " + RobotContainer.m_Shooter.getRPM());
+                " Indexer (e) RPM: " + RobotContainer.m_Indexer.getIndexError() +
+                " Shooter (a) RPM: " + RobotContainer.m_Shooter.getRPM() +
+                " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
 
         RobotContainer.m_Intake.start();
     }
@@ -74,6 +80,7 @@ public class ShootHigh extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        RobotContainer.m_Shooter.stop();
     }
 
     // Returns true when the command should end.

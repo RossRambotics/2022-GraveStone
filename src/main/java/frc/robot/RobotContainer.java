@@ -104,7 +104,7 @@ public class RobotContainer {
                 m_drivetrainSubsystem,
                 () -> -getInputLeftY(),
                 () -> -getInputLeftX(),
-                () -> getInputRightX()));
+                () -> -getInputRightX()));
 
         // Climb Default Command
         m_Climb.setDefaultCommand(new DefaultClimb(m_Climb, () -> -getOperatorRightY()));
@@ -268,9 +268,14 @@ public class RobotContainer {
         new Button(m_controllerOperator::getYButton)
                 .whenPressed(new frc.robot.commands.Turret.LockTurret());
 
-        // // targets to target
-        // new Button(m_controllerDriver::getRightBumperPressed)
-        // .whileHeld(command);
+        // assign unlock turret
+        new Button(m_controllerOperator::getXButton)
+                .whenPressed(new frc.robot.commands.Turret.UnlockTurret());
+
+        // // shoot
+        new Button(m_controllerDriver::getRightBumperPressed)
+                .whenPressed(new frc.robot.commands.Shooter.ShootHigh()
+                        .withTimeout(2.0));
 
         // // climb goes up operator
         // new Button(m_controllerOperator::getAButtonPressed)

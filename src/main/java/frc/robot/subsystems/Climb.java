@@ -47,6 +47,8 @@ public class Climb extends SubsystemBase {
 
         if (RobotContainer.m_Turret.isTurretLocked()) {
             m_ClimbWinch.set(TalonFXControlMode.PercentOutput, Power);
+        } else {
+            m_ClimbWinch.set(TalonFXControlMode.PercentOutput, 0);
         }
     }
 

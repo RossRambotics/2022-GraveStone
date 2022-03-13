@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -46,7 +47,7 @@ public class Turret extends SubsystemBase {
     private NetworkTableEntry m_goalYaw = null;
     private NetworkTableEntry m_testTargetYaw = null;
 
-    private TalonFX_Gains m_yawGains = new TalonFX_Gains(0.7, 0, 0.0, 0, 300, 1.00);
+    private TalonFX_Gains m_yawGains = new TalonFX_Gains(1.2, 0, 0.0, 0, 300, 1.00);
     private NetworkTableEntry m_yaw_pid_kP = null;
     private NetworkTableEntry m_yaw_pid_kI = null;
     private NetworkTableEntry m_yaw_pid_kD = null;
@@ -62,7 +63,7 @@ public class Turret extends SubsystemBase {
     private NetworkTableEntry m_tuning_percent_pitch = null;
     private NetworkTableEntry m_tuning_offset_yaw = null;
 
-    private TalonFX_Gains m_pitchGains = new TalonFX_Gains(2.0, 0, 2.0, 0, 300, 1.00);
+    private TalonFX_Gains m_pitchGains = new TalonFX_Gains(1.75, 0, 2.0, 0, 300, 1.00);
     private NetworkTableEntry m_pitch_pid_kP = null;
     private NetworkTableEntry m_pitch_pid_kI = null;
     private NetworkTableEntry m_pitch_pid_kD = null;
@@ -104,7 +105,7 @@ public class Turret extends SubsystemBase {
         m_yawMotor.configPeakOutputReverse(-0.1, m_kTimeoutMs);
         m_pitchMotor.configNominalOutputForward(0, m_kTimeoutMs);
         m_pitchMotor.configNominalOutputReverse(0, m_kTimeoutMs);
-        m_pitchMotor.configPeakOutputForward(0.5, m_kTimeoutMs);
+        m_pitchMotor.configPeakOutputForward(0.1, m_kTimeoutMs);
         m_pitchMotor.configPeakOutputReverse(-0.1, m_kTimeoutMs);
 
         /* Config the position closed loop gains in slot0 */
@@ -146,7 +147,8 @@ public class Turret extends SubsystemBase {
         // get the total error
         double error = Math.abs(m_pitchError.getDouble(0)) + Math.abs(m_yawError.getDouble(0));
 
-        if (error < 50) {
+        // update targeting error
+        if (error < 1.0) {
             m_isOnTarget = true;
         } else {
             m_isOnTarget = false;
@@ -171,24 +173,21 @@ public class Turret extends SubsystemBase {
 
         // check if a soft limit is triggered?
         // TODO update soft limits
-        if (m_goalYaw.getDouble(0) < -44.0) {
-            m_goalYaw.setDouble(90.0);
-        }
-        if (m_goalYaw.getDouble(0) > 100.0) {
-            m_goalYaw.setDouble(100.0);
-        }
-
-        if (m_goalPitch.getDouble(0) < 0) {
-            m_goalPitch.setDouble(0.0);
-        }
-        if (m_goalPitch.getDouble(0) > 23.0) {
-            m_goalPitch.setDouble(23.0);
-        }
+        m_goalYaw.setDouble(clampYaw(m_goalYaw.getDouble(0)));
+        m_goalPitch.setDouble(clampPitch(m_goalPitch.getDouble(0)));
 
         // TODO check if hard limit
 
         // int com.ctre.phoenix.motorcontrol.can.BaseTalon.isFwdLimitSwitchClosed()
 
+    }
+
+    private double clampYaw(double value) {
+        return MathUtil.clamp(value, -37.0, 100.0);
+    }
+
+    private double clampPitch(double value) {
+        return MathUtil.clamp(value, 0.0, 20.0);
     }
 
     public double getYaw() {
@@ -222,6 +221,10 @@ public class Turret extends SubsystemBase {
         // check to make sure the goal is within bounds of the turrent
 
         // if the goal is outside the bounds, set the goal to the boundary
+        goal = clampYaw(goal);
+        if (Math.abs(goal - m_currentYaw.getDouble(0)) < 0.5) {
+            return;
+        }
 
         m_goalYaw.setDouble(goal);
 
@@ -310,12 +313,17 @@ public class Turret extends SubsystemBase {
     public void setYawDegreesRelative(double goal) {
         // convert to yaw that is relative to the front of the robot
         goal += m_currentYaw.getDouble(0);
+        goal = clampYaw(goal);
         this.setYawDegreesFront(goal);
     }
 
     public void setPitchDegrees(double goal) {
 
-        m_goalPitch.setDouble(goal);
+        if (Math.abs(goal - m_currentPitch.getDouble(0)) < 0.5) {
+            return;
+        }
+
+        m_goalPitch.setDouble(clampPitch(goal));
         if (isTurretLocked()) {
             return;
         }
@@ -353,7 +361,7 @@ public class Turret extends SubsystemBase {
     // intended to be used if a limit switch is hit
     // or to rezero the turret
     public void resetYawDegressAbs(double yaw) {
-        m_currentYaw.setDouble(yaw);
+        // m_currentYaw.setDouble(clampYaw(yaw));
 
         if (isTurretLocked()) {
             return;
