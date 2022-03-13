@@ -150,7 +150,6 @@ public class Shooter extends SubsystemBase {
                 return;
             }
             m_distance = RobotContainer.m_Targeting.getTargetDistance();
-            m_nt_distance.
         }
 
         // only do the following if the shooter has a target and is not in test mode

@@ -16,11 +16,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.commands.DriveWhileTracking;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import frc.robot.Constants;
 
 public class Tracking extends SubsystemBase {
 
@@ -31,6 +34,7 @@ public class Tracking extends SubsystemBase {
     private PhotonCamera m_camera;
     private NetworkTableEntry m_pEntry = null;
     private NetworkTableEntry m_dEntry = null;
+    private PowerDistribution m_PDH = null;
 
     private boolean m_isTesting = false;
 
@@ -41,6 +45,7 @@ public class Tracking extends SubsystemBase {
         // TODO Chester!
         // something like
         m_camera = new PhotonCamera("photonvision");
+        m_PDH = new PowerDistribution(Constants.PDH, ModuleType.kRev);
 
         // set the appropriate pipeline for the color of the ball based
         // createShuffleBoardTab();
@@ -153,5 +158,13 @@ public class Tracking extends SubsystemBase {
 
     public void EnableTestMode() {
         m_isTesting = true;
+    }
+
+    public void enableSearchLight(){
+        m_PDH.setSwitchableChannel(true);
+    }
+
+    public void disableSearchLight(){
+        m_PDH.setSwitchableChannel(false);
     }
 }
