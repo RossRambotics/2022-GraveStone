@@ -107,7 +107,7 @@ public class RobotContainer {
                 () -> getInputRightX()));
 
         // Climb Default Command
-        m_Climb.setDefaultCommand(new DefaultClimb(m_Climb, () -> getOperatorRightY()));
+        m_Climb.setDefaultCommand(new DefaultClimb(m_Climb, () -> -getOperatorRightY()));
 
         // Configure the button bindings
         configureButtonBindings();
@@ -255,9 +255,7 @@ public class RobotContainer {
                 .whenHeld(cmd);
 
         // // reverse the intake
-        cmd = new ParallelCommandGroup(
-                new ReverseIntake(),
-                new ReverseWheels());
+        cmd = new ReverseIntake();
         new Button(m_controllerDriver::getBButton)
                 .whenHeld(cmd);
 
@@ -265,6 +263,10 @@ public class RobotContainer {
         new Button(m_controllerDriver::getYButton)
                 .whenPressed(new frc.robot.commands.Shooter.ShootLow()
                         .withTimeout(2.0));
+
+        // assign lock turret
+        new Button(m_controllerOperator::getYButton)
+                .whenPressed(new frc.robot.commands.Turret.LockTurret());
 
         // // targets to target
         // new Button(m_controllerDriver::getRightBumperPressed)

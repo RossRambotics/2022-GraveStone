@@ -273,7 +273,7 @@ public class Shooter extends SubsystemBase {
          * 2048 Units/Rev * RPM / 600 100ms/min in either direction:
          * velocity setpoint is in units/100ms
          */
-        double targetVelocity_UnitsPer100ms = 750 * 2048.0 / 600.0;
+        double targetVelocity_UnitsPer100ms = 850 * 2048.0 / 600.0;
 
         m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
         m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);

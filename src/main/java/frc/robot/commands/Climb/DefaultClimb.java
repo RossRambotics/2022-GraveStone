@@ -8,60 +8,64 @@ import frc.robot.subsystems.Climb;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */
 public class DefaultClimb extends CommandBase {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Climb m_Climb;
-  private DoubleSupplier m_AxisSupplier;
+    @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
+    private final Climb m_Climb;
+    private DoubleSupplier m_AxisSupplier;
 
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
-  public DefaultClimb(Climb subsystem, DoubleSupplier ClimbAxis) {
-    m_Climb = subsystem;
-    m_AxisSupplier = ClimbAxis;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystem);
-  }
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    double power = m_AxisSupplier.getAsDouble();
-
-    if (power > 0){
-      if (m_Climb.getClimbEncoderPosition() < m_Climb.getMaxClimbPosition()){
-        m_Climb.setClimbPower(power);
-      } else {
-        m_Climb.setClimbPower(0);
-      }
-    } else {
-      if (m_Climb.getClimbEncoderPosition() > m_Climb.getMinClimbPosition()){
-        m_Climb.setClimbPower(power);
-      } else  {
-        m_Climb.setClimbPower(0);
-      }
+    /**
+     * Creates a new ExampleCommand.
+     *
+     * @param subsystem The subsystem used by this command.
+     */
+    public DefaultClimb(Climb subsystem, DoubleSupplier ClimbAxis) {
+        m_Climb = subsystem;
+        m_AxisSupplier = ClimbAxis;
+        // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements(subsystem);
     }
-   
-   
 
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        double power = m_AxisSupplier.getAsDouble();
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+        // DataLogManager.log("Climb power: " + power
+        // + " climb position: " + m_Climb.getClimbEncoderPosition());
+
+        if (power > 0) {
+            if (m_Climb.getClimbEncoderPosition() < m_Climb.getMaxClimbPosition()) {
+                m_Climb.setClimbPower(-power);
+            } else {
+                m_Climb.setClimbPower(0);
+            }
+        } else {
+            if (m_Climb.getClimbEncoderPosition() > m_Climb.getMinClimbPosition()) {
+                m_Climb.setClimbPower(-power);
+            } else {
+                m_Climb.setClimbPower(0);
+            }
+        }
+
+    }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

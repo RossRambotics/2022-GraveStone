@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -71,7 +72,7 @@ public class Turret extends SubsystemBase {
     private boolean m_isTurretLocked = false;
     private boolean m_isOnTarget = false;
 
-    WPI_TalonFX m_pitchMotor = new WPI_TalonFX(Constants.ANGULAR_MOTOR, "usb");
+    WPI_TalonFX m_pitchMotor = new WPI_TalonFX(Constants.ANGULAR_MOTOR, "usb2");
 
     /** Creates a new Turret. */
     public Turret() {
@@ -272,7 +273,14 @@ public class Turret extends SubsystemBase {
     }
 
     public void unlockTurret() {
-        m_isTurretLocked = false;
+
+        DataLogManager.log("Turret could be unlocking -------------------------------");
+
+        // only allow the turret to unlock once the climb has been lowered
+        if (RobotContainer.m_Climb.getClimbEncoderPosition() < 1000) {
+            DataLogManager.log("Turret is Unlocked!-------------------------------");
+            m_isTurretLocked = false;
+        }
     }
 
     public boolean isTurretLocked() {

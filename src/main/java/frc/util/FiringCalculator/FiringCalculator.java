@@ -13,7 +13,7 @@ import java.util.List;
  * them to provide a Firing Solution at any distance
  */
 public class FiringCalculator {
-    private FiringSolution m_defaultFiringSolution = new FiringSolution(0.0, 20.0, 500);
+    private FiringSolution m_defaultFiringSolution = new FiringSolution(0.0, 10.0, 500);
     private boolean m_sorted = false;
 
     private List<FiringSolution> m_data = new ArrayList<FiringSolution>();

@@ -2,29 +2,22 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.Intake;
+package frc.robot.commands.LEDStrip;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Intake;
 
-public class ReverseIntake extends CommandBase {
-    private Intake m_intake = null;
-
-    /** Creates a new StartIntake. */
-    public ReverseIntake() {
-        m_intake = RobotContainer.m_Intake;
-        ;
+public class TurretLock extends CommandBase {
+    /** Creates a new HubNotFound. */
+    public TurretLock() {
         // Use addRequirements() here to declare subsystem dependencies.
-        this.addRequirements(RobotContainer.m_Intake,
-                RobotContainer.m_Indexer);
+        addRequirements(RobotContainer.m_LEDStrip.m_targeting);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        m_intake.reverse();
-
+        RobotContainer.m_LEDStrip.setHubPink();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -35,7 +28,6 @@ public class ReverseIntake extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_intake.stop();
     }
 
     // Returns true when the command should end.

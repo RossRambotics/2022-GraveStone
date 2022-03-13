@@ -24,7 +24,7 @@ public class EmptyCheck extends CommandBase {
     public void initialize() {
         if (RobotContainer.m_Indexer.getSensorIndexerEntry()) {
             RobotContainer.m_Indexer.slow();
-            RobotContainer.m_Intake.start();
+            RobotContainer.m_Intake.slow();
             m_found = true;
             m_isFinished = false;
         } else {

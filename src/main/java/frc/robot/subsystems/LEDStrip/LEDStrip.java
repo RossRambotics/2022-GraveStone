@@ -389,6 +389,21 @@ public class LEDStrip extends SubsystemBase {
         RobotContainer.m_RioLEDs.setDataStrip(m_ledBuffer);
     }
 
+    public void setHubPink() {
+        for (var a = 0; a < m_ledBuffer.getLength(); a++) {
+            // Sets the specified LED to the RGB values for red
+
+            if ((a % 2) == 0) {
+
+            } else { // odd leds
+                m_ledBuffer.setRGB(a, 255, 128, 128);
+            }
+
+        }
+
+        RobotContainer.m_RioLEDs.setDataStrip(m_ledBuffer);
+    }
+
     public void setHubGreen() {
         for (var a = 0; a < m_ledBuffer.getLength(); a++) {
             // Sets the specified LED to the RGB values for red

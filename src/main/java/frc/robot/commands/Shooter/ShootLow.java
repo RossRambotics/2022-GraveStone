@@ -25,7 +25,7 @@ public class ShootLow extends CommandBase {
     public void initialize() {
         RobotContainer.m_Turret.setYawDegreesFront(0);
         RobotContainer.m_Shooter.shootLow();
-        RobotContainer.m_Turret.setPitchDegrees(15);
+        RobotContainer.m_Turret.setPitchDegrees(17);
         m_timer.reset();
         m_timer.start();
     }

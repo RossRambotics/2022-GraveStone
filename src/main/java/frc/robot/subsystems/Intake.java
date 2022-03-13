@@ -181,8 +181,12 @@ public class Intake extends SubsystemBase {
     public void start() {
         // Start intake
         // System.out.println("Starting Intake");
-        m_rollerMotor.set(TalonFXControlMode.PercentOutput, 0.25);
+        m_rollerMotor.set(TalonFXControlMode.PercentOutput, 0.45);
         // m_rollerMotor.setVoltage(2);
+    }
+
+    public void slow() {
+        m_rollerMotor.set(TalonFXControlMode.PercentOutput, 0.25);
     }
 
     public void stop() {
