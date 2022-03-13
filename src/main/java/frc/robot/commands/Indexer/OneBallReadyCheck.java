@@ -2,45 +2,48 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.Intake;
+package frc.robot.commands.Indexer;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Intake;
 
-public class ReverseIntake extends CommandBase {
-    private Intake m_intake = null;
+public class OneBallReadyCheck extends CommandBase {
+    private boolean m_ballFound = false;
 
-    /** Creates a new StartIntake. */
-    public ReverseIntake() {
-        m_intake = RobotContainer.m_Intake;
-        ;
+    /** Creates a new OneBallReadyCheck. */
+    public OneBallReadyCheck() {
         // Use addRequirements() here to declare subsystem dependencies.
-        this.addRequirements(RobotContainer.m_Intake,
-                RobotContainer.m_Indexer);
+        addRequirements(RobotContainer.m_Indexer);
+        addRequirements(RobotContainer.m_Intake);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        m_intake.reverse();
+        if (RobotContainer.m_Indexer.getSensorIndexerMiddle()) {
+            m_ballFound = true;
+        }
 
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        if (RobotContainer.m_Indexer.getSensorIndexerEntry()) {
+            RobotContainer.m_Intake.stop();
+            RobotContainer.m_Intake.retract();
+        }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_intake.stop();
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return false;
+        return !m_ballFound;
     }
 }

@@ -25,7 +25,7 @@ public class ShootLow extends CommandBase {
     public void initialize() {
         RobotContainer.m_Turret.setYawDegreesFront(0);
         RobotContainer.m_Shooter.shootLow();
-        RobotContainer.m_Turret.setPitchDegrees(20);
+        RobotContainer.m_Turret.setPitchDegrees(17);
         m_timer.reset();
         m_timer.start();
     }
@@ -40,7 +40,7 @@ public class ShootLow extends CommandBase {
         }
         RobotContainer.m_Indexer.shoot();
 
-        if (!m_timer.hasElapsed(0.15)) {
+        if (!m_timer.hasElapsed(0.5)) {
             RobotContainer.m_Intake.start();
         }
     }
@@ -51,6 +51,7 @@ public class ShootLow extends CommandBase {
         RobotContainer.m_Shooter.stop();
         RobotContainer.m_Indexer.stop();
         RobotContainer.m_Intake.stop();
+        RobotContainer.m_Turret.setPitchDegrees(0);
     }
 
     // Returns true when the command should end.

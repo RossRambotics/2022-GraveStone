@@ -30,6 +30,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWhileTracking;
+import frc.robot.commands.Indexer.ReverseWheels;
+import frc.robot.commands.Climb.DefaultClimb;
 import frc.robot.commands.Intake.ExtendIntake;
 import frc.robot.commands.Intake.RetractIntake;
 import frc.robot.commands.Intake.ReverseIntake;
@@ -37,6 +39,7 @@ import frc.robot.commands.Intake.StartIntake;
 import frc.robot.commands.Intake.StopIntake;
 import frc.robot.commands.Turret.TrackTarget;
 import frc.robot.sim.PhysicsSim;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.Indexer;
 
@@ -76,6 +79,8 @@ public class RobotContainer {
     static public final Tracking m_Tracking = new Tracking();
     static public final Turret m_Turret = new Turret();
 
+    static public final Climb m_Climb = new Climb();
+
     static public final Targeting m_Targeting = new Targeting();
     static public final Intake m_Intake = new Intake();
     static public final Indexer m_Indexer = new Indexer();
@@ -85,7 +90,7 @@ public class RobotContainer {
     // static public final LEDPanel m_LEDPanel = new LEDPanel();
 
     private final XboxController m_controllerDriver = new XboxController(0);
-    // private final XboxController m_controllerOperator = new XboxController(1);
+    private final XboxController m_controllerOperator = new XboxController(1);
 
     public PhysicsSim m_PhysicsSim;
 
@@ -99,9 +104,10 @@ public class RobotContainer {
                 m_drivetrainSubsystem,
                 () -> -getInputLeftY(),
                 () -> -getInputLeftX(),
-                () -> -modifyAxis(
-                        getInputRightX())
-                        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+                () -> getInputRightX()));
+
+        // Climb Default Command
+        m_Climb.setDefaultCommand(new DefaultClimb(m_Climb, () -> -getOperatorRightY()));
 
         // Configure the button bindings
         configureButtonBindings();
@@ -115,7 +121,7 @@ public class RobotContainer {
         // LiveWindow.disableAllTelemetry();
     }
 
-    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(0.6);
+    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(2.0);
 
     private double getInputLeftY() {
         double kDEAD_SLEW = 0.2;
@@ -144,7 +150,7 @@ public class RobotContainer {
 
     }
 
-    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(0.6);
+    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(2.0);
 
     private double getInputLeftX() {
         double kDEAD_SLEW = 0.2;
@@ -171,7 +177,7 @@ public class RobotContainer {
         return slew;
     }
 
-    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(0.6);
+    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(3.0);
 
     private double getInputRightX() {
         double kDEAD_SLEW = 0.2;
@@ -197,6 +203,18 @@ public class RobotContainer {
         }
         return slew;
         // return rightX;
+    }
+
+    private double getOperatorRightY() {
+        double operatorRightY = 0;
+
+        // implement Joystick Deadzone
+        if (Math.abs(m_controllerOperator.getRightY()) > 0.01) {
+            operatorRightY = m_controllerOperator.getRightY();
+
+        }
+
+        return operatorRightY;
     }
 
     /**
@@ -237,13 +255,18 @@ public class RobotContainer {
                 .whenHeld(cmd);
 
         // // reverse the intake
+        cmd = new ReverseIntake();
         new Button(m_controllerDriver::getBButton)
-                .whenHeld(new ReverseIntake());
+                .whenHeld(cmd);
 
         // // shootes into the lower hub at low RPM Driver
         new Button(m_controllerDriver::getYButton)
                 .whenPressed(new frc.robot.commands.Shooter.ShootLow()
-                        .withTimeout(20.0));
+                        .withTimeout(2.0));
+
+        // assign lock turret
+        new Button(m_controllerOperator::getYButton)
+                .whenPressed(new frc.robot.commands.Turret.LockTurret());
 
         // // targets to target
         // new Button(m_controllerDriver::getRightBumperPressed)
@@ -392,7 +415,7 @@ public class RobotContainer {
         cmd.addRequirements(m_Intake);
         m_Intake.setDefaultCommand(cmd);
 
-        cmd = new frc.robot.commands.Indexer.EmptyCheck();
+        cmd = new frc.robot.commands.Indexer.DefaultIndexer();
         m_Indexer.setDefaultCommand(cmd);
 
         DataLogManager.start();

@@ -43,14 +43,30 @@
       "axisConfig": [
         {
           "decKey": 74,
-          "incKey": 76
+          "incKey": 73
         },
         {
-          "decKey": 73,
+          "decKey": 76,
           "incKey": 75
+        },
+        {
+          "decKey": 89,
+          "incKey": 84
+        },
+        {
+          "decKey": 72,
+          "incKey": 71
+        },
+        {
+          "decKey": 48,
+          "incKey": 57
+        },
+        {
+          "decKey": 61,
+          "incKey": 45
         }
       ],
-      "axisCount": 2,
+      "axisCount": 6,
       "buttonCount": 4,
       "buttonKeys": [
         77,
@@ -91,7 +107,11 @@
   ],
   "robotJoysticks": [
     {
-      "guid": "Keyboard0"
+      "guid": "Keyboard0",
+      "name": "DriverJoystick"
+    },
+    {
+      "guid": "Keyboard1"
     }
   ]
 }
