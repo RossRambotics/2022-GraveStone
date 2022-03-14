@@ -140,15 +140,16 @@ public class Turret extends SubsystemBase {
         m_currentYaw.setDouble(m_yawMotor.getSelectedSensorPosition(0) / kYAW_TICKS_PER_DEGREE);
         m_currentPitch.setDouble(m_pitchMotor.getSelectedSensorPosition(0) / kPITCH_TICKS_PER_DEGREE);
         m_pitchError.setDouble(m_pitchMotor.getSelectedSensorPosition(0)
-                - (m_goalPitch.getDouble(0) * kPITCH_TICKS_PER_DEGREE));
+                - (m_goalPitch.getDouble(0) / kPITCH_TICKS_PER_DEGREE));
         m_yawError.setDouble(m_yawMotor.getSelectedSensorPosition(0)
-                - (m_goalYaw.getDouble(0) * kPITCH_TICKS_PER_DEGREE));
+                - (m_goalYaw.getDouble(0) / kYAW_TICKS_PER_DEGREE));
 
         // get the total error
-        double error = Math.abs(m_pitchError.getDouble(0)) + Math.abs(m_yawError.getDouble(0));
+        // double error = Math.abs(m_pitchError.getDouble(0)) +
+        // Math.abs(m_yawError.getDouble(0));
 
         // update targeting error
-        if (error < 1.0) {
+        if (Math.abs(RobotContainer.m_Targeting.getPredictedTargetOffsetYaw(0)) < 2.0) {
             m_isOnTarget = true;
         } else {
             m_isOnTarget = false;

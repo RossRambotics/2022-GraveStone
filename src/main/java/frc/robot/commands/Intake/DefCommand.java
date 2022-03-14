@@ -19,7 +19,6 @@ public class DefCommand extends CommandBase {
     @Override
     public void initialize() {
         RobotContainer.m_Intake.retract();
-        RobotContainer.m_Intake.stop();
     }
 
     // Called every time the scheduler runs while the command is scheduled.

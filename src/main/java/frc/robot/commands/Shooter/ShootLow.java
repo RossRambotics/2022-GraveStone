@@ -25,7 +25,7 @@ public class ShootLow extends CommandBase {
     public void initialize() {
         RobotContainer.m_Turret.setYawDegreesFront(0);
         RobotContainer.m_Shooter.shootLow();
-        RobotContainer.m_Turret.setPitchDegrees(17);
+        RobotContainer.m_Turret.setPitchDegrees(19);
         m_timer.reset();
         m_timer.start();
     }
@@ -35,7 +35,7 @@ public class ShootLow extends CommandBase {
     public void execute() {
         // pause briefly to allow turret to center
         // allow shooter to spin up
-        if (!m_timer.hasElapsed(0.1)) {
+        if (!m_timer.hasElapsed(0.2)) {
             return;
         }
         RobotContainer.m_Indexer.shoot();

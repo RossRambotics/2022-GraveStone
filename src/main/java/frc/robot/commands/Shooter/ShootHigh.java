@@ -115,6 +115,7 @@ public class ShootHigh extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         RobotContainer.m_Shooter.stop();
+        RobotContainer.m_Intake.stop();
     }
 
     // Returns true when the command should end.
