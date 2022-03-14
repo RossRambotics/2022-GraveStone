@@ -52,14 +52,14 @@ public class CanCoderFactoryBuilder {
 
         @Override
         public double getAbsoluteAngle() {
-            double angle = Math.toRadians(encoder.getAbsolutePosition());
+            double angle = Math.toRadians(encoder.getPosition());
 
             ErrorCode code = encoder.getLastError();
 
             for (int i = 0; i < ATTEMPTS; i++) {
                 if (code == ErrorCode.OK)
                     break;
-                angle = Math.toRadians(encoder.getAbsolutePosition());
+                angle = Math.toRadians(encoder.getPosition());
                 code = encoder.getLastError();
             }
 
