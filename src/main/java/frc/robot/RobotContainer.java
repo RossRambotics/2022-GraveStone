@@ -275,7 +275,7 @@ public class RobotContainer {
         // // shoot
         new Button(m_controllerDriver::getRightBumperPressed)
                 .whenPressed(new frc.robot.commands.Shooter.ShootHigh()
-                        .withTimeout(2.0));
+                        .withTimeout(5));
 
         // // climb goes up operator
         // new Button(m_controllerOperator::getAButtonPressed)
