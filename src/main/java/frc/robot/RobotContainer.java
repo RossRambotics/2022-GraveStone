@@ -361,7 +361,7 @@ public class RobotContainer {
         ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 1)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
-        PathPlannerTrajectory examplePath = PathPlanner.loadPath("BBL", 3, 1);
+        PathPlannerTrajectory examplePath = PathPlanner.loadPath("Test1", 3, 1);
 
         TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
                 Math.PI, Math.PI);
@@ -401,9 +401,9 @@ public class RobotContainer {
         autoCmd.setName("Drive");
         m_autoChooser.addOption("Drive", autoCmd);
 
-        autoCmd = new InstantCommand();
-        autoCmd.setName("Drive And Shoot");
-        m_autoChooser.addOption("Drive And Shoot", autoCmd);
+        autoCmd = new frc.robot.commands.auto.BottomLeftNoHumanPlayer();
+        autoCmd.setName("Bottom Left No Human");
+        m_autoChooser.addOption("Bottom Left No Human", autoCmd);
         tab.add("Autonomous", m_autoChooser).withSize(2, 1);
 
         this.m_Shooter.createShuffleBoardTab();
