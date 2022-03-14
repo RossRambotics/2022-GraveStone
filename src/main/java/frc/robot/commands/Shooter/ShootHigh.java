@@ -12,6 +12,7 @@ import frc.robot.RobotContainer;
 public class ShootHigh extends CommandBase {
     private Timer m_timer = new Timer();
     private boolean m_isShooting = false;
+    private boolean m_isShooting2 = false;
 
     /** Creates a new Shoot. */
     public ShootHigh() {
@@ -29,11 +30,12 @@ public class ShootHigh extends CommandBase {
                 " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
                 " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
                 " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
-                " Indexer (e) RPM: " + RobotContainer.m_Indexer.getIndexError() +
+                " Indexer (a) RPM: " + RobotContainer.m_Indexer.getfrountwheelrpm() +
                 " Shooter (a) RPM: " + RobotContainer.m_Shooter.getRPM() +
                 " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
         RobotContainer.m_Intake.retract();
         RobotContainer.m_Shooter.start();
+
         m_isShooting = false;
     }
 
@@ -42,6 +44,7 @@ public class ShootHigh extends CommandBase {
     public void execute() {
         if (!m_isShooting && RobotContainer.m_Shooter.isSpunUp()) {
             m_isShooting = true;
+            m_isShooting2 = true;
             RobotContainer.m_Indexer.shoot();
             m_timer.reset();
             m_timer.start();
@@ -52,15 +55,17 @@ public class ShootHigh extends CommandBase {
                     " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
                     " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
                     " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
-                    " Indexer (e) RPM: " + RobotContainer.m_Indexer.getIndexError() +
+                    " Indexer (a) RPM: " + RobotContainer.m_Indexer.getfrountwheelrpm() +
                     " Shooter (a) RPM: " + RobotContainer.m_Shooter.getRPM() +
                     " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
-        } else {
+        } else if (!m_isShooting2) {
+
             return;
         }
 
         // pause briefly then turn on the intake
         if (m_timer.hasElapsed(0.5) == false) {
+            System.out.println("I am leaving early");
             return;
         }
 
@@ -70,7 +75,7 @@ public class ShootHigh extends CommandBase {
                 " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
                 " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
                 " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
-                " Indexer (e) RPM: " + RobotContainer.m_Indexer.getIndexError() +
+                " Indexer (a) RPM: " + RobotContainer.m_Indexer.getfrountwheelrpm() +
                 " Shooter (a) RPM: " + RobotContainer.m_Shooter.getRPM() +
                 " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
 

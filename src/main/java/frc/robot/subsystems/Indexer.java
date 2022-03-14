@@ -101,7 +101,8 @@ public class Indexer extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        m_diffWheelSpeed.setDouble(m_frontwheels.getSelectedSensorVelocity(0) - m_wheelSpeed.getDouble(0));
+        m_diffWheelSpeed
+                .setDouble(Math.abs(m_frontwheels.getSelectedSensorVelocity(0)) - Math.abs(m_wheelSpeed.getDouble(0)));
     }
 
     public boolean getSensorIndexerEntry() {
@@ -239,6 +240,11 @@ public class Indexer extends SubsystemBase {
         // Reverse intake
         m_frontwheels.set(TalonFXControlMode.PercentOutput, -0.25);
         m_backwheels.set(TalonFXControlMode.PercentOutput, -0.25);
+    }
+
+    public double getfrountwheelrpm() {
+        return m_frontwheels.getSelectedSensorVelocity();
+
     }
 
 }
