@@ -35,7 +35,7 @@ public class Targeting extends SubsystemBase {
     private HubNotFound m_cmdHubNotFound = new HubNotFound();
     private HubTargeted m_cmdHubTargeted = new HubTargeted();
     private static final double kHEIGHT = 2.0; // the difference in height of the robot to the target ring
-    private static final double kMOUNT_PITCH = 31.4; // the angle of the camera mount pitch
+    private static final double kMOUNT_PITCH = 32.19; // the angle of the camera mount pitch
     private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Targeting");
     private NetworkTableEntry m_pred_distance = null;
     private NetworkTableEntry m_pred_yaw = null;
@@ -85,7 +85,7 @@ public class Targeting extends SubsystemBase {
          * o: is the height difference between the camera lens and the hub ring
          * a: is the distance of the robot from the hub
          */
-        m_distanceToTarget = kHEIGHT / Math.atan(Math.toRadians(kMOUNT_PITCH + m_targetOffsetAngle_Vertical));
+        m_distanceToTarget = kHEIGHT / Math.tan(Math.toRadians(kMOUNT_PITCH + m_targetOffsetAngle_Vertical));
 
         // save off the history
         for (int c = 0; c < 2; c++) {

@@ -24,6 +24,7 @@ public class ReverseIntake extends CommandBase {
     @Override
     public void initialize() {
         m_intake.reverse();
+        RobotContainer.m_Indexer.reverse();
 
     }
 
@@ -36,6 +37,7 @@ public class ReverseIntake extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         m_intake.stop();
+        RobotContainer.m_Indexer.stop();
     }
 
     // Returns true when the command should end.

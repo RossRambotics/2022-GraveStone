@@ -150,6 +150,7 @@ public class Shooter extends SubsystemBase {
                 return;
             }
             m_distance = RobotContainer.m_Targeting.getTargetDistance();
+            m_nt_distance.setDouble(m_distance);
         }
 
         // only do the following if the shooter has a target and is not in test mode
@@ -159,6 +160,8 @@ public class Shooter extends SubsystemBase {
 
         if (!m_bTestMode) {
             m_goalRPM.setDouble(fs.m_speed);
+            m_diffBackRPM.setDouble(m_BackRPM_shooter - m_goalRPM.getDouble(0));
+            m_diffFrontRPM.setDouble(m_FrontRPM_shooter - m_goalRPM.getDouble(0));
 
             // update Turret pitch for firing solution unless in test mode
             if (!RobotContainer.m_Turret.isTestMode()) {
@@ -337,10 +340,14 @@ public class Shooter extends SubsystemBase {
         return ave;
     }
 
+    public double getErrorRPM() {
+        return m_diffBackRPM.getDouble(0) + m_diffFrontRPM.getDouble(0);
+    }
+
     public boolean isSpunUp() {
         double error = m_diffBackRPM.getDouble(0) + m_diffFrontRPM.getDouble(0);
 
-        if (error < 200) {
+        if (Math.abs(error) < 200.0) {
             return true;
         }
 

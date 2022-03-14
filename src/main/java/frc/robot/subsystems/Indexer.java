@@ -163,6 +163,10 @@ public class Indexer extends SubsystemBase {
 
     }
 
+    public double getIndexError() {
+        return m_diffWheelSpeed.getDouble(0);
+    }
+
     class IndexerConstants {
         /**
          * Which PID slot to pull gains from. Starting 2018, you can choose from

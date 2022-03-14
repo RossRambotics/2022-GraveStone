@@ -174,7 +174,7 @@ public class Intake extends SubsystemBase {
         public static final int kTimeoutMs = 30;
 
         // Number of ticks required to extend the intake
-        public static final double m_defaultExtensionDegrees = 120;
+        public static final double m_defaultExtensionDegrees = 110;
         public static final double m_ticksPerDegree = 2048 * 16 / 360;
     }
 

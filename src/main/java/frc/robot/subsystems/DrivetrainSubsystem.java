@@ -106,7 +106,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
     // adding SwerveOdometry
-    private final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
+    private SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
     private Pose2d m_odometryPose = new Pose2d();
     private SwerveModuleState[] m_swerveModuleStates = new SwerveModuleState[4]; // added while adding odometry support
                                                                                  // & replaced m_chassisSpeeds
@@ -207,10 +207,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // m_navx.zeroYaw();
     }
 
+    public void resetOdometry() {
+        zeroGyroscope();
+        m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
+    }
+
     public Rotation2d getGyroscopeRotation() {
         // FIXME Remove if you are using a Pigeon
         // return Rotation2d.fromDegrees(m_pigeon.getFusedHeading());
-        return Rotation2d.fromDegrees(m_pigeon.getYaw());
+        return Rotation2d.fromDegrees(-m_pigeon.getYaw());
 
         // FIXME Uncomment if you are using a NavX
         // if (m_navx.isMagnetometerCalibrated()) {

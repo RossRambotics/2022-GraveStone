@@ -37,12 +37,12 @@ public class LEDStrip extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (getCurrentCommand() == null) {
-            for (int c = 0; c < m_noLEDs; c++) {
-                m_ledBuffer.setHSV(c, 91, 14, 43);
-            }
-            RobotContainer.m_RioLEDs.setDataStrip(m_ledBuffer);
-        }
+        // if (getCurrentCommand() == null) {
+        // for (int c = 0; c < m_noLEDs; c++) {
+        // m_ledBuffer.setRGB(c, 91, 14, 43);
+        // }
+        // RobotContainer.m_RioLEDs.setDataStrip(m_ledBuffer);
+        // }
     }
 
     public void setBallWhite() {

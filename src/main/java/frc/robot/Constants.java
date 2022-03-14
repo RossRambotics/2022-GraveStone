@@ -77,5 +77,6 @@ public final class Constants {
     public static final int INDEXER_MIDDLE = 2; // Sensor ID for the Indexer Middle
     public static final int INDEXER_EXIT = 3; // Sensor ID for the Indexer Exit
 
-    public static final int CLIMB_WINCH = 50; //CAN ID for Climb Winch
+    public static final int CLIMB_WINCH = 50; // CAN ID for Climb Winch
+    public static final int PDH = 51; // CAN ID for PDP
 }

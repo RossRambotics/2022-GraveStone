@@ -43,6 +43,8 @@ public class AutoDriveWhileTracking extends CommandBase {
         final double ANGULAR_D = RobotContainer.m_Tracking.getAngleD();
         m_PIDTracking = new PIDController(ANGULAR_P, 0, ANGULAR_D);
 
+        RobotContainer.m_Tracking.enableSearchLight();
+
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -90,6 +92,8 @@ public class AutoDriveWhileTracking extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+
+        RobotContainer.m_Tracking.disableSearchLight();
     }
 
     // Returns true when the command should end.
