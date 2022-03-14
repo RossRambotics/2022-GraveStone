@@ -104,7 +104,7 @@ public class RobotContainer {
                 m_drivetrainSubsystem,
                 () -> -getInputLeftY(),
                 () -> -getInputLeftX(),
-                () -> -getInputRightX()));
+                () -> getInputRightX()));
 
         // Climb Default Command
         m_Climb.setDefaultCommand(new DefaultClimb(m_Climb, () -> -getOperatorRightY()));
