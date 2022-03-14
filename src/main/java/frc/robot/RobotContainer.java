@@ -239,7 +239,7 @@ public class RobotContainer {
                 () -> -modifyAxis(
                         getInputLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
                 () -> -modifyAxis(
-                        getInputLeftX())
+                        getInputRightX())
                         * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
         new Button(m_controllerDriver::getLeftBumper)
                 .whenHeld(cmd, true);
