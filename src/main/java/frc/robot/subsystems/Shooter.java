@@ -117,7 +117,7 @@ public class Shooter extends SubsystemBase {
         m_firingCalculator.addSolution(new FiringSolution(1, 7.5, 1700));
         m_firingCalculator.addSolution(new FiringSolution(2, 11.26, 1706));
         m_firingCalculator.addSolution(new FiringSolution(3, 13.14, 2069));
-        m_firingCalculator.addSolution(new FiringSolution(4, 13, 2575));
+        m_firingCalculator.addSolution(new FiringSolution(4, 15, 2575));
         m_firingCalculator.addSolution(new FiringSolution(5, 16.8, 2500));
 
         // m_firingCalculator.addSolution(new FiringSolution(6, , 1700));
