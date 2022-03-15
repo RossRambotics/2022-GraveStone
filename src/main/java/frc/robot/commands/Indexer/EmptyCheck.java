@@ -44,6 +44,8 @@ public class EmptyCheck extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        CommandBase reverseIndexer = new ReverseIndexer();
+        // reverseIndexer.withTimeout(0.1).schedule();
         RobotContainer.m_Indexer.stop();
         if (m_found)
             RobotContainer.m_Intake.stop();
@@ -54,4 +56,5 @@ public class EmptyCheck extends CommandBase {
     public boolean isFinished() {
         return m_isFinished;
     }
+
 }

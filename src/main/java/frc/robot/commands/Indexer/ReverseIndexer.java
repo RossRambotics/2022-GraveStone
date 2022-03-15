@@ -2,33 +2,41 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.Intake;
+package frc.robot.commands.Indexer;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Indexer;
 
-public class DefCommand extends CommandBase {
-    /** Creates a new DefCommand. */
-    public DefCommand() {
+public class ReverseIndexer extends CommandBase {
+    private Indexer m_indexer = null;
+
+    /** Creates a new ShootCargo. */
+    public ReverseIndexer() {
+        m_indexer = RobotContainer.m_Indexer;
+
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(RobotContainer.m_Intake,
-                RobotContainer.m_Intake.m_extension);
+        this.addRequirements(m_indexer);
+
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        RobotContainer.m_Intake.retract();
+        m_indexer.reverse();
+        System.out.println("Running reverse indexer");
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        RobotContainer.m_Indexer.stop();
     }
 
     // Returns true when the command should end.

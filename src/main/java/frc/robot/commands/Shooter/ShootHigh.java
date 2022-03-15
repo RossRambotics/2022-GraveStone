@@ -12,6 +12,8 @@ import frc.robot.RobotContainer;
 public class ShootHigh extends CommandBase {
     private Timer m_timer = new Timer();
     private boolean m_isShooting = false;
+    private boolean m_isShooting2 = false;
+    private boolean m_isCompacting = true;
 
     /** Creates a new Shoot. */
     public ShootHigh() {
@@ -23,25 +25,48 @@ public class ShootHigh extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        m_timer.reset();
+        m_timer.start();
         DataLogManager.log("ShootHigh Initialize:" +
                 " Target Yaw: " + RobotContainer.m_Targeting.getTargetOffsetYaw() +
                 " Target Distance: " + RobotContainer.m_Targeting.getTargetDistance() +
                 " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
                 " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
                 " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
+                " Indexer (a) RPM: " + RobotContainer.m_Indexer.getfrountwheelrpm() +
                 " Indexer (e) RPM: " + RobotContainer.m_Indexer.getIndexError() +
                 " Shooter (a) RPM: " + RobotContainer.m_Shooter.getRPM() +
                 " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
         RobotContainer.m_Intake.retract();
+        RobotContainer.m_Intake.stop();
         RobotContainer.m_Shooter.start();
+
         m_isShooting = false;
+        m_isShooting2 = false;
+        m_isCompacting = true;
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+
+        if (m_isCompacting && (m_timer.hasElapsed(0.2) == false)) {
+            RobotContainer.m_Indexer.reverse();
+            return;
+        } else if (m_isCompacting) {
+            m_isCompacting = false;
+            RobotContainer.m_Indexer.stop();
+            m_timer.reset();
+            m_timer.start();
+        }
+
+        if (m_timer.hasElapsed(0.1) == false) {
+            return;
+        }
+
         if (!m_isShooting && RobotContainer.m_Shooter.isSpunUp()) {
             m_isShooting = true;
+            m_isShooting2 = true;
             RobotContainer.m_Indexer.shoot();
             m_timer.reset();
             m_timer.start();
@@ -52,17 +77,28 @@ public class ShootHigh extends CommandBase {
                     " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
                     " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
                     " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
+                    " Indexer (a) RPM: " + RobotContainer.m_Indexer.getfrountwheelrpm() +
                     " Indexer (e) RPM: " + RobotContainer.m_Indexer.getIndexError() +
                     " Shooter (a) RPM: " + RobotContainer.m_Shooter.getRPM() +
                     " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
-        } else {
+        } else if (!m_isShooting2) {
+
             return;
         }
 
-        // pause briefly then turn on the intake
-        if (m_timer.hasElapsed(0.5) == false) {
+        if (m_timer.hasElapsed(0.25) == false) {
             return;
         }
+
+        RobotContainer.m_Indexer.stop();
+
+        // pause briefly then turn on the intake
+        if (m_timer.hasElapsed(0.75) == false) {
+
+            return;
+        }
+
+        RobotContainer.m_Indexer.start();
 
         DataLogManager.log("ShootHigh Shoot2:" +
                 " Target Yaw: " + RobotContainer.m_Targeting.getTargetOffsetYaw() +
@@ -70,6 +106,7 @@ public class ShootHigh extends CommandBase {
                 " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
                 " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
                 " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
+                " Indexer (a) RPM: " + RobotContainer.m_Indexer.getfrountwheelrpm() +
                 " Indexer (e) RPM: " + RobotContainer.m_Indexer.getIndexError() +
                 " Shooter (a) RPM: " + RobotContainer.m_Shooter.getRPM() +
                 " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
@@ -81,6 +118,7 @@ public class ShootHigh extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         RobotContainer.m_Shooter.stop();
+        RobotContainer.m_Intake.stop();
     }
 
     // Returns true when the command should end.

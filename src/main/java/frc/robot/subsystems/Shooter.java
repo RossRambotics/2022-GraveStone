@@ -115,10 +115,13 @@ public class Shooter extends SubsystemBase {
         m_backMotor.config_kD(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kD, ShooterConstants.kTimeoutMs);
 
         m_firingCalculator.addSolution(new FiringSolution(1, 7.5, 1700));
-        m_firingCalculator.addSolution(new FiringSolution(2, 11.26, 1706));
-        m_firingCalculator.addSolution(new FiringSolution(3, 13.14, 2069));
-        m_firingCalculator.addSolution(new FiringSolution(4, 15, 2337));
-        m_firingCalculator.addSolution(new FiringSolution(5, 16.8, 2500));
+        m_firingCalculator.addSolution(new FiringSolution(2, 11.26, 1801));
+        m_firingCalculator.addSolution(new FiringSolution(3, 13.14, 2131));
+        m_firingCalculator.addSolution(new FiringSolution(4, 17, 2501));
+        m_firingCalculator.addSolution(new FiringSolution(5, 18, 2701));
+        m_firingCalculator.addSolution(new FiringSolution(6, 18, 2900));
+        m_firingCalculator.addSolution(new FiringSolution(7, 18, 3100));
+        m_firingCalculator.addSolution(new FiringSolution(8, 18, 3300));
 
         // m_firingCalculator.addSolution(new FiringSolution(6, , 1700));
         // m_firingCalculator.addSolution(new FiringSolution(7, 7.5, 1700));

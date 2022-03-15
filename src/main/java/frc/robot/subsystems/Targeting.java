@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.Map;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -47,6 +48,9 @@ public class Targeting extends SubsystemBase {
 
     }
 
+    private SlewRateLimiter m_yawSlew = new SlewRateLimiter(0.6);
+    private SlewRateLimiter m_pitchSlew = new SlewRateLimiter(0.6);
+
     @Override
     public void periodic() {
         // get updates from limelight
@@ -71,6 +75,10 @@ public class Targeting extends SubsystemBase {
             m_cmdHubFound.schedule();
         }
 
+        // m_targetOffsetAngle_Horizontal =
+        // m_yawSlew.calculate(table.getEntry("tx").getDouble(0));
+        // m_targetOffsetAngle_Vertical =
+        // m_pitchSlew.calculate(table.getEntry("ty").getDouble(0));
         m_targetOffsetAngle_Horizontal = table.getEntry("tx").getDouble(0);
         m_targetOffsetAngle_Vertical = table.getEntry("ty").getDouble(0);
         m_targetArea = table.getEntry("ta").getDouble(0);
@@ -130,9 +138,10 @@ public class Targeting extends SubsystemBase {
     // future
     // so, if the time of flight (TOF) of the cargo is 2s in the future, pass in 2.0
     public double getPredictedTargetOffsetYaw(double time) {
-        double v = m_yawHistory[2] - m_yawHistory[1];
+        // double v = m_yawHistory[2] - m_yawHistory[1];
 
-        return m_yawHistory[2] + (v * time);
+        // return m_yawHistory[2] + (v * time);
+        return m_targetOffsetAngle_Horizontal;
     }
 
     // returns the predicted distance of the target given a time in seconds into the

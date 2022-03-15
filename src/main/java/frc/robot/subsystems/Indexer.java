@@ -101,7 +101,8 @@ public class Indexer extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        m_diffWheelSpeed.setDouble(m_frontwheels.getSelectedSensorVelocity(0) - m_wheelSpeed.getDouble(0));
+        m_diffWheelSpeed
+                .setDouble(Math.abs(m_frontwheels.getSelectedSensorVelocity(0)) - Math.abs(m_wheelSpeed.getDouble(0)));
     }
 
     public boolean getSensorIndexerEntry() {
@@ -153,7 +154,7 @@ public class Indexer extends SubsystemBase {
         // SmartDashboard.putData(c);
         indexerCommands.add(c);
 
-        m_wheelSpeed = m_shuffleboardTab.add("Indexer Shoot RPM", 2000).withWidget(BuiltInWidgets.kNumberSlider)
+        m_wheelSpeed = m_shuffleboardTab.add("Indexer Shoot RPM", 2500).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
                 .withPosition(2, 0).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
 
@@ -199,7 +200,7 @@ public class Indexer extends SubsystemBase {
 
     public void slow() {
         // Start intake
-        double p = 0.2;
+        double p = 0.15;
 
         m_frontwheels.set(TalonFXControlMode.PercentOutput, p);
         m_backwheels.set(TalonFXControlMode.PercentOutput, p);
@@ -211,7 +212,7 @@ public class Indexer extends SubsystemBase {
          * 2048 Units/Rev * RPM / 600 100ms/min in either direction:
          * velocity setpoint is in units/100ms
          */
-        double targetVelocity_UnitsPer100ms = m_wheelSpeed.getDouble(2000) * 2048.0 / 600.0;
+        double targetVelocity_UnitsPer100ms = m_wheelSpeed.getDouble(2500) * 2048.0 / 600.0;
         /* 2000 RPM in either direction */
 
         m_frontwheels.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
@@ -239,6 +240,11 @@ public class Indexer extends SubsystemBase {
         // Reverse intake
         m_frontwheels.set(TalonFXControlMode.PercentOutput, -0.25);
         m_backwheels.set(TalonFXControlMode.PercentOutput, -0.25);
+    }
+
+    public double getfrountwheelrpm() {
+        return m_frontwheels.getSelectedSensorVelocity();
+
     }
 
 }
