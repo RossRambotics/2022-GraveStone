@@ -160,11 +160,11 @@ public class Tracking extends SubsystemBase {
         m_isTesting = true;
     }
 
-    public void enableSearchLight(){
+    public void enableSearchLight() {
         m_PDH.setSwitchableChannel(true);
     }
 
-    public void disableSearchLight(){
+    public void disableSearchLight() {
         m_PDH.setSwitchableChannel(false);
     }
 }

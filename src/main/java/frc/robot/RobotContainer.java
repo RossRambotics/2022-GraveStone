@@ -107,7 +107,7 @@ public class RobotContainer {
                 m_drivetrainSubsystem,
                 () -> -getInputLeftY(),
                 () -> -getInputLeftX(),
-                () -> getInputRightX()));
+                () -> -getInputRightX()));
 
         // Climb Default Command
         m_Climb.setDefaultCommand(new DefaultClimb(m_Climb, () -> -getOperatorRightY()));
@@ -283,7 +283,7 @@ public class RobotContainer {
         new Button(m_controllerOperator::getAButton)
                 .whenPressed(new AutoDriveWhileTracking(m_drivetrainSubsystem, null, null, null));
 
-        // // climb goes up operator  
+        // // climb goes up operator
         // new Button(m_controllerOperator::getAButtonPressed)
         // .whileHeld(command);
 
@@ -413,9 +413,10 @@ public class RobotContainer {
         autoCmd = new BackShootBall();
         autoCmd.setName("BackShootBall");
         m_autoChooser.addOption("BackShootBall", autoCmd);
+        // autoCmd = new frc.robot.commands.auto.BottomLeftNoHumanPlayer();
+        // autoCmd.setName("Bottom Left No Human");
+        // m_autoChooser.addOption("Bottom Left No Human", autoCmd);
         tab.add("Autonomous", m_autoChooser).withSize(2, 1);
-
-    
 
         this.m_Shooter.createShuffleBoardTab();
         this.m_Tracking.createShuffleBoardTab();

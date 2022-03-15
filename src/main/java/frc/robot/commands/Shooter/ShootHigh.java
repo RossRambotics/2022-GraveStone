@@ -34,6 +34,7 @@ public class ShootHigh extends CommandBase {
                 " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
                 " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
                 " Indexer (a) RPM: " + RobotContainer.m_Indexer.getfrountwheelrpm() +
+                " Indexer (e) RPM: " + RobotContainer.m_Indexer.getIndexError() +
                 " Shooter (a) RPM: " + RobotContainer.m_Shooter.getRPM() +
                 " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
         RobotContainer.m_Intake.retract();
@@ -77,6 +78,7 @@ public class ShootHigh extends CommandBase {
                     " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
                     " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
                     " Indexer (a) RPM: " + RobotContainer.m_Indexer.getfrountwheelrpm() +
+                    " Indexer (e) RPM: " + RobotContainer.m_Indexer.getIndexError() +
                     " Shooter (a) RPM: " + RobotContainer.m_Shooter.getRPM() +
                     " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
         } else if (!m_isShooting2) {
@@ -105,6 +107,7 @@ public class ShootHigh extends CommandBase {
                 " Turret Yaw: " + RobotContainer.m_Turret.getYaw() +
                 " Target Found: " + RobotContainer.m_Turret.getIsOnTarget() +
                 " Indexer (a) RPM: " + RobotContainer.m_Indexer.getfrountwheelrpm() +
+                " Indexer (e) RPM: " + RobotContainer.m_Indexer.getIndexError() +
                 " Shooter (a) RPM: " + RobotContainer.m_Shooter.getRPM() +
                 " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
 
