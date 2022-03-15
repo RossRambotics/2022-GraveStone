@@ -71,10 +71,13 @@ public class AutoDriveWhileTracking extends CommandBase {
             double fieldXSpeed = m_BaseSpeed * Math.sin(m_drivetrainSubsystem.getGyroHeading().getDegrees());
             double fieldYSpeed = m_BaseSpeed * Math.cos(m_drivetrainSubsystem.getGyroHeading().getDegrees());
 
+            DoubleSupplier x = () -> {return fieldXSpeed;};
+            DoubleSupplier y = () -> {return fieldYSpeed;};
+
             m_drivetrainSubsystem.drive(
                     ChassisSpeeds.fromFieldRelativeSpeeds(
-                            m_translationXSupplier.getAsDouble(),
-                            m_translationYSupplier.getAsDouble(),
+                           x.getAsDouble(),
+                           y.getAsDouble(),
                             rotationSpeed,
                             m_drivetrainSubsystem.getGyroscopeRotation()));
         } else {

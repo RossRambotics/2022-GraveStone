@@ -44,7 +44,7 @@ public class Tracking extends SubsystemBase {
         // https://docs.photonvision.org/en/latest/docs/programming/photonlib/creating-photon-camera.html
         // TODO Chester!
         // something like
-        m_camera = new PhotonCamera("photonvision");
+        m_camera = new PhotonCamera("Mircosoft_LifeCam_HD-3000");
         m_PDH = new PowerDistribution(Constants.PDH, ModuleType.kRev);
 
         // set the appropriate pipeline for the color of the ball based

@@ -223,7 +223,9 @@ public class Turret extends SubsystemBase {
 
         // if the goal is outside the bounds, set the goal to the boundary
         goal = clampYaw(goal);
-        if (Math.abs(goal - m_currentYaw.getDouble(0)) < 0.5) {
+        if (Math.abs(goal - m_currentYaw.getDouble(0)) < 1.5) {
+            m_yawMotor.set(TalonFXControlMode.PercentOutput, 0);
+
             return;
         }
 

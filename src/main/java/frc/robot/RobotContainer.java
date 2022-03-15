@@ -38,6 +38,8 @@ import frc.robot.commands.Intake.ReverseIntake;
 import frc.robot.commands.Intake.StartIntake;
 import frc.robot.commands.Intake.StopIntake;
 import frc.robot.commands.Turret.TrackTarget;
+import frc.robot.commands.auto.BackAndShoot;
+import frc.robot.commands.auto.BackShootBall;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -57,6 +59,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import frc.robot.commands.AutoDriveWhileTracking;
 
 public class RobotContainer {
 
@@ -277,7 +280,10 @@ public class RobotContainer {
                 .whenPressed(new frc.robot.commands.Shooter.ShootHigh()
                         .withTimeout(5));
 
-        // // climb goes up operator
+        new Button(m_controllerOperator::getAButton)
+                .whenPressed(new AutoDriveWhileTracking(m_drivetrainSubsystem, null, null, null));
+
+        // // climb goes up operator  
         // new Button(m_controllerOperator::getAButtonPressed)
         // .whileHeld(command);
 
@@ -401,10 +407,15 @@ public class RobotContainer {
         autoCmd.setName("Drive");
         m_autoChooser.addOption("Drive", autoCmd);
 
-        autoCmd = new frc.robot.commands.auto.BottomLeftNoHumanPlayer();
-        autoCmd.setName("Bottom Left No Human");
-        m_autoChooser.addOption("Bottom Left No Human", autoCmd);
+        autoCmd = new BackAndShoot();
+        autoCmd.setName("AutoPath1");
+        m_autoChooser.addOption("AutoPath1", autoCmd);
+        autoCmd = new BackShootBall();
+        autoCmd.setName("BackShootBall");
+        m_autoChooser.addOption("BackShootBall", autoCmd);
         tab.add("Autonomous", m_autoChooser).withSize(2, 1);
+
+    
 
         this.m_Shooter.createShuffleBoardTab();
         this.m_Tracking.createShuffleBoardTab();
