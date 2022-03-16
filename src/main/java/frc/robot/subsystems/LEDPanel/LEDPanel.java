@@ -5,6 +5,7 @@
 package frc.robot.subsystems.LEDPanel;
 
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -90,9 +91,34 @@ public class LEDPanel extends SubsystemBase {
     private Timer m_timer = new Timer();
     String phraseVals[] = new String[14];
     Color pColors[] = new Color[14];
+    private boolean m_isBlankDisabled = false;
+    private Color m_pixels[][] = null;
 
     @Override
     public void periodic() {
+
+        // only run if disabled and blank out the panel when it is initially enabled.
+        if (!DriverStation.isDisabled()) {
+            if (m_isBlankDisabled == false) {
+                for (int c = 0; c < m_noLEDs; c++) {
+                    m_ledBuffer.setRGB(c, 0, 0, 0);
+                }
+                RobotContainer.m_RioLEDs.setDataPanel(m_ledBuffer);
+            }
+            m_isBlankDisabled = true;
+            return;
+        } else {
+            // if we are coming out of disabled reset the timer so the text doesn't scroll
+            // crazy fast
+            if (m_isBlankDisabled == true) {
+                m_timer.reset();
+                m_timer.start();
+                phraseIndex = 0;
+                m_pixels = null;
+            }
+            m_isBlankDisabled = false;
+        }
+
         // This method will be called once per scheduler run
 
         // only do this every x seconds
@@ -123,7 +149,6 @@ public class LEDPanel extends SubsystemBase {
         // Phrases p = new Phrases(phraseVals[phraseIndex].toUpperCase());
         // p.phraseColor = pColors[phraseIndex];
         // p.phraseColor = Color.kBlue;
-        Color color[][] = p.getColors();
 
         m_index++;
         if (m_index >= p.size() * 7) {
@@ -131,10 +156,20 @@ public class LEDPanel extends SubsystemBase {
 
             phraseIndex++;
             if (phraseIndex >= phraseVals.length) {
-                phraseIndex = 0;
+                // phraseIndex = 0;
+                m_index = 0;
+                m_pixels = null;
+                m_timer.stop();
+                return;
             }
             p = new Phrases(phraseVals[phraseIndex].toUpperCase());
             p.phraseColor = pColors[phraseIndex];
+            m_pixels = p.getColors();
+        }
+
+        // added to cache m_pixls to try and improve performance
+        if (m_pixels == null) {
+            m_pixels = p.getColors();
         }
 
         int col = 0;
@@ -155,9 +190,9 @@ public class LEDPanel extends SubsystemBase {
             for (row = 0; row < 8; row++) {
                 i = (col * 8) + row;
                 if (col % 2 == 0) {
-                    m_ledBuffer.setLED(i, color[col + m_index][row]);
+                    m_ledBuffer.setLED(i, m_pixels[col + m_index][row]);
                 } else {
-                    m_ledBuffer.setLED(i, color[col + m_index][7 - row]);
+                    m_ledBuffer.setLED(i, m_pixels[col + m_index][7 - row]);
                 }
             }
         }

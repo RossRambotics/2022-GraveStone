@@ -90,7 +90,7 @@ public class RobotContainer {
     static public final RioLEDs m_RioLEDs = new RioLEDs();
 
     static public final LEDStrip m_LEDStrip = new LEDStrip();
-    // static public final LEDPanel m_LEDPanel = new LEDPanel();
+    static public final LEDPanel m_LEDPanel = new LEDPanel();
 
     private final XboxController m_controllerDriver = new XboxController(0);
     private final XboxController m_controllerOperator = new XboxController(1);
