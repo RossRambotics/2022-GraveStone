@@ -49,7 +49,7 @@ public class LEDPanel extends SubsystemBase {
         // JP Wood Studio LLC
         // Schuler Family
 
-        phraseVals[0] = "  Thanks to Our Sponsers!";
+        phraseVals[0] = "  Thanks to Our Sponsors!";
         phraseVals[1] = "  NASA Battelle";
         phraseVals[2] = "  Watson Gravel";
         phraseVals[3] = "  Intuitive Foundation";
