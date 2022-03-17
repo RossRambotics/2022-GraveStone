@@ -149,7 +149,7 @@ public class RobotContainer {
             m_slewLeftY.reset(slew);
         }
 
-        return slew / 2.0;
+        return slew;
 
     }
 
@@ -177,7 +177,7 @@ public class RobotContainer {
             }
             m_slewLeftX.reset(slew);
         }
-        return slew / 2.0;
+        return slew;
     }
 
     private SlewRateLimiter m_slewRightX = new SlewRateLimiter(6.0);
@@ -362,7 +362,7 @@ public class RobotContainer {
         // Square the axis
         value = Math.copySign(value * value, value);
 
-        return value;
+        return value * 0.60;
     }
 
     private SendableChooser m_autoChooser = new SendableChooser();
