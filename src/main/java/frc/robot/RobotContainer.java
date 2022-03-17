@@ -286,7 +286,11 @@ public class RobotContainer {
                         .withTimeout(5));
 
         new Button(m_controllerOperator::getAButton)
-                .whenPressed(new AutoDriveWhileTracking(m_drivetrainSubsystem, null, null, null));
+                .whenPressed(new frc.robot.commands.Intake.ResetIntake());
+
+        // new Button(m_controllerOperator::getAButton)
+        // .whenPressed(new AutoDriveWhileTracking(m_drivetrainSubsystem, null, null,
+        // null));
 
         // // climb goes up operator
         // new Button(m_controllerOperator::getAButtonPressed)

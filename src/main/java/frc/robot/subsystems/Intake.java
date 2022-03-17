@@ -239,4 +239,13 @@ public class Intake extends SubsystemBase {
 
     static private class Intake_extension extends SubsystemBase {
     }
+
+    public void resetArm() {
+        m_extensionMotor.set(TalonFXControlMode.PercentOutput, -0.1);
+    }
+
+    public void resetArmEncoder() {
+        m_extensionMotor.setSelectedSensorPosition(0.0);
+        m_extensionMotor.set(TalonFXControlMode.Position, 0);
+    }
 }
