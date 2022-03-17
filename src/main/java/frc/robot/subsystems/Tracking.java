@@ -40,8 +40,9 @@ public class Tracking extends SubsystemBase {
 
     private boolean m_isTesting = false;
     private boolean m_isBlueAlliance = true;
-    private final int kBLUE_PIPELINE = 1;
-    private final int kRED_PIPELINE = 2;
+    private final int kBLUE_PIPELINE = 2;
+    private final int kRED_PIPELINE = 1;
+    // set to -1
     private int m_currentPipeline = -1;
 
     /** Creates a new Tracking. */
@@ -50,7 +51,7 @@ public class Tracking extends SubsystemBase {
         // https://docs.photonvision.org/en/latest/docs/programming/photonlib/creating-photon-camera.html
         // TODO Chester!
         // something like
-        m_camera = new PhotonCamera("ball_cam");
+        m_camera = new PhotonCamera("ballcam");
         m_PDH = new PowerDistribution(Constants.PDH, ModuleType.kRev);
 
         // set the appropriate pipeline for the color of the ball based
@@ -74,8 +75,8 @@ public class Tracking extends SubsystemBase {
         }
 
         // TODO remove this
-        if (true)
-            return;
+        // if (true)
+        // return;
         // This method will be called once per scheduler run
         m_currentYaw.setDouble(RobotContainer.m_drivetrainSubsystem.getGyroHeading()
                 .getDegrees());
@@ -158,7 +159,7 @@ public class Tracking extends SubsystemBase {
         m_goalYaw = m_shuffleboardTab.add("Goal Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
                 .withPosition(2, 2).withProperties(Map.of("min", -100.0, "max", 100.0)).getEntry();
-        m_pEntry = m_shuffleboardTab.add("Angle P", 0.095)
+        m_pEntry = m_shuffleboardTab.add("Angle P", 0.1)
                 .withSize(1, 1)
                 .withPosition(6, 0).getEntry();
         m_dEntry = m_shuffleboardTab.add("Angle D", 0.001)
@@ -184,6 +185,6 @@ public class Tracking extends SubsystemBase {
     }
 
     public void disableSearchLight() {
-        m_PDH.setSwitchableChannel(false);
+        m_PDH.setSwitchableChannel(true);
     }
 }

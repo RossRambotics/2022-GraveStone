@@ -149,7 +149,7 @@ public class RobotContainer {
             m_slewLeftY.reset(slew);
         }
 
-        return slew;
+        return slew / 2.0;
 
     }
 
@@ -177,10 +177,10 @@ public class RobotContainer {
             }
             m_slewLeftX.reset(slew);
         }
-        return slew;
+        return slew / 2.0;
     }
 
-    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(3.0);
+    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(6.0);
 
     private double getInputRightX() {
         double kDEAD_SLEW = 0.2;
@@ -236,21 +236,19 @@ public class RobotContainer {
 
         // map button for tracking cargo
         // create tracking cargo drive command
-        // CommandBase cmd = new DriveWhileTracking(m_drivetrainSubsystem,
-        // () -> -modifyAxis(
-        // getInputLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-        // () -> -modifyAxis(
-        // getInputLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-        // () -> -modifyAxis(
-        // getInputRightX())
-        // * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
+
+        // CommandBase cmd = new ParallelCommandGroup(
+        // new DriveWhileTracking(m_drivetrainSubsystem,
+        // () -> -getInputLeftY(),
+        // () -> -getInputLeftX(),
+        // () -> -getInputRightX()),
+        // new ExtendIntake(),
+        // new StartIntake());
         CommandBase cmd = new ParallelCommandGroup(
                 new DriveWhileTracking(m_drivetrainSubsystem,
                         () -> -getInputLeftY(),
                         () -> -getInputLeftX(),
-                        () -> -getInputRightX()),
-                new ExtendIntake(),
-                new StartIntake());
+                        () -> -getInputRightX()));
         new Button(m_controllerDriver::getLeftBumper)
                 .whenHeld(cmd, true);
 
@@ -272,7 +270,7 @@ public class RobotContainer {
         // // shootes into the lower hub at low RPM Driver
         new Button(m_controllerDriver::getYButton)
                 .whenPressed(new frc.robot.commands.Shooter.ShootLow()
-                        .withTimeout(2.0));
+                        .withTimeout(2.6));
 
         // assign lock turret
         new Button(m_controllerOperator::getYButton)
@@ -359,7 +357,7 @@ public class RobotContainer {
 
     private static double modifyAxis(double value) {
         // Deadband
-        value = deadband(value, 0.05);
+        value = deadband(value, 0.1);
 
         // Square the axis
         value = Math.copySign(value * value, value);
