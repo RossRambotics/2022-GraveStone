@@ -236,14 +236,21 @@ public class RobotContainer {
 
         // map button for tracking cargo
         // create tracking cargo drive command
-        CommandBase cmd = new DriveWhileTracking(m_drivetrainSubsystem,
-                () -> -modifyAxis(
-                        getInputLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -modifyAxis(
-                        getInputLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -modifyAxis(
-                        getInputRightX())
-                        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
+        // CommandBase cmd = new DriveWhileTracking(m_drivetrainSubsystem,
+        // () -> -modifyAxis(
+        // getInputLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        // () -> -modifyAxis(
+        // getInputLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        // () -> -modifyAxis(
+        // getInputRightX())
+        // * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
+        CommandBase cmd = new ParallelCommandGroup(
+                new DriveWhileTracking(m_drivetrainSubsystem,
+                        () -> -getInputLeftY(),
+                        () -> -getInputLeftX(),
+                        () -> -getInputRightX()),
+                new ExtendIntake(),
+                new StartIntake());
         new Button(m_controllerDriver::getLeftBumper)
                 .whenHeld(cmd, true);
 
@@ -401,7 +408,7 @@ public class RobotContainer {
         CommandBase autoCmd = null;
         autoCmd = new InstantCommand();
         autoCmd.setName("Do Nothing");
-        m_autoChooser.setDefaultOption("Do Nothing", autoCmd);
+        m_autoChooser.addOption("Do Nothing", autoCmd);
 
         autoCmd = new InstantCommand();
         autoCmd.setName("Drive");
@@ -412,7 +419,7 @@ public class RobotContainer {
         m_autoChooser.addOption("AutoPath1", autoCmd);
         autoCmd = new BackShootBall();
         autoCmd.setName("BackShootBall");
-        m_autoChooser.addOption("BackShootBall", autoCmd);
+        m_autoChooser.setDefaultOption("BackShootBall", autoCmd);
         // autoCmd = new frc.robot.commands.auto.BottomLeftNoHumanPlayer();
         // autoCmd.setName("Bottom Left No Human");
         // m_autoChooser.addOption("Bottom Left No Human", autoCmd);
@@ -434,6 +441,9 @@ public class RobotContainer {
 
         cmd = new frc.robot.commands.Indexer.DefaultIndexer();
         m_Indexer.setDefaultCommand(cmd);
+
+        cmd = new frc.robot.commands.Turret.TrackTarget();
+        m_Turret.setDefaultCommand(cmd);
 
         DataLogManager.start();
         DataLogManager.log("Log Started.");
