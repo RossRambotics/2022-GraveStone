@@ -7,6 +7,7 @@ package frc.robot.commands.Shooter;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ProxyScheduleCommand;
 import frc.robot.RobotContainer;
 
 public class ShootHigh extends CommandBase {
@@ -14,6 +15,7 @@ public class ShootHigh extends CommandBase {
     private boolean m_isShooting = false;
     private boolean m_isShooting2 = false;
     private boolean m_isCompacting = true;
+    private CommandBase m_AimCmd = null;
 
     /** Creates a new Shoot. */
     public ShootHigh() {
@@ -44,6 +46,9 @@ public class ShootHigh extends CommandBase {
         m_isShooting = false;
         m_isShooting2 = false;
         m_isCompacting = true;
+
+        m_AimCmd = new frc.robot.commands.Turret.AimTarget().withTimeout(2.0);
+        m_AimCmd.schedule();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -119,11 +124,13 @@ public class ShootHigh extends CommandBase {
     public void end(boolean interrupted) {
         RobotContainer.m_Shooter.stop();
         RobotContainer.m_Intake.stop();
+        RobotContainer.m_Turret.setYawDegreesFront(0);
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
         return false;
+
     }
 }

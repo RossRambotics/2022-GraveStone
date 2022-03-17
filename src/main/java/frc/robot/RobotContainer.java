@@ -412,13 +412,18 @@ public class RobotContainer {
         autoCmd.setName("Do Nothing");
         m_autoChooser.addOption("Do Nothing", autoCmd);
 
-        autoCmd = new InstantCommand();
-        autoCmd.setName("Drive");
-        m_autoChooser.addOption("Drive", autoCmd);
+        autoCmd = new frc.robot.commands.auto.BackShootBall2_1();
+        autoCmd.setName("BackShootBall2_1");
+        m_autoChooser.addOption("BackShootBall2_1", autoCmd);
 
-        autoCmd = new BackAndShoot();
-        autoCmd.setName("AutoPath1");
-        m_autoChooser.addOption("AutoPath1", autoCmd);
+        autoCmd = new frc.robot.commands.auto.BackShootBall2_2();
+        autoCmd.setName("BackShootBall2_2");
+        m_autoChooser.addOption("BackShootBall2_2", autoCmd);
+
+        autoCmd = new frc.robot.commands.auto.BackShootBall2_3();
+        autoCmd.setName("BackShootBall2_3");
+        m_autoChooser.addOption("BackShootBall2_3", autoCmd);
+
         autoCmd = new BackShootBall();
         autoCmd.setName("BackShootBall");
         m_autoChooser.setDefaultOption("BackShootBall", autoCmd);
@@ -444,8 +449,8 @@ public class RobotContainer {
         cmd = new frc.robot.commands.Indexer.DefaultIndexer();
         m_Indexer.setDefaultCommand(cmd);
 
-        cmd = new frc.robot.commands.Turret.TrackTarget();
-        m_Turret.setDefaultCommand(cmd);
+        // cmd = new frc.robot.commands.Turret.TrackTarget();
+        // m_Turret.setDefaultCommand(cmd);
 
         DataLogManager.start();
         DataLogManager.log("Log Started.");
