@@ -20,8 +20,7 @@ public class ShootHighFromHub extends CommandBase {
     public ShootHighFromHub() {
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(RobotContainer.m_Shooter, RobotContainer.m_Indexer,
-                RobotContainer.m_Intake, RobotContainer.m_Intake.m_roller,
-                RobotContainer.m_Turret);
+                RobotContainer.m_Intake, RobotContainer.m_Intake.m_roller);
     }
 
     // Called when the command is initially scheduled.
@@ -43,7 +42,7 @@ public class ShootHighFromHub extends CommandBase {
         RobotContainer.m_Intake.stop();
         RobotContainer.m_Shooter.shootHighFromHub();
         RobotContainer.m_Turret.setYawDegreesFront(0);
-        RobotContainer.m_Turret.setPitchDegrees(5.0);
+        RobotContainer.m_Turret.setPitchDegrees(3.5);
 
         m_isShooting = false;
         m_isShooting2 = false;
@@ -71,7 +70,7 @@ public class ShootHighFromHub extends CommandBase {
             return;
         }
 
-        if (!m_isShooting && RobotContainer.m_Shooter.isSpunUp()) {
+        if (!m_isShooting) {
             m_isShooting = true;
             m_isShooting2 = true;
             RobotContainer.m_Indexer.shoot();

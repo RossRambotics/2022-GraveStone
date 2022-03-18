@@ -426,6 +426,10 @@ public class RobotContainer {
         autoCmd.setName("BackShootBall2_3");
         m_autoChooser.addOption("BackShootBall2_3", autoCmd);
 
+        autoCmd = new frc.robot.commands.auto.TestShort();
+        autoCmd.setName("Test Short");
+        m_autoChooser.addOption("Test Short", autoCmd);
+
         autoCmd = new BackShootBall();
         autoCmd.setName("BackShootBall");
         m_autoChooser.setDefaultOption("BackShootBall", autoCmd);

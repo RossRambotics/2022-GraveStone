@@ -47,7 +47,7 @@ public class BackShootBall2_1 extends CommandBase {
 
         // let's the theta controller know that it is a circle (ie, 180 = -180)
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
-        m_driveSub.zeroGyroscope();
+        // m_driveSub.zeroGyroscope();
 
         // use this to automatically set
         // the robot position on the field to match the start of the trajectory

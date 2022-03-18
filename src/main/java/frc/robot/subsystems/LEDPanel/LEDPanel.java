@@ -63,7 +63,7 @@ public class LEDPanel extends SubsystemBase {
         phraseVals[10] = "  Schuler Family";
         phraseVals[11] = "  Ross Local Schools";
         phraseVals[12] = "  Happy Birthday to Carrie!";
-        phraseVals[13] = "  And Happy Saint Patricks Day!";
+        phraseVals[13] = "  Ross Local Schools";
 
         pColors[0] = Color.kYellow;
         pColors[1] = Color.kBlue;

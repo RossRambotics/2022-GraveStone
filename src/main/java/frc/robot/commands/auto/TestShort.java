@@ -26,11 +26,11 @@ import frc.robot.commands.Turret.TrackTarget;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.RobotContainer;
 
-public class BackShootBall2_3 extends CommandBase {
+public class TestShort extends CommandBase {
     private DrivetrainSubsystem m_driveSub = null;
 
     /** Creates a new BottomRightHumanPlayer. */
-    public BackShootBall2_3() {
+    public TestShort() {
         m_driveSub = RobotContainer.m_drivetrainSubsystem;
         // Use addRequirements() here to declare subsystem dependencies.
     }
@@ -38,7 +38,7 @@ public class BackShootBall2_3 extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        PathPlannerTrajectory examplePath = PathPlanner.loadPath("BackShootBall2_3", 2, 1);
+        PathPlannerTrajectory examplePath = PathPlanner.loadPath("Short", 2, 1);
 
         TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
                 Math.PI, Math.PI);

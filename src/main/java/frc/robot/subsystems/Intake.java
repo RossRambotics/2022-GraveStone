@@ -241,7 +241,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void resetArm() {
-        m_extensionMotor.set(TalonFXControlMode.PercentOutput, -0.1);
+        m_extensionMotor.set(TalonFXControlMode.PercentOutput, -0.2);
     }
 
     public void resetArmEncoder() {

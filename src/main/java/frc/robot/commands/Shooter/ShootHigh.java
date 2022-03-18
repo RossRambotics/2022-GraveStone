@@ -21,7 +21,7 @@ public class ShootHigh extends CommandBase {
     public ShootHigh() {
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(RobotContainer.m_Shooter, RobotContainer.m_Indexer,
-                RobotContainer.m_Intake, RobotContainer.m_Intake.m_roller);
+                RobotContainer.m_Intake, RobotContainer.m_Intake.m_roller, RobotContainer.m_Turret);
     }
 
     // Called when the command is initially scheduled.

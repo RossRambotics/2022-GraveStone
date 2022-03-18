@@ -365,7 +365,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void shootHighFromHub() {
-        double targetVelocity_UnitsPer100ms = 2000.0 * 2048.0 / 600.0;
+        double targetVelocity_UnitsPer100ms = 1700.0 * 2048.0 / 600.0;
 
         m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
         m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
