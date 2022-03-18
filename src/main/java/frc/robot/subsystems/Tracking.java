@@ -53,6 +53,7 @@ public class Tracking extends SubsystemBase {
         // something like
         m_camera = new PhotonCamera("ballcam");
         m_PDH = new PowerDistribution(Constants.PDH, ModuleType.kRev);
+        m_camera.setDriverMode(true);
 
         // set the appropriate pipeline for the color of the ball based
         // createShuffleBoardTab();
@@ -62,17 +63,18 @@ public class Tracking extends SubsystemBase {
     @Override
     public void periodic() {
         // make sure we are using the appropriate vision pipeline
-        if (DriverStation.getAlliance() != DriverStation.Alliance.Invalid && m_currentPipeline == -1) {
-            if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
-                m_currentPipeline = kBLUE_PIPELINE;
-                m_camera.setPipelineIndex(kBLUE_PIPELINE);
-                DataLogManager.log("Tracking:  We are BLUE alliance.");
-            } else {
-                m_currentPipeline = kRED_PIPELINE;
-                m_camera.setPipelineIndex(kRED_PIPELINE);
-                DataLogManager.log("Tracking: We are RED alliance.");
-            }
-        }
+        // if (DriverStation.getAlliance() != DriverStation.Alliance.Invalid &&
+        // m_currentPipeline == -1) {
+        // if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+        // m_currentPipeline = kBLUE_PIPELINE;
+        // m_camera.setPipelineIndex(kBLUE_PIPELINE);
+        // DataLogManager.log("Tracking: We are BLUE alliance.");
+        // } else {
+        // m_currentPipeline = kRED_PIPELINE;
+        // m_camera.setPipelineIndex(kRED_PIPELINE);
+        // DataLogManager.log("Tracking: We are RED alliance.");
+        // }
+        // }
 
         // TODO remove this
         // if (true)

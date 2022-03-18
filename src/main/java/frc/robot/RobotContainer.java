@@ -408,31 +408,22 @@ public class RobotContainer {
         command.setName("Example Path");
         commands.add(command);
 
+        CommandBase cmd = new frc.robot.commands.auto.TestShort();
+        commands.add(cmd);
+
         // Add auto routines
         CommandBase autoCmd = null;
         autoCmd = new InstantCommand();
         autoCmd.setName("Do Nothing");
         m_autoChooser.addOption("Do Nothing", autoCmd);
 
-        autoCmd = new frc.robot.commands.auto.BackShootBall2_1();
-        autoCmd.setName("BackShootBall2_1");
-        m_autoChooser.addOption("BackShootBall2_1", autoCmd);
-
-        autoCmd = new frc.robot.commands.auto.BackShootBall2_2();
-        autoCmd.setName("BackShootBall2_2");
-        m_autoChooser.addOption("BackShootBall2_2", autoCmd);
-
-        autoCmd = new frc.robot.commands.auto.BackShootBall2_3();
-        autoCmd.setName("BackShootBall2_3");
-        m_autoChooser.addOption("BackShootBall2_3", autoCmd);
-
         autoCmd = new frc.robot.commands.auto.TestShort();
         autoCmd.setName("Test Short");
-        m_autoChooser.addOption("Test Short", autoCmd);
+        m_autoChooser.setDefaultOption("Test Short", autoCmd);
 
         autoCmd = new BackShootBall();
         autoCmd.setName("BackShootBall");
-        m_autoChooser.setDefaultOption("BackShootBall", autoCmd);
+        m_autoChooser.addOption("BackShootBall", autoCmd);
         // autoCmd = new frc.robot.commands.auto.BottomLeftNoHumanPlayer();
         // autoCmd.setName("Bottom Left No Human");
         // m_autoChooser.addOption("Bottom Left No Human", autoCmd);
@@ -446,7 +437,7 @@ public class RobotContainer {
         this.m_Targeting.createShuffleBoardTab();
 
         // m_Turret.setDefaultCommand(new TrackTarget());
-        CommandBase cmd = new frc.robot.commands.Intake.DefCommand();
+        cmd = new frc.robot.commands.Intake.DefCommand();
 
         cmd.setName("Default RetractIntake Cmd");
         cmd.addRequirements(m_Intake);

@@ -38,40 +38,25 @@ public class TestShort extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        PathPlannerTrajectory examplePath = PathPlanner.loadPath("Short", 2, 1);
 
-        TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
-                Math.PI, Math.PI);
-        ProfiledPIDController thetaController = new ProfiledPIDController(
-                -4, 0, 0, kThetaControllerConstraints);
+        m_driveSub.zeroGyroscope();
+        CommandBase cmd = new frc.robot.commands.DefaultDriveCommand(
+                RobotContainer.m_drivetrainSubsystem,
+                () -> {
+                    return -0.75;
+                },
+                () -> {
+                    return 0;
+                },
+                () -> {
+                    return 0;
+                });
 
-        // let's the theta controller know that it is a circle (ie, 180 = -180)
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
-        // m_driveSub.zeroGyroscope();
+        cmd = cmd.withTimeout(2.5);
 
-        // use this to automatically set
-        // the robot position on the field to match the start of the trajectory
-        PathPlannerState start = examplePath.getInitialState();
-        m_driveSub.getOdometry().resetPosition(start.poseMeters,
-                m_driveSub.getGyroscopeRotation());
-
-        PPSwerveControllerCommand runPath = new PPSwerveControllerCommand(
-                examplePath,
-                m_driveSub::getOdometryPose,
-                m_driveSub.getKinematics(),
-                // Position controllers
-                new PIDController(0.2, 0, 0),
-                new PIDController(0.2, 0, 0),
-                thetaController,
-                m_driveSub::setSwerveModulesStates,
-                m_driveSub);
-
-        SequentialCommandGroup command = new SequentialCommandGroup(new ExtendIntake().withTimeout(1),
-                new StartIntake().withTimeout(1), runPath, new ShootHigh().withTimeout(5),
-                new StopIntake().withTimeout(1), new RetractIntake().withTimeout(1));
-
-        // ParallelCommandGroup parallelgroup = new ParallelCommandGroup(command, new
-        // TrackTarget());
+        SequentialCommandGroup command = new SequentialCommandGroup(new ExtendIntake().withTimeout(0.1),
+                new StartIntake().withTimeout(0.1), cmd, new ShootHigh().withTimeout(5),
+                new StopIntake().withTimeout(0.1), new RetractIntake().withTimeout(1));
 
         command.schedule();
 
