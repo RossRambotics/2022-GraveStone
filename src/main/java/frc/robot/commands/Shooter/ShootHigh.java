@@ -17,6 +17,7 @@ public class ShootHigh extends CommandBase {
     private boolean m_isCompacting = true;
     private CommandBase m_AimCmd = null;
 
+    // extra
     /** Creates a new Shoot. */
     public ShootHigh() {
         // Use addRequirements() here to declare subsystem dependencies.
