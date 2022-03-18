@@ -237,13 +237,6 @@ public class RobotContainer {
         // map button for tracking cargo
         // create tracking cargo drive command
 
-        // CommandBase cmd = new ParallelCommandGroup(
-        // new DriveWhileTracking(m_drivetrainSubsystem,
-        // () -> -getInputLeftY(),
-        // () -> -getInputLeftX(),
-        // () -> -getInputRightX()),
-        // new ExtendIntake(),
-        // new StartIntake());
         CommandBase cmd = new ParallelCommandGroup(
                 new DriveWhileTracking(m_drivetrainSubsystem,
                         () -> -getInputLeftY(),
@@ -272,6 +265,20 @@ public class RobotContainer {
                 .whenPressed(new frc.robot.commands.Shooter.ShootLow()
                         .withTimeout(2.6));
 
+        // shoots into the high goal from hub
+        new Button(m_controllerDriver::getXButton)
+                .whenPressed(new frc.robot.commands.Shooter.ShootHighFromHub()
+                        .withTimeout(5.0));
+
+        // // shoot
+        new Button(m_controllerDriver::getRightBumperPressed)
+                .whenPressed(new frc.robot.commands.Shooter.ShootHigh()
+                        .withTimeout(5));
+
+        /**
+         * Operator controls
+         */
+
         // assign lock turret
         new Button(m_controllerOperator::getYButton)
                 .whenPressed(new frc.robot.commands.Turret.LockTurret());
@@ -279,11 +286,6 @@ public class RobotContainer {
         // assign unlock turret
         new Button(m_controllerOperator::getXButton)
                 .whenPressed(new frc.robot.commands.Turret.UnlockTurret());
-
-        // // shoot
-        new Button(m_controllerDriver::getRightBumperPressed)
-                .whenPressed(new frc.robot.commands.Shooter.ShootHigh()
-                        .withTimeout(5));
 
         new Button(m_controllerOperator::getAButton)
                 .whenPressed(new frc.robot.commands.Intake.ResetIntake());

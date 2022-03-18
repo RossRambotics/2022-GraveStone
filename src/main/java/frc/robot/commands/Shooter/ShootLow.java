@@ -35,12 +35,12 @@ public class ShootLow extends CommandBase {
     public void execute() {
         // pause briefly to allow turret to center
         // allow shooter to spin up
-        if (!m_timer.hasElapsed(0.75)) {
+        if (!m_timer.hasElapsed(0.2)) {
             return;
         }
         RobotContainer.m_Indexer.shoot();
 
-        if (!m_timer.hasElapsed(0.8)) {
+        if (!m_timer.hasElapsed(0.5)) {
             RobotContainer.m_Intake.start();
         }
     }
