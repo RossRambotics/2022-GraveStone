@@ -58,6 +58,7 @@ public class Shooter extends SubsystemBase {
     private double m_BackRPM_shooter = 0;
     private double m_distance = 0;
     private double m_interpolated_RPM = 0;
+    private double m_goalPitch = 0;
 
     private FiringCalculator m_firingCalculator = new FiringCalculator();
     private boolean m_bTestMode = false;
@@ -165,10 +166,12 @@ public class Shooter extends SubsystemBase {
             m_goalRPM.setDouble(fs.m_speed);
             m_diffBackRPM.setDouble(m_BackRPM_shooter - m_goalRPM.getDouble(0));
             m_diffFrontRPM.setDouble(m_FrontRPM_shooter - m_goalRPM.getDouble(0));
+            m_goalPitch = fs.m_pitch;
 
             // update Turret pitch for firing solution unless in test mode
             if (!RobotContainer.m_Turret.isTestMode()) {
-
+                // TODO test removing this and adding it to the start method below (currently
+                // commented out)
                 RobotContainer.m_Turret.setPitchDegrees(fs.m_pitch);
             }
         }
@@ -307,6 +310,10 @@ public class Shooter extends SubsystemBase {
             m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms * (100.0 + spin) / 100.0);
             m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms * Math.abs(100.0 - spin) / 100.0);
         }
+
+        // TODO Test this
+        // set the pitch
+        // RobotContainer.m_Turret.setPitchDegrees(m_goalPitch);
     }
 
     public void stop() {
@@ -355,6 +362,13 @@ public class Shooter extends SubsystemBase {
         }
 
         return false;
+    }
+
+    public void shootHighFromHub() {
+        double targetVelocity_UnitsPer100ms = 1700.0 * 2048.0 / 600.0;
+
+        m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
+        m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);
     }
 
 }

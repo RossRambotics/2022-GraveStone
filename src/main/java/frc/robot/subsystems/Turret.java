@@ -56,7 +56,10 @@ public class Turret extends SubsystemBase {
     WPI_TalonFX m_yawMotor = new WPI_TalonFX(Constants.TURRET_MOTOR, "usb");
 
     // pitch related member variables
-    private final double kPITCH_TICKS_PER_DEGREE = (20 * 2048.0) / 360.0; // TODO update with gear ratio
+    // private final double kPITCH_TICKS_PER_DEGREE = (20 * 2048.0) / 360.0; //
+    // 113.77777
+    private final double kPITCH_TICKS_PER_DEGREE = 113.7777 * 16 / 10; // we switched from 10:1 gearbox to 16:1
+                                                                       // 182.04432
     private NetworkTableEntry m_currentPitch = null; // updated by calaculating it back from the turret motor encoder
     private NetworkTableEntry m_goalPitch = null;
     private NetworkTableEntry m_testTargetPitch = null;
@@ -432,6 +435,10 @@ public class Turret extends SubsystemBase {
         c.setName("Track Target");
         commands.add(c);
 
+        c = new frc.robot.commands.Turret.AcquireFront();
+        c.setName("Acquire FRont");
+        commands.add(c);
+
         m_testTargetYaw = m_shuffleboardTab.add("Test Target Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(3, 1)
                 .withPosition(2, 0).withProperties(Map.of("min", -100.0, "max", 100.0)).getEntry();
@@ -492,7 +499,7 @@ public class Turret extends SubsystemBase {
                 .withSize(4, 1)
                 .withPosition(2, 1).withProperties(Map.of("min", -100, "max", 100)).getEntry();
 
-        m_tuning_offset_yaw = RobotContainer.m_TuningTab.add("Tune Offset Yaw", 0)
+        m_tuning_offset_yaw = RobotContainer.m_TuningTab.add("Tune Offset Yaw", -0.50)
                 .withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
                 .withPosition(2, 2).withProperties(Map.of("min", -10, "max", 10)).getEntry();

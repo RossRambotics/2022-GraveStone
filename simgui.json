@@ -2,7 +2,7 @@
   "HALProvider": {
     "Addressable LEDs": {
       "0": {
-        "columns": 48,
+        "columns": 50,
         "order": 1,
         "serpentine": true
       },
@@ -40,9 +40,18 @@
       "/LiveWindow/Targeting": "Subsystem",
       "/LiveWindow/Tracking": "Subsystem",
       "/LiveWindow/Turret": "Subsystem",
+      "/LiveWindow/Ungrouped/PIDController[10]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[11]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[12]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[6]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[7]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[8]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[9]": "PIDController",
       "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
       "/LiveWindow/Ungrouped/Talon FX [31]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [32]": "Motor Controller",
@@ -77,6 +86,7 @@
       "/Shuffleboard/Sub.Shooter/Commands/Update PIDF": "Command",
       "/Shuffleboard/Sub.Tracking/Commands/Test Mode": "Command",
       "/Shuffleboard/Sub.Tracking/Commands/Update PIDF": "Command",
+      "/Shuffleboard/Sub.Turret/Commands/Acquire FRont": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Enable Pitch": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Enable Yaw": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Lock Turret": "Command",

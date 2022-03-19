@@ -7,22 +7,20 @@ package frc.robot.commands.Shooter;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.ProxyScheduleCommand;
 import frc.robot.RobotContainer;
 
-public class ShootHigh extends CommandBase {
+public class ShootHighFromHub extends CommandBase {
     private Timer m_timer = new Timer();
     private boolean m_isShooting = false;
     private boolean m_isShooting2 = false;
     private boolean m_isCompacting = true;
     private CommandBase m_AimCmd = null;
 
-    // extra
     /** Creates a new Shoot. */
-    public ShootHigh() {
+    public ShootHighFromHub() {
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(RobotContainer.m_Shooter, RobotContainer.m_Indexer,
-                RobotContainer.m_Intake, RobotContainer.m_Intake.m_roller, RobotContainer.m_Turret);
+                RobotContainer.m_Intake, RobotContainer.m_Intake.m_roller);
     }
 
     // Called when the command is initially scheduled.
@@ -30,7 +28,7 @@ public class ShootHigh extends CommandBase {
     public void initialize() {
         m_timer.reset();
         m_timer.start();
-        DataLogManager.log("ShootHigh Initialize:" +
+        DataLogManager.log("ShootHighFromHub Initialize:" +
                 " Target Yaw: " + RobotContainer.m_Targeting.getTargetOffsetYaw() +
                 " Target Distance: " + RobotContainer.m_Targeting.getTargetDistance() +
                 " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
@@ -42,7 +40,9 @@ public class ShootHigh extends CommandBase {
                 " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
         RobotContainer.m_Intake.retract();
         RobotContainer.m_Intake.stop();
-        RobotContainer.m_Shooter.start();
+        RobotContainer.m_Shooter.shootHighFromHub();
+        RobotContainer.m_Turret.setYawDegreesFront(0);
+        RobotContainer.m_Turret.setPitchDegrees(3.5);
 
         m_isShooting = false;
         m_isShooting2 = false;
@@ -70,14 +70,14 @@ public class ShootHigh extends CommandBase {
             return;
         }
 
-        if (!m_isShooting && RobotContainer.m_Shooter.isSpunUp()) {
+        if (!m_isShooting) {
             m_isShooting = true;
             m_isShooting2 = true;
             RobotContainer.m_Indexer.shoot();
             m_timer.reset();
             m_timer.start();
 
-            DataLogManager.log("ShootHigh Shoot1:" +
+            DataLogManager.log("ShootHighFromHub Shoot1:" +
                     " Target Yaw: " + RobotContainer.m_Targeting.getTargetOffsetYaw() +
                     " Target Distance: " + RobotContainer.m_Targeting.getTargetDistance() +
                     " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +
@@ -106,7 +106,7 @@ public class ShootHigh extends CommandBase {
 
         RobotContainer.m_Indexer.start();
 
-        DataLogManager.log("ShootHigh Shoot2:" +
+        DataLogManager.log("ShootHighFromHub Shoot2:" +
                 " Target Yaw: " + RobotContainer.m_Targeting.getTargetOffsetYaw() +
                 " Target Distance: " + RobotContainer.m_Targeting.getTargetDistance() +
                 " Turret Pitch: " + RobotContainer.m_Turret.getPitch() +

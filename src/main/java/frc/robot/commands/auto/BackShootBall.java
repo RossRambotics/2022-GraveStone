@@ -27,66 +27,69 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.RobotContainer;
 
 public class BackShootBall extends CommandBase {
-  private DrivetrainSubsystem m_driveSub = null;
+    private DrivetrainSubsystem m_driveSub = null;
 
-  /** Creates a new BottomRightHumanPlayer. */
-  public BackShootBall() {
-    m_driveSub = RobotContainer.m_drivetrainSubsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
-  }
+    /** Creates a new BottomRightHumanPlayer. */
+    public BackShootBall() {
+        m_driveSub = RobotContainer.m_drivetrainSubsystem;
+        // Use addRequirements() here to declare subsystem dependencies.
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    PathPlannerTrajectory examplePath = PathPlanner.loadPath("BackShootBall", 2, 1);
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        PathPlannerTrajectory examplePath = PathPlanner.loadPath("BackShootBall", 2, 1);
 
-    TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
-        Math.PI, Math.PI);
-    ProfiledPIDController thetaController = new ProfiledPIDController(
-        -4, 0, 0, kThetaControllerConstraints);
+        TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
+                Math.PI, Math.PI);
+        ProfiledPIDController thetaController = new ProfiledPIDController(
+                -4, 0, 0, kThetaControllerConstraints);
 
-    // let's the theta controller know that it is a circle (ie, 180 = -180)
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    m_driveSub.zeroGyroscope();
+        // let's the theta controller know that it is a circle (ie, 180 = -180)
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        m_driveSub.zeroGyroscope();
 
-    // use this to automatically set
-    // the robot position on the field to match the start of the trajectory
-    PathPlannerState start = examplePath.getInitialState();
-    m_driveSub.getOdometry().resetPosition(start.poseMeters,
-        m_driveSub.getGyroscopeRotation());
+        // use this to automatically set
+        // the robot position on the field to match the start of the trajectory
+        PathPlannerState start = examplePath.getInitialState();
+        m_driveSub.getOdometry().resetPosition(start.poseMeters,
+                m_driveSub.getGyroscopeRotation());
 
-    PPSwerveControllerCommand runPath = new PPSwerveControllerCommand(
-        examplePath,
-        m_driveSub::getOdometryPose,
-        m_driveSub.getKinematics(),
-        // Position controllers
-        new PIDController(0.2, 0, 0),
-        new PIDController(0.2, 0, 0),
-        thetaController,
-        m_driveSub::setSwerveModulesStates,
-        m_driveSub);
+        PPSwerveControllerCommand runPath = new PPSwerveControllerCommand(
+                examplePath,
+                m_driveSub::getOdometryPose,
+                m_driveSub.getKinematics(),
+                // Position controllers
+                new PIDController(0.2, 0, 0),
+                new PIDController(0.2, 0, 0),
+                thetaController,
+                m_driveSub::setSwerveModulesStates,
+                m_driveSub);
 
-      SequentialCommandGroup command = new SequentialCommandGroup(new ExtendIntake().withTimeout(1), new StartIntake().withTimeout(1), runPath, new ShootHigh().withTimeout(5), new StopIntake().withTimeout(1), new RetractIntake().withTimeout(1));
+        SequentialCommandGroup command = new SequentialCommandGroup(new ExtendIntake().withTimeout(1),
+                new StartIntake().withTimeout(1), runPath, new ShootHigh().withTimeout(5),
+                new StopIntake().withTimeout(1), new RetractIntake().withTimeout(1));
 
-      ParallelCommandGroup parallelgroup = new ParallelCommandGroup(command, new TrackTarget());
+        // ParallelCommandGroup parallelgroup = new ParallelCommandGroup(command, new
+        // TrackTarget());
 
-      parallelgroup.schedule();
+        command.schedule();
 
-  }
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

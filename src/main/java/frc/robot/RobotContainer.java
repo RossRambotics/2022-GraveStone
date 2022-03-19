@@ -90,7 +90,7 @@ public class RobotContainer {
     static public final RioLEDs m_RioLEDs = new RioLEDs();
 
     static public final LEDStrip m_LEDStrip = new LEDStrip();
-    // static public final LEDPanel m_LEDPanel = new LEDPanel();
+    static public final LEDPanel m_LEDPanel = new LEDPanel();
 
     private final XboxController m_controllerDriver = new XboxController(0);
     private final XboxController m_controllerOperator = new XboxController(1);
@@ -180,7 +180,7 @@ public class RobotContainer {
         return slew;
     }
 
-    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(3.0);
+    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(6.0);
 
     private double getInputRightX() {
         double kDEAD_SLEW = 0.2;
@@ -236,14 +236,12 @@ public class RobotContainer {
 
         // map button for tracking cargo
         // create tracking cargo drive command
-        CommandBase cmd = new DriveWhileTracking(m_drivetrainSubsystem,
-                () -> -modifyAxis(
-                        getInputLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -modifyAxis(
-                        getInputLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-                () -> -modifyAxis(
-                        getInputRightX())
-                        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
+
+        CommandBase cmd = new ParallelCommandGroup(
+                new DriveWhileTracking(m_drivetrainSubsystem,
+                        () -> -getInputLeftY(),
+                        () -> -getInputLeftX(),
+                        () -> -getInputRightX()));
         new Button(m_controllerDriver::getLeftBumper)
                 .whenHeld(cmd, true);
 
@@ -265,7 +263,21 @@ public class RobotContainer {
         // // shootes into the lower hub at low RPM Driver
         new Button(m_controllerDriver::getYButton)
                 .whenPressed(new frc.robot.commands.Shooter.ShootLow()
-                        .withTimeout(2.0));
+                        .withTimeout(2.6));
+
+        // shoots into the high goal from hub
+        new Button(m_controllerDriver::getXButton)
+                .whenPressed(new frc.robot.commands.Shooter.ShootHighFromHub()
+                        .withTimeout(5.0));
+
+        // // shoot
+        new Button(m_controllerDriver::getRightBumperPressed)
+                .whenPressed(new frc.robot.commands.Shooter.ShootHigh()
+                        .withTimeout(5));
+
+        /**
+         * Operator controls
+         */
 
         // assign lock turret
         new Button(m_controllerOperator::getYButton)
@@ -275,13 +287,12 @@ public class RobotContainer {
         new Button(m_controllerOperator::getXButton)
                 .whenPressed(new frc.robot.commands.Turret.UnlockTurret());
 
-        // // shoot
-        new Button(m_controllerDriver::getRightBumperPressed)
-                .whenPressed(new frc.robot.commands.Shooter.ShootHigh()
-                        .withTimeout(5));
-
         new Button(m_controllerOperator::getAButton)
-                .whenPressed(new AutoDriveWhileTracking(m_drivetrainSubsystem, null, null, null));
+                .whenPressed(new frc.robot.commands.Intake.ResetIntake());
+
+        // new Button(m_controllerOperator::getAButton)
+        // .whenPressed(new AutoDriveWhileTracking(m_drivetrainSubsystem, null, null,
+        // null));
 
         // // climb goes up operator
         // new Button(m_controllerOperator::getAButtonPressed)
@@ -352,12 +363,12 @@ public class RobotContainer {
 
     private static double modifyAxis(double value) {
         // Deadband
-        value = deadband(value, 0.05);
+        value = deadband(value, 0.1);
 
         // Square the axis
         value = Math.copySign(value * value, value);
 
-        return value;
+        return value * 0.60;
     }
 
     private SendableChooser m_autoChooser = new SendableChooser();
@@ -397,19 +408,26 @@ public class RobotContainer {
         command.setName("Example Path");
         commands.add(command);
 
+        CommandBase cmd = new frc.robot.commands.auto.TestShort();
+        commands.add(cmd);
+
+        cmd = new frc.robot.commands.auto.HubShotBackShot();
+        commands.add(cmd);
+
         // Add auto routines
         CommandBase autoCmd = null;
         autoCmd = new InstantCommand();
         autoCmd.setName("Do Nothing");
-        m_autoChooser.setDefaultOption("Do Nothing", autoCmd);
+        m_autoChooser.addOption("Do Nothing", autoCmd);
 
-        autoCmd = new InstantCommand();
-        autoCmd.setName("Drive");
-        m_autoChooser.addOption("Drive", autoCmd);
+        autoCmd = new frc.robot.commands.auto.TestShort();
+        autoCmd.setName("Test Short");
+        m_autoChooser.addOption("Test Short", autoCmd);
 
-        autoCmd = new BackAndShoot();
-        autoCmd.setName("AutoPath1");
-        m_autoChooser.addOption("AutoPath1", autoCmd);
+        autoCmd = new frc.robot.commands.auto.HubShotBackShot();
+        autoCmd.setName("Auto Hub Shot");
+        m_autoChooser.setDefaultOption("Hub Shot", autoCmd);
+
         autoCmd = new BackShootBall();
         autoCmd.setName("BackShootBall");
         m_autoChooser.addOption("BackShootBall", autoCmd);
@@ -426,7 +444,7 @@ public class RobotContainer {
         this.m_Targeting.createShuffleBoardTab();
 
         // m_Turret.setDefaultCommand(new TrackTarget());
-        CommandBase cmd = new frc.robot.commands.Intake.DefCommand();
+        cmd = new frc.robot.commands.Intake.DefCommand();
 
         cmd.setName("Default RetractIntake Cmd");
         cmd.addRequirements(m_Intake);
@@ -434,6 +452,9 @@ public class RobotContainer {
 
         cmd = new frc.robot.commands.Indexer.DefaultIndexer();
         m_Indexer.setDefaultCommand(cmd);
+
+        // cmd = new frc.robot.commands.Turret.TrackTarget();
+        // m_Turret.setDefaultCommand(cmd);
 
         DataLogManager.start();
         DataLogManager.log("Log Started.");

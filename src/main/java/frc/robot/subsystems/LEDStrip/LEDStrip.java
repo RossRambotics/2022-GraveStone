@@ -12,7 +12,7 @@ import frc.robot.RobotContainer;
 public class LEDStrip extends SubsystemBase {
 
     private AddressableLEDBuffer m_ledBuffer = null;
-    static private final int kLED_COLUMNS = 127;
+    static private final int kLED_COLUMNS = 125;
     // static private final int kLED_COLUMNS = 2;
     static private final int kLED_ROWS = 1;
     // number of LEDs

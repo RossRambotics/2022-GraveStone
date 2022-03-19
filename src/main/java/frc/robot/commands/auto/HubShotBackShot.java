@@ -19,16 +19,19 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.commands.Intake.ExtendIntake;
 import frc.robot.commands.Intake.RetractIntake;
+import frc.robot.commands.Intake.StartIntake;
+import frc.robot.commands.Intake.StopIntake;
 import frc.robot.commands.Shooter.ShootHigh;
+import frc.robot.commands.Shooter.ShootLow;
 import frc.robot.commands.Turret.TrackTarget;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.RobotContainer;
 
-public class BackAndShoot extends CommandBase {
+public class HubShotBackShot extends CommandBase {
     private DrivetrainSubsystem m_driveSub = null;
 
     /** Creates a new BottomRightHumanPlayer. */
-    public BackAndShoot() {
+    public HubShotBackShot() {
         m_driveSub = RobotContainer.m_drivetrainSubsystem;
         // Use addRequirements() here to declare subsystem dependencies.
     }
@@ -36,40 +39,29 @@ public class BackAndShoot extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        PathPlannerTrajectory examplePath = PathPlanner.loadPath("BackAndShoot", 2, 1);
 
-        TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
-                Math.PI, Math.PI);
-        ProfiledPIDController thetaController = new ProfiledPIDController(
-                -4, 0, 0, kThetaControllerConstraints);
-
-        // let's the theta controller know that it is a circle (ie, 180 = -180)
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
         m_driveSub.zeroGyroscope();
+        CommandBase cmd = new frc.robot.commands.DefaultDriveCommand(
+                RobotContainer.m_drivetrainSubsystem,
+                () -> {
+                    return -0.75;
+                },
+                () -> {
+                    return 0;
+                },
+                () -> {
+                    return 0;
+                });
 
-        // use this to automatically set
-        // the robot position on the field to match the start of the trajectory
-        PathPlannerState start = examplePath.getInitialState();
-        m_driveSub.getOdometry().resetPosition(start.poseMeters,
-                m_driveSub.getGyroscopeRotation());
+        cmd = cmd.withTimeout(2.5);
 
-        PPSwerveControllerCommand runPath = new PPSwerveControllerCommand(
-                examplePath,
-                m_driveSub::getOdometryPose,
-                m_driveSub.getKinematics(),
-                // Position controllers
-                new PIDController(0.2, 0, 0),
-                new PIDController(0.2, 0, 0),
-                thetaController,
-                m_driveSub::setSwerveModulesStates,
-                m_driveSub);
+        SequentialCommandGroup command = new SequentialCommandGroup(
+                new ShootLow().withTimeout(2.6),
+                new ExtendIntake().withTimeout(0.1),
+                new StartIntake().withTimeout(0.1), cmd, new ShootHigh().withTimeout(5),
+                new StopIntake().withTimeout(0.1), new RetractIntake().withTimeout(1));
 
-        SequentialCommandGroup command = new SequentialCommandGroup(new ExtendIntake().withTimeout(1), runPath,
-                new ShootHigh().withTimeout(5), new RetractIntake().withTimeout(1));
-
-        ParallelCommandGroup parallelgroup = new ParallelCommandGroup(command, new TrackTarget());
-
-        parallelgroup.schedule();
+        command.schedule();
 
     }
 

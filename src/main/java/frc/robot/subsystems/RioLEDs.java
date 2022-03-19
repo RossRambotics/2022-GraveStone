@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.subsystems.LEDPanel.LEDPanel;
 import frc.robot.subsystems.LEDStrip.LEDStrip;
 
@@ -16,7 +18,8 @@ import frc.robot.subsystems.LEDStrip.LEDStrip;
  */
 public class RioLEDs {
     static public final AddressableLED m_RioLEDs = new AddressableLED(8); // PWM port 8
-    static public final int m_noLEDs = LEDStrip.m_noLEDs + LEDPanel.m_noLEDs;
+    static public final int m_simLEDAdjust = 16 - (LEDStrip.m_noLEDs % 16);
+    static public final int m_noLEDs = LEDStrip.m_noLEDs + LEDPanel.m_noLEDs + m_simLEDAdjust;
     static public final AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(m_noLEDs);
     static public final int m_LEDStripOffset = 0;
     static public final int m_LEDPanelOffset = m_LEDStripOffset + LEDStrip.m_noLEDs;
@@ -34,7 +37,14 @@ public class RioLEDs {
     }
 
     public void setDataPanel(AddressableLEDBuffer buff) {
-        for (int c1 = m_LEDPanelOffset, c2 = 0; c2 < LEDPanel.m_noLEDs; c1++, c2++) {
+        int firstLED = m_LEDPanelOffset;
+
+        // just move over some pixels so it can be read in the simulator
+        if (RobotBase.isSimulation()) {
+            firstLED += m_simLEDAdjust;
+        }
+
+        for (int c1 = firstLED, c2 = 0; c2 < LEDPanel.m_noLEDs; c1++, c2++) {
             m_ledBuffer.setLED(c1, buff.getLED(c2));
         }
         m_RioLEDs.setData(m_ledBuffer);

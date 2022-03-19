@@ -2,45 +2,48 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.Turret;
+package frc.robot.commands.Intake;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class AcquireFront extends CommandBase {
+public class ResetIntake extends CommandBase {
+    private Timer m_timer = new Timer();
 
-    /** Creates a new AcquireFront. */
-    public AcquireFront() {
+    /** Creates a new ResetIntake. */
+    public ResetIntake() {
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(RobotContainer.m_Turret);
+        addRequirements(RobotContainer.m_Intake);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        // Move the turret to zero yaw
-        RobotContainer.m_Turret.setYawDegreesFront(0);
+        RobotContainer.m_Intake.resetArm();
+        m_timer.reset();
+        m_timer.start();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        // if the targeting camera has found the target transition to the TrackTarget
-        // command
-        if (RobotContainer.m_Targeting.isTrackingTarget()) {
-            // CommandBase cmd = new TrackTarget();
-            // cmd.schedule();
-        }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        RobotContainer.m_Intake.resetArmEncoder();
+        RobotContainer.m_Intake.retract();
+
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return true;
+        if (m_timer.hasElapsed(0.75)) {
+            return true;
+        }
+        return false;
     }
 }
