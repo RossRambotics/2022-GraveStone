@@ -411,6 +411,9 @@ public class RobotContainer {
         CommandBase cmd = new frc.robot.commands.auto.TestShort();
         commands.add(cmd);
 
+        cmd = new frc.robot.commands.auto.HubShotBackShot();
+        commands.add(cmd);
+
         // Add auto routines
         CommandBase autoCmd = null;
         autoCmd = new InstantCommand();
@@ -419,7 +422,11 @@ public class RobotContainer {
 
         autoCmd = new frc.robot.commands.auto.TestShort();
         autoCmd.setName("Test Short");
-        m_autoChooser.setDefaultOption("Test Short", autoCmd);
+        m_autoChooser.addOption("Test Short", autoCmd);
+
+        autoCmd = new frc.robot.commands.auto.HubShotBackShot();
+        autoCmd.setName("Auto Hub Shot");
+        m_autoChooser.setDefaultOption("Hub Shot", autoCmd);
 
         autoCmd = new BackShootBall();
         autoCmd.setName("BackShootBall");
