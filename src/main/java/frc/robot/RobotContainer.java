@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PerpetualCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWhileTracking;
 import frc.robot.commands.Indexer.ReverseWheels;
@@ -290,25 +291,49 @@ public class RobotContainer {
         new Button(m_controllerOperator::getAButton)
                 .whenPressed(new frc.robot.commands.Intake.ResetIntake());
 
-        // new Button(m_controllerOperator::getAButton)
-        // .whenPressed(new AutoDriveWhileTracking(m_drivetrainSubsystem, null, null,
-        // null));
+        /**
+         * Implement Snap Drive
+         */
 
-        // // climb goes up operator
-        // new Button(m_controllerOperator::getAButtonPressed)
-        // .whileHeld(command);
+        // North
+        cmd = new frc.robot.commands.Drive.SnapDrive(
+                m_drivetrainSubsystem,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                0);
 
-        // // climb goes down operator
-        // new Button(m_controllerOperator::getYButton)
-        // .whenPressed(command);
+        new POVButton(m_controllerOperator, 0)
+                .whenHeld(cmd);
 
-        // // aim at the target
-        // new Button(m_controllerDriver::getRightTriggerAxis)
-        // .whileHeld(command);
+        // South
+        cmd = new frc.robot.commands.Drive.SnapDrive(
+                m_drivetrainSubsystem,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                180);
 
-        // how long move turrent is
-        var spinTurret = 1;
-        var angleTurret = 1;
+        new POVButton(m_controllerOperator, 180)
+                .whenHeld(cmd);
+
+        // East
+        cmd = new frc.robot.commands.Drive.SnapDrive(
+                m_drivetrainSubsystem,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                90);
+
+        new POVButton(m_controllerOperator, 90)
+                .whenHeld(cmd);
+
+        // West
+        cmd = new frc.robot.commands.Drive.SnapDrive(
+                m_drivetrainSubsystem,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                270);
+
+        new POVButton(m_controllerOperator, 270)
+                .whenHeld(cmd);
 
         // // turret go up
         // POVButton operatorTurretUp = new POVButton(m_controllerOperator, 0);
