@@ -53,7 +53,7 @@ public class HubShotBackShot extends CommandBase {
                     return 0;
                 });
 
-        cmd = cmd.withTimeout(2.5);
+        cmd = cmd.withTimeout(3.201);
 
         SequentialCommandGroup command = new SequentialCommandGroup(
                 new ShootLow().withTimeout(2.6),

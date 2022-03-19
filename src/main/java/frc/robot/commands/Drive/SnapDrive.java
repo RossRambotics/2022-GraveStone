@@ -19,7 +19,7 @@ public class SnapDrive extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final DoubleSupplier m_translationXSupplier;
     private final DoubleSupplier m_translationYSupplier;
-    private final double m_goalDegrees;
+    private double m_goalDegrees;
     ProfiledPIDController m_PIDTracking = null;
 
     /** Creates a new DriveWhileTracking. */
@@ -40,16 +40,16 @@ public class SnapDrive extends CommandBase {
     @Override
     public void initialize() {
 
-        final double ANGULAR_P = RobotContainer.m_Tracking.getAngleP();
-        final double ANGULAR_D = RobotContainer.m_Tracking.getAngleD();
+        double ANGULAR_P = RobotContainer.m_Tracking.getAngleP();
+        double ANGULAR_D = RobotContainer.m_Tracking.getAngleD();
 
         TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
-                Math.PI, Math.PI);
+                2, 2);
         m_PIDTracking = new ProfiledPIDController(
                 ANGULAR_P, 0, ANGULAR_D, kThetaControllerConstraints);
 
         // let's the theta controller know that it is a circle (ie, 180 = -180)
-        m_PIDTracking.enableContinuousInput(-180, 180);
+        m_PIDTracking.enableContinuousInput(0, 360);
         m_PIDTracking.reset(getError());
     }
 
@@ -63,7 +63,7 @@ public class SnapDrive extends CommandBase {
         double p = getError();
 
         // convert p from degrees to motor power
-        double rotationSpeed = -m_PIDTracking.calculate(p, 0);
+        double rotationSpeed = -m_PIDTracking.calculate(p, m_goalDegrees);
 
         m_drivetrainSubsystem.drive(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
