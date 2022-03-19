@@ -6,11 +6,14 @@ package frc.robot.commands.Drive;
 
 import java.util.Map;
 import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -20,7 +23,7 @@ public class SnapDrive extends CommandBase {
     private final DoubleSupplier m_translationXSupplier;
     private final DoubleSupplier m_translationYSupplier;
     private double m_goalDegrees;
-    ProfiledPIDController m_PIDTracking = null;
+    PIDController m_PIDTracking = null;
 
     /** Creates a new DriveWhileTracking. */
     public SnapDrive(DrivetrainSubsystem drivetrainSubsystem,
@@ -45,12 +48,13 @@ public class SnapDrive extends CommandBase {
 
         TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
                 2, 2);
-        m_PIDTracking = new ProfiledPIDController(
-                ANGULAR_P, 0, ANGULAR_D, kThetaControllerConstraints);
+        // m_PIDTracking = new ProfiledPIDController(
+        // ANGULAR_P, 0, ANGULAR_D, kThetaControllerConstraints);
+        m_PIDTracking = new PIDController(ANGULAR_P, 0, ANGULAR_D);
 
         // let's the theta controller know that it is a circle (ie, 180 = -180)
         m_PIDTracking.enableContinuousInput(0, 360);
-        m_PIDTracking.reset(getError());
+        // m_PIDTracking.reset(getError());
     }
 
     private double getError() {
@@ -63,7 +67,10 @@ public class SnapDrive extends CommandBase {
         double p = getError();
 
         // convert p from degrees to motor power
-        double rotationSpeed = -m_PIDTracking.calculate(p, m_goalDegrees);
+        double rotationSpeed = -m_PIDTracking.calculate(p, 0);
+        rotationSpeed = MathUtil.clamp(rotationSpeed, -3.0, 3.0);
+        // DataLogManager.log("Snap: Goal: " + m_goalDegrees + " Error: " + p + "
+        // Rotation Speed: " + rotationSpeed);
 
         m_drivetrainSubsystem.drive(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
