@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -172,6 +173,9 @@ public class Shooter extends SubsystemBase {
             if (!RobotContainer.m_Turret.isTestMode()) {
                 // TODO test removing this and adding it to the start method below (currently
                 // commented out)
+                if (DriverStation.isTeleop()) {
+                    return;
+                }
                 RobotContainer.m_Turret.setPitchDegrees(fs.m_pitch);
             }
         }

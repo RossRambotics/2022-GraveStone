@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -81,7 +82,7 @@ public class Robot extends TimedRobot {
 
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
-            System.out.println("Auto Command: " + m_autonomousCommand.getName());
+            DataLogManager.log("Auto Command: " + m_autonomousCommand.getName());
             m_autonomousCommand.schedule();
         }
     }

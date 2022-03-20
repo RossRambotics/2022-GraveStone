@@ -64,6 +64,8 @@
       "/LiveWindow/Ungrouped/Talon FX [50]": "Motor Controller",
       "/Shuffleboard/Match.Auto/Autonomous": "String Chooser",
       "/Shuffleboard/Match.Auto/Commands/Example Path": "Command",
+      "/Shuffleboard/Match.Auto/Commands/HubShotBackShot": "Command",
+      "/Shuffleboard/Match.Auto/Commands/TestShort": "Command",
       "/Shuffleboard/Sub.Auto/Autonomous": "String Chooser",
       "/Shuffleboard/Sub.Auto/Commands/Example Path": "Command",
       "/Shuffleboard/Sub.Indexer/Commands/Reverse Indexer": "Command",

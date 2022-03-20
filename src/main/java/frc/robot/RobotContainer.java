@@ -243,6 +243,7 @@ public class RobotContainer {
                         () -> -getInputLeftY(),
                         () -> -getInputLeftX(),
                         () -> -getInputRightX()));
+        cmd.setName("DriveWhileTracking");
         new Button(m_controllerDriver::getLeftBumper)
                 .whenHeld(cmd, true);
 
