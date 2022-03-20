@@ -84,7 +84,8 @@ public class BallStrafeDrive extends CommandBase {
                             m_translationXSupplier.getAsDouble(),
                             m_translationYSupplier.getAsDouble(),
                             rotationSpeed,
-                            m_drivetrainSubsystem.getGyroscopeRotation()));
+                            m_drivetrainSubsystem.getGyroscopeRotation()),
+                    rotationSpeed);
         } else {
             // if we aren't tracking a target then do normal drive...
             m_drivetrainSubsystem.drive(
@@ -92,7 +93,8 @@ public class BallStrafeDrive extends CommandBase {
                             m_translationXSupplier.getAsDouble(),
                             m_translationYSupplier.getAsDouble(),
                             m_rotationSupplier.getAsDouble(),
-                            m_drivetrainSubsystem.getGyroscopeRotation()));
+                            m_drivetrainSubsystem.getGyroscopeRotation()),
+                    m_rotationSupplier.getAsDouble());
         }
     }
 
@@ -100,7 +102,7 @@ public class BallStrafeDrive extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         RobotContainer.m_Tracking.disableSearchLight();
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0), 0.0);
     }
 
     // Returns true when the command should end.

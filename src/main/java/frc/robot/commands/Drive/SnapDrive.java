@@ -22,8 +22,9 @@ public class SnapDrive extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final DoubleSupplier m_translationXSupplier;
     private final DoubleSupplier m_translationYSupplier;
+    private final DoubleSupplier m_goalSupplier;
     private double m_goalDegrees;
-    PIDController m_PIDTracking = null;
+    ProfiledPIDController m_PIDTracking = null;
 
     /** Creates a new DriveWhileTracking. */
     public SnapDrive(DrivetrainSubsystem drivetrainSubsystem,
@@ -34,6 +35,21 @@ public class SnapDrive extends CommandBase {
         this.m_translationXSupplier = translationXSupplier;
         this.m_translationYSupplier = translationYSupplier;
         this.m_goalDegrees = goalDegrees;
+        this.m_goalSupplier = null;
+
+        // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements(drivetrainSubsystem);
+    }
+
+    public SnapDrive(DrivetrainSubsystem drivetrainSubsystem,
+            DoubleSupplier translationXSupplier,
+            DoubleSupplier translationYSupplier,
+            DoubleSupplier goalSupplier) {
+        this.m_drivetrainSubsystem = drivetrainSubsystem;
+        this.m_translationXSupplier = translationXSupplier;
+        this.m_translationYSupplier = translationYSupplier;
+        this.m_goalDegrees = 720;
+        this.m_goalSupplier = goalSupplier;
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drivetrainSubsystem);
@@ -47,10 +63,10 @@ public class SnapDrive extends CommandBase {
         double ANGULAR_D = RobotContainer.m_Tracking.getAngleD();
 
         TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
-                2, 2);
-        // m_PIDTracking = new ProfiledPIDController(
-        // ANGULAR_P, 0, ANGULAR_D, kThetaControllerConstraints);
-        m_PIDTracking = new PIDController(ANGULAR_P, 0, ANGULAR_D);
+                3, 3);
+        m_PIDTracking = new ProfiledPIDController(
+                ANGULAR_P, 0, ANGULAR_D, kThetaControllerConstraints);
+        // m_PIDTracking = new PIDController(ANGULAR_P, 0, ANGULAR_D);
 
         // let's the theta controller know that it is a circle (ie, 180 = -180)
         m_PIDTracking.enableContinuousInput(0, 360);
@@ -58,7 +74,17 @@ public class SnapDrive extends CommandBase {
     }
 
     private double getError() {
-        return m_goalDegrees - RobotContainer.m_drivetrainSubsystem.getGyroHeading().getDegrees();
+        if (m_goalSupplier == null) {
+            return m_goalDegrees - RobotContainer.m_drivetrainSubsystem.getGyroHeading().getDegrees();
+        }
+
+        // 720 is a special number than can be set as the angle to instantly
+        // make the error zero so the robot doesn't change headings.
+        if (Math.abs(720.0 - m_goalSupplier.getAsDouble()) < 0.1) {
+            return 0;
+        }
+
+        return m_goalSupplier.getAsDouble() - RobotContainer.m_drivetrainSubsystem.getGyroHeading().getDegrees();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -77,13 +103,14 @@ public class SnapDrive extends CommandBase {
                         m_translationXSupplier.getAsDouble(),
                         m_translationYSupplier.getAsDouble(),
                         rotationSpeed,
-                        m_drivetrainSubsystem.getGyroscopeRotation()));
+                        m_drivetrainSubsystem.getGyroscopeRotation()),
+                rotationSpeed);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0), 0.0);
     }
 
     // Returns true when the command should end.

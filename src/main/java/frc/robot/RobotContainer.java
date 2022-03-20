@@ -33,6 +33,7 @@ import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWhileTracking;
 import frc.robot.commands.Indexer.ReverseWheels;
 import frc.robot.commands.Climb.DefaultClimb;
+import frc.robot.commands.Drive.SnapDrive;
 import frc.robot.commands.Intake.ExtendIntake;
 import frc.robot.commands.Intake.RetractIntake;
 import frc.robot.commands.Intake.ReverseIntake;
@@ -104,11 +105,17 @@ public class RobotContainer {
         // Left stick Y axis -> forward and backwards movement
         // Left stick X axis -> left and right movement
         // Right stick X axis -> rotation
-        m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-                m_drivetrainSubsystem,
+
+        // m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+        // m_drivetrainSubsystem,
+        // () -> -getInputLeftY(),
+        // () -> -getInputLeftX(),
+        // () -> -getInputRightX()));
+
+        m_drivetrainSubsystem.setDefaultCommand(new SnapDrive(m_drivetrainSubsystem,
                 () -> -getInputLeftY(),
                 () -> -getInputLeftX(),
-                () -> -getInputRightX()));
+                () -> snapAngle()));
 
         // Climb Default Command
         m_Climb.setDefaultCommand(new DefaultClimb(m_Climb, () -> -getOperatorRightY()));
@@ -209,6 +216,34 @@ public class RobotContainer {
         // return rightX;
     }
 
+    private SlewRateLimiter m_slewRightY = new SlewRateLimiter(6.0);
+
+    private double getInputRightY() {
+        double kDEAD_SLEW = 0.2;
+        double driverRightY = modifyAxis(
+                m_controllerDriver.getRightY()
+                        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
+        // double operatorRightY = m_controllerOperator.getRightY() / m_weakPower;
+        double operatorRightY = 0.0;
+        double rightY = operatorRightY;
+        if (Math.abs(rightY) < 0.01) {
+            rightY = driverRightY;
+        }
+        double slew = m_slewRightY.calculate(rightY);
+        if (Math.abs(slew) < kDEAD_SLEW) {
+            if (driverRightY == 0) {
+                slew = 0.0;
+            } else if (driverRightY > 0) {
+                slew = kDEAD_SLEW;
+            } else {
+                slew = -kDEAD_SLEW;
+            }
+            m_slewRightY.reset(slew);
+        }
+        return slew;
+        // return rightX;
+    }
+
     private double getOperatorRightY() {
         double operatorRightY = 0;
 
@@ -219,6 +254,23 @@ public class RobotContainer {
         }
 
         return operatorRightY;
+    }
+
+    private double snapAngle() {
+        double x = m_controllerDriver.getRightX();
+        double y = -m_controllerDriver.getRightY();
+
+        if (Math.abs(x) < 0.1 && Math.abs(y) < 0.1) {
+            return 720;
+        }
+
+        double angle = Math.toDegrees(Math.atan2(x, y));
+
+        if ((angle > 360) || (angle < -360)) {
+            return 360;
+        }
+
+        return angle;
     }
 
     /**
@@ -238,11 +290,20 @@ public class RobotContainer {
         // map button for tracking cargo
         // create tracking cargo drive command
 
+        // CommandBase cmd = new ParallelCommandGroup(
+        // new DriveWhileTracking(m_drivetrainSubsystem,
+        // () -> -getInputLeftY(),
+        // () -> -getInputLeftX(),
+        // () -> -getInputRightX()));
+        // cmd.setName("DriveWhileTracking");
+        // new Button(m_controllerDriver::getLeftBumper)
+        // .whenHeld(cmd, true);
+
         CommandBase cmd = new ParallelCommandGroup(
-                new DriveWhileTracking(m_drivetrainSubsystem,
+                new SnapDrive(m_drivetrainSubsystem,
                         () -> -getInputLeftY(),
                         () -> -getInputLeftX(),
-                        () -> -getInputRightX()));
+                        () -> snapAngle()));
         cmd.setName("DriveWhileTracking");
         new Button(m_controllerDriver::getLeftBumper)
                 .whenHeld(cmd, true);

@@ -34,11 +34,13 @@ public class DefaultDriveCommand extends CommandBase {
                         m_translationXSupplier.getAsDouble(),
                         m_translationYSupplier.getAsDouble(),
                         m_rotationSupplier.getAsDouble(),
-                        m_drivetrainSubsystem.getGyroscopeRotation()));
+                        m_drivetrainSubsystem.getGyroscopeRotation()),
+                m_rotationSupplier.getAsDouble());
+
     }
 
     @Override
     public void end(boolean interrupted) {
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0), 0);
     }
 }

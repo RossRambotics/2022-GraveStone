@@ -62,6 +62,7 @@
       "/LiveWindow/Ungrouped/Talon FX [45]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [46]": "Motor Controller",
       "/LiveWindow/Ungrouped/Talon FX [50]": "Motor Controller",
+      "/Shuffleboard/Field/Field": "Field2d",
       "/Shuffleboard/Match.Auto/Autonomous": "String Chooser",
       "/Shuffleboard/Match.Auto/Commands/Example Path": "Command",
       "/Shuffleboard/Match.Auto/Commands/HubShotBackShot": "Command",
