@@ -135,28 +135,10 @@ public class RobotContainer {
     private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(2.0);
 
     private double getInputLeftY() {
-        double kDEAD_SLEW = 0.2;
         double driverLeftY = modifyAxis(m_controllerDriver.getLeftY()
                 * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND);
-        // double operatorLeftY = m_controllerOperator.getLeftY() / m_weakPower;
-        double operatorLeftY = 0.0;
-        double leftY = operatorLeftY;
-        if (Math.abs(leftY) < 0.01) {
-            leftY = driverLeftY;
-        }
 
-        double slew = m_slewLeftY.calculate(leftY);
-        if (Math.abs(slew) < kDEAD_SLEW) {
-            if (driverLeftY == 0) {
-                slew = 0.0;
-            } else if (driverLeftY > 0) {
-                slew = kDEAD_SLEW;
-            } else {
-                slew = -kDEAD_SLEW;
-            }
-            m_slewLeftY.reset(slew);
-        }
-
+        double slew = m_slewLeftY.calculate(driverLeftY);
         return slew;
 
     }
@@ -164,84 +146,11 @@ public class RobotContainer {
     private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(2.0);
 
     private double getInputLeftX() {
-        double kDEAD_SLEW = 0.2;
         double driverLeftX = modifyAxis(
                 m_controllerDriver.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
-        // double operatorLeftX = m_controllerOperator.getLeftX() / m_weakPower;
-        double operatorLeftX = 0.0;
-        double leftX = operatorLeftX;
-        if (Math.abs(leftX) < 0.01) {
-            leftX = driverLeftX;
-        }
 
-        double slew = m_slewLeftX.calculate(leftX);
-        if (Math.abs(slew) < kDEAD_SLEW) {
-            if (driverLeftX == 0) {
-                slew = 0.0;
-            } else if (driverLeftX > 0) {
-                slew = kDEAD_SLEW;
-            } else {
-                slew = -kDEAD_SLEW;
-            }
-            m_slewLeftX.reset(slew);
-        }
+        double slew = m_slewLeftX.calculate(driverLeftX);
         return slew;
-    }
-
-    private SlewRateLimiter m_slewRightX = new SlewRateLimiter(6.0);
-
-    private double getInputRightX() {
-        double kDEAD_SLEW = 0.2;
-        double driverRightX = modifyAxis(
-                m_controllerDriver.getRightX()
-                        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
-        // double operatorRightX = m_controllerOperator.getRightX() / m_weakPower;
-        double operatorRightX = 0.0;
-        double rightX = operatorRightX;
-        if (Math.abs(rightX) < 0.01) {
-            rightX = driverRightX;
-        }
-        double slew = m_slewRightX.calculate(rightX);
-        if (Math.abs(slew) < kDEAD_SLEW) {
-            if (driverRightX == 0) {
-                slew = 0.0;
-            } else if (driverRightX > 0) {
-                slew = kDEAD_SLEW;
-            } else {
-                slew = -kDEAD_SLEW;
-            }
-            m_slewRightX.reset(slew);
-        }
-        return slew;
-        // return rightX;
-    }
-
-    private SlewRateLimiter m_slewRightY = new SlewRateLimiter(6.0);
-
-    private double getInputRightY() {
-        double kDEAD_SLEW = 0.2;
-        double driverRightY = modifyAxis(
-                m_controllerDriver.getRightY()
-                        * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND);
-        // double operatorRightY = m_controllerOperator.getRightY() / m_weakPower;
-        double operatorRightY = 0.0;
-        double rightY = operatorRightY;
-        if (Math.abs(rightY) < 0.01) {
-            rightY = driverRightY;
-        }
-        double slew = m_slewRightY.calculate(rightY);
-        if (Math.abs(slew) < kDEAD_SLEW) {
-            if (driverRightY == 0) {
-                slew = 0.0;
-            } else if (driverRightY > 0) {
-                slew = kDEAD_SLEW;
-            } else {
-                slew = -kDEAD_SLEW;
-            }
-            m_slewRightY.reset(slew);
-        }
-        return slew;
-        // return rightX;
     }
 
     private double getOperatorRightY() {
@@ -289,24 +198,34 @@ public class RobotContainer {
 
         // map button for tracking cargo
         // create tracking cargo drive command
-
-        // CommandBase cmd = new ParallelCommandGroup(
-        // new DriveWhileTracking(m_drivetrainSubsystem,
-        // () -> -getInputLeftY(),
-        // () -> -getInputLeftX(),
-        // () -> -getInputRightX()));
-        // cmd.setName("DriveWhileTracking");
-        // new Button(m_controllerDriver::getLeftBumper)
-        // .whenHeld(cmd, true);
-
         CommandBase cmd = new ParallelCommandGroup(
-                new SnapDrive(m_drivetrainSubsystem,
+                new DriveWhileTracking(m_drivetrainSubsystem,
                         () -> -getInputLeftY(),
                         () -> -getInputLeftX(),
                         () -> snapAngle()));
         cmd.setName("DriveWhileTracking");
         new Button(m_controllerDriver::getLeftBumper)
                 .whenHeld(cmd, true);
+
+        cmd = new DefaultDriveCommand(
+                m_drivetrainSubsystem,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                () -> {
+                    return -0.2;
+                });
+        new POVButton(m_controllerDriver, 180)
+                .whenHeld(cmd);
+
+        cmd = new DefaultDriveCommand(
+                m_drivetrainSubsystem,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                () -> {
+                    return 0.2;
+                });
+        new POVButton(m_controllerDriver, 90)
+                .whenHeld(cmd);
 
         // extends the intake and turns on the intake wheels Driver
         cmd = new ParallelCommandGroup(
