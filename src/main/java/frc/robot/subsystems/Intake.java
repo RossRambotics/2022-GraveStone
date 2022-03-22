@@ -50,11 +50,10 @@ public class Intake extends SubsystemBase {
      */
     private TalonFX_Gains m_gainsVelocity = new TalonFX_Gains(0.1, 0, 5, -0.05, 300, 1.00);
     private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Intake");
-    private NetworkTableEntry m_pid_kP = null;
-    private NetworkTableEntry m_pid_kI = null;
-    private NetworkTableEntry m_pid_kD = null;
-    private NetworkTableEntry m_pid_kFF = null;
-    private NetworkTableEntry m_targetExtensionDegrees = null;
+    private double m_pid_kP = m_gainsVelocity.kP;
+    private double m_pid_kI = m_gainsVelocity.kI;
+    private double m_pid_kD = m_gainsVelocity.kD;
+    private double m_pid_kFF = m_gainsVelocity.kF;
 
     /** Creates a new Intake. */
     public Intake() {
@@ -139,17 +138,18 @@ public class Intake extends SubsystemBase {
         // "Y-axis/Upper bound": 7000.0,
         // "Y-axis/Lower bound": 0.0,
         // "Y-axis/Unit": "RPM",
-        m_pid_kFF = m_shuffleboardTab.add("Extension PID kFF",
-                m_gainsVelocity.kF).withSize(2, 1).withPosition(3, 0).getEntry();
-        m_pid_kP = m_shuffleboardTab.add("Extension PID kP",
-                m_gainsVelocity.kP).withSize(2, 1).withPosition(3, 1).getEntry();
-        m_pid_kD = m_shuffleboardTab.add("Extension PID kD",
-                m_gainsVelocity.kD).withSize(2, 1).withPosition(3, 2).getEntry();
-        m_pid_kI = m_shuffleboardTab.add("Extension PID kI",
-                m_gainsVelocity.kI).withSize(2, 1).withPosition(3, 3).getEntry();
+        // m_pid_kFF = m_shuffleboardTab.add("Extension PID kFF",
+        // m_gainsVelocity.kF).withSize(2, 1).withPosition(3, 0).getEntry();
+        // m_pid_kP = m_shuffleboardTab.add("Extension PID kP",
+        // m_gainsVelocity.kP).withSize(2, 1).withPosition(3, 1).getEntry();
+        // m_pid_kD = m_shuffleboardTab.add("Extension PID kD",
+        // m_gainsVelocity.kD).withSize(2, 1).withPosition(3, 2).getEntry();
+        // m_pid_kI = m_shuffleboardTab.add("Extension PID kI",
+        // m_gainsVelocity.kI).withSize(2, 1).withPosition(3, 3).getEntry();
 
-        m_targetExtensionDegrees = m_shuffleboardTab.add("Extension Target", m_extensionTargetDegrees).withSize(1, 1)
-                .withPosition(2, 3).getEntry();
+        // m_targetExtensionDegrees = m_shuffleboardTab.add("Extension Target",
+        // m_extensionTargetDegrees).withSize(1, 1)
+        // .withPosition(2, 3).getEntry();
 
     }
 
@@ -203,7 +203,7 @@ public class Intake extends SubsystemBase {
 
     public void extend() {
         // Extends arm
-        double targetTicks = IntakeConstants.m_ticksPerDegree * m_targetExtensionDegrees.getDouble(120);
+        double targetTicks = IntakeConstants.m_ticksPerDegree * m_extensionTargetDegrees;
 
         m_extensionMotor.set(TalonFXControlMode.Position, targetTicks);
     }
@@ -216,10 +216,10 @@ public class Intake extends SubsystemBase {
 
     public void updatePIDF() {
         // Get PIDF values from the dashboard
-        m_gainsVelocity.kF = m_pid_kFF.getDouble(0);
-        m_gainsVelocity.kP = m_pid_kP.getDouble(0);
-        m_gainsVelocity.kD = m_pid_kD.getDouble(0);
-        m_gainsVelocity.kI = m_pid_kI.getDouble(0);
+        // m_gainsVelocity.kF = m_pid_kFF.getDouble(0);
+        // m_gainsVelocity.kP = m_pid_kP.getDouble(0);
+        // m_gainsVelocity.kD = m_pid_kD.getDouble(0);
+        // m_gainsVelocity.kI = m_pid_kI.getDouble(0);
 
         /* Config the Velocity closed loop gains in slot0 */
         m_extensionMotor.config_kF(IntakeConstants.kPIDLoopIdx, m_gainsVelocity.kF, IntakeConstants.kTimeoutMs);
