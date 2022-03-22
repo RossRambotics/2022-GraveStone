@@ -135,22 +135,20 @@ public class RobotContainer {
     private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(2.0);
 
     private double getInputLeftY() {
-        double driverLeftY = modifyAxis(m_controllerDriver.getLeftY()
-                * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND);
+        double driverLeftY = modifyAxis(m_controllerDriver.getLeftY());
 
-        double slew = m_slewLeftY.calculate(driverLeftY);
-        return slew;
+        double slew = m_slewLeftY.calculate(driverLeftY) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+        return slew * 0.6;
 
     }
 
     private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(2.0);
 
     private double getInputLeftX() {
-        double driverLeftX = modifyAxis(
-                m_controllerDriver.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+        double driverLeftX = modifyAxis(m_controllerDriver.getLeftX());
 
-        double slew = m_slewLeftX.calculate(driverLeftX);
-        return slew;
+        double slew = m_slewLeftX.calculate(driverLeftX) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+        return slew * 0.6;
     }
 
     private double getOperatorRightY() {
@@ -374,7 +372,7 @@ public class RobotContainer {
         // Square the axis
         value = Math.copySign(value * value, value);
 
-        return value * 0.60;
+        return value;
     }
 
     private SendableChooser m_autoChooser = new SendableChooser();
@@ -384,35 +382,36 @@ public class RobotContainer {
         ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 1)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
-        PathPlannerTrajectory examplePath = PathPlanner.loadPath("Test1", 3, 1);
+        // PathPlannerTrajectory examplePath = PathPlanner.loadPath("Test1", 3, 1);
 
-        TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
-                Math.PI, Math.PI);
-        ProfiledPIDController thetaController = new ProfiledPIDController(
-                4, 0, 0, kThetaControllerConstraints);
+        // TrapezoidProfile.Constraints kThetaControllerConstraints = new
+        // TrapezoidProfile.Constraints(
+        // Math.PI, Math.PI);
+        // ProfiledPIDController thetaController = new ProfiledPIDController(
+        // 4, 0, 0, kThetaControllerConstraints);
 
-        // let's the theta controller know that it is a circle (ie, 180 = -180)
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
-        m_drivetrainSubsystem.zeroGyroscope();
+        // // let's the theta controller know that it is a circle (ie, 180 = -180)
+        // thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        // m_drivetrainSubsystem.zeroGyroscope();
 
-        // use this to automatically set
-        // the robot position on the field to match the start of the trajectory
-        PathPlannerState start = examplePath.getInitialState();
-        m_drivetrainSubsystem.getOdometry().resetPosition(start.poseMeters,
-                m_drivetrainSubsystem.getGyroscopeRotation());
+        // // use this to automatically set
+        // // the robot position on the field to match the start of the trajectory
+        // PathPlannerState start = examplePath.getInitialState();
+        // m_drivetrainSubsystem.getOdometry().resetPosition(start.poseMeters,
+        // m_drivetrainSubsystem.getGyroscopeRotation());
 
-        PPSwerveControllerCommand command = new PPSwerveControllerCommand(
-                examplePath,
-                m_drivetrainSubsystem::getOdometryPose,
-                m_drivetrainSubsystem.getKinematics(),
-                // Position controllers
-                new PIDController(0.2, 0, 0),
-                new PIDController(0.2, 0, 0),
-                thetaController,
-                m_drivetrainSubsystem::setSwerveModulesStates,
-                m_drivetrainSubsystem);
-        command.setName("Example Path");
-        commands.add(command);
+        // PPSwerveControllerCommand command = new PPSwerveControllerCommand(
+        // examplePath,
+        // m_drivetrainSubsystem::getOdometryPose,
+        // m_drivetrainSubsystem.getKinematics(),
+        // // Position controllers
+        // new PIDController(0.2, 0, 0),
+        // new PIDController(0.2, 0, 0),
+        // thetaController,
+        // m_drivetrainSubsystem::setSwerveModulesStates,
+        // m_drivetrainSubsystem);
+        // command.setName("Example Path");
+        // commands.add(command);
 
         CommandBase cmd = new frc.robot.commands.auto.TestShort();
         commands.add(cmd);

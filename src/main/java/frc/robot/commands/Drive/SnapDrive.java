@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -25,6 +26,7 @@ public class SnapDrive extends CommandBase {
     private final DoubleSupplier m_goalSupplier;
     private double m_goalDegrees;
     ProfiledPIDController m_PIDTracking = null;
+    private Timer m_timer = new Timer();
 
     /** Creates a new DriveWhileTracking. */
     public SnapDrive(DrivetrainSubsystem drivetrainSubsystem,
@@ -53,6 +55,8 @@ public class SnapDrive extends CommandBase {
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drivetrainSubsystem);
+
+        m_timer.start();
     }
 
     // Called when the command is initially scheduled.
@@ -71,6 +75,7 @@ public class SnapDrive extends CommandBase {
         // let's the theta controller know that it is a circle (ie, 180 = -180)
         m_PIDTracking.enableContinuousInput(0, 360);
         // m_PIDTracking.reset(getError());
+
     }
 
     private double getError() {
@@ -97,6 +102,12 @@ public class SnapDrive extends CommandBase {
         rotationSpeed = MathUtil.clamp(rotationSpeed, -3.0, 3.0);
         // DataLogManager.log("Snap: Goal: " + m_goalDegrees + " Error: " + p + "
         // Rotation Speed: " + rotationSpeed);
+
+        if (m_timer.advanceIfElapsed(0.5)) {
+            DataLogManager.log("SnapDrive: X: " + m_translationXSupplier.getAsDouble()
+                    + " Y: " + m_translationYSupplier.getAsDouble()
+                    + " Rot: " + m_goalDegrees);
+        }
 
         m_drivetrainSubsystem.drive(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
