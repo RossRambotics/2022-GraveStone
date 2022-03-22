@@ -152,7 +152,7 @@ public class Turret extends SubsystemBase {
         // Math.abs(m_yawError.getDouble(0));
 
         // update targeting error
-        if (Math.abs(RobotContainer.m_Targeting.getPredictedTargetOffsetYaw(0)) < 2.0) {
+        if (Math.abs(RobotContainer.m_Targeting.getTargetOffsetYaw()) < 2.0) {
             m_isOnTarget = true;
         } else {
             m_isOnTarget = false;
@@ -257,6 +257,7 @@ public class Turret extends SubsystemBase {
     // returns true if lock position is found
     // returns false if the lock position is not found
     public boolean searchTurretLock() {
+        DataLogManager.log("Turret: Turret lock in progress");
         if (getSensorTurretLock()) {
             // lock the turret
             lockTurret();
@@ -276,6 +277,7 @@ public class Turret extends SubsystemBase {
 
     public void lockTurret() {
         // set the position control to here
+        DataLogManager.log("Turret: Locked Turret.");
         m_yawMotor.set(TalonFXControlMode.Position, m_yawMotor.getSelectedSensorPosition(0));
 
         m_isTurretLocked = true;
@@ -283,11 +285,11 @@ public class Turret extends SubsystemBase {
 
     public void unlockTurret() {
 
-        DataLogManager.log("Turret could be unlocking -------------------------------");
+        DataLogManager.log("Turret: Turret unlocking");
 
         // only allow the turret to unlock once the climb has been lowered
         if (RobotContainer.m_Climb.getClimbEncoderPosition() < 1000) {
-            DataLogManager.log("Turret is Unlocked!-------------------------------");
+            DataLogManager.log("Turret: Turret is Unlocked!");
             m_isTurretLocked = false;
         }
     }
@@ -300,6 +302,7 @@ public class Turret extends SubsystemBase {
     // returns true if we are close to search start angle
     // returns false if we are still moving
     public boolean initializeTurretLock() {
+        DataLogManager.log("Turret:  Starting turret lock");
         // if we are within 5 degrees true true
         if (Math.abs(this.getYaw() - kTURRET_LOCK_SEARCH_START) < 2) {
             // stop spinning the turret

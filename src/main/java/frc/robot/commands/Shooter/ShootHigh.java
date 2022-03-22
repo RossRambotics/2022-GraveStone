@@ -42,7 +42,7 @@ public class ShootHigh extends CommandBase {
                 " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
         RobotContainer.m_Intake.retract();
         RobotContainer.m_Intake.stop();
-        RobotContainer.m_Shooter.start();
+        RobotContainer.m_Shooter.shootHigh();
 
         m_isShooting = false;
         m_isShooting2 = false;

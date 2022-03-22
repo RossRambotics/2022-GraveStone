@@ -4,13 +4,9 @@
 
 package frc.robot.subsystems;
 
-import java.util.Map;
-
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,38 +19,30 @@ public class Targeting extends SubsystemBase {
     private double m_testTargetYaw = 0.0;
     private double m_testTargetPitch = 0.0;
     private boolean m_isTestMode = false;
-    private double m_distanceToTarget = 0.0;
-    private NetworkTable table = null;
+    private NetworkTable m_limelight_nt = null;
     private double m_targetOffsetAngle_Horizontal = 0.0;
     private double m_targetOffsetAngle_Vertical = 0.0;
-    private double m_targetArea = 0.0;
-    private double m_targetSkew = 0.0;
+    private double m_distanceToTarget = 0;
     private boolean m_hasTarget = false;
-    private double[] m_yawHistory = new double[3];
-    private double[] m_distanceHistory = new double[3];
+
     private HubFound m_cmdHubFound = new HubFound();
     private HubNotFound m_cmdHubNotFound = new HubNotFound();
     private HubTargeted m_cmdHubTargeted = new HubTargeted();
     private static final double kHEIGHT = 1.87; // the difference in height of the robot to the target ring
     private static final double kMOUNT_PITCH = 32.5; // the angle of the camera mount pitch
-    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Targeting");
-    private NetworkTableEntry m_pred_distance = null;
-    private NetworkTableEntry m_pred_yaw = null;
-    private NetworkTableEntry m_pred_yaw_distance = null;
+    // private ShuffleboardTab m_shuffleboardTab =
+    // Shuffleboard.getTab("Sub.Targeting");
 
     /** Creates a new Targeting. */
     public Targeting() {
-        table = NetworkTableInstance.getDefault().getTable("limelight-rambot");
+        m_limelight_nt = NetworkTableInstance.getDefault().getTable("limelight-rambot");
 
     }
-
-    private SlewRateLimiter m_yawSlew = new SlewRateLimiter(0.6);
-    private SlewRateLimiter m_pitchSlew = new SlewRateLimiter(0.6);
 
     @Override
     public void periodic() {
         // get updates from limelight
-        int tv = table.getEntry("tv").getNumber(0).intValue();
+        int tv = m_limelight_nt.getEntry("tv").getNumber(0).intValue();
 
         // if the target isn't found don't update the values
         if (RobotContainer.m_Turret.isTurretLocked()) {
@@ -75,14 +63,8 @@ public class Targeting extends SubsystemBase {
             m_cmdHubFound.schedule();
         }
 
-        // m_targetOffsetAngle_Horizontal =
-        // m_yawSlew.calculate(table.getEntry("tx").getDouble(0));
-        // m_targetOffsetAngle_Vertical =
-        // m_pitchSlew.calculate(table.getEntry("ty").getDouble(0));
-        m_targetOffsetAngle_Horizontal = table.getEntry("tx").getDouble(0);
-        m_targetOffsetAngle_Vertical = table.getEntry("ty").getDouble(0);
-        m_targetArea = table.getEntry("ta").getDouble(0);
-        m_targetSkew = table.getEntry("ts").getDouble(0);
+        m_targetOffsetAngle_Horizontal = m_limelight_nt.getEntry("tx").getDouble(0);
+        m_targetOffsetAngle_Vertical = m_limelight_nt.getEntry("ty").getDouble(0);
 
         // get the pitch of the target
         // calculate the distance
@@ -94,28 +76,11 @@ public class Targeting extends SubsystemBase {
          * a: is the distance of the robot from the hub
          */
         m_distanceToTarget = kHEIGHT / Math.tan(Math.toRadians(kMOUNT_PITCH + m_targetOffsetAngle_Vertical));
-
-        // save off the history
-        for (int c = 0; c < 2; c++) {
-            m_distanceHistory[c] = m_distanceHistory[c + 1];
-            m_yawHistory[c] = m_yawHistory[c + 1];
-        }
-        m_distanceHistory[2] = m_distanceToTarget;
-        m_yawHistory[2] = m_targetOffsetAngle_Horizontal;
-
-        // save off the history
-        for (int c = 0; c < 2; c++) {
-            m_distanceHistory[c] = m_distanceHistory[c + 1];
-            m_yawHistory[c] = m_yawHistory[c + 1];
-        }
-        m_distanceHistory[2] = m_distanceToTarget;
-        m_yawHistory[2] = m_targetOffsetAngle_Horizontal;
-
     }
 
     public double getTargetDistance() {
         if (m_hasTarget) {
-            return this.getPredictedDistance(m_pred_distance.getDouble(0.0));
+            return m_distanceToTarget;
         }
         return 0.0;
     }
@@ -127,30 +92,9 @@ public class Targeting extends SubsystemBase {
 
         // get result from camera
         double tuning = RobotContainer.m_Turret.getTuningYawOffset();
-        double time = m_pred_yaw.getDouble(0.0)
-                + (m_pred_yaw_distance.getDouble(0.0) / 100.0 * this.getTargetDistance());
-        double base = this.getPredictedTargetOffsetYaw(time);
+        double base = m_targetOffsetAngle_Horizontal;
 
         return base + tuning;
-    }
-
-    // returns the predicted yaw of the target given a time in seconds into the
-    // future
-    // so, if the time of flight (TOF) of the cargo is 2s in the future, pass in 2.0
-    public double getPredictedTargetOffsetYaw(double time) {
-        // double v = m_yawHistory[2] - m_yawHistory[1];
-
-        // return m_yawHistory[2] + (v * time);
-        return m_targetOffsetAngle_Horizontal;
-    }
-
-    // returns the predicted distance of the target given a time in seconds into the
-    // future
-    // so, if the time of flight (TOF) of the cargo is 2s in the future, pass in 2.0
-    public double getPredictedDistance(double time) {
-        double v = m_distanceHistory[2] - m_distanceHistory[1];
-
-        return m_distanceHistory[2] + (v * time);
     }
 
     public double getTargetOffsetPitch() {
@@ -183,17 +127,22 @@ public class Targeting extends SubsystemBase {
 
     public void createShuffleBoardTab() {
 
-        m_pred_distance = m_shuffleboardTab.add("Distance Look Ahead", 1.0).withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(3, 1)
-                .withPosition(2, 0).withProperties(Map.of("min", 0.0, "max", 5.0)).getEntry();
+        // m_pred_distance = m_shuffleboardTab.add("Distance Look Ahead",
+        // 1.0).withWidget(BuiltInWidgets.kNumberSlider)
+        // .withSize(3, 1)
+        // .withPosition(2, 0).withProperties(Map.of("min", 0.0, "max",
+        // 5.0)).getEntry();
 
-        m_pred_yaw = m_shuffleboardTab.add("Yaw Look Ahead", 1.0).withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(3, 1)
-                .withPosition(2, 1).withProperties(Map.of("min", 0.0, "max", 5.0)).getEntry();
+        // m_pred_yaw = m_shuffleboardTab.add("Yaw Look Ahead",
+        // 1.0).withWidget(BuiltInWidgets.kNumberSlider)
+        // .withSize(3, 1)
+        // .withPosition(2, 1).withProperties(Map.of("min", 0.0, "max",
+        // 5.0)).getEntry();
 
-        m_pred_yaw_distance = m_shuffleboardTab.add("Yaw Look Distance Weight", 0)
-                .withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(3, 1)
-                .withPosition(2, 2).withProperties(Map.of("min", 0.0, "max", 100.0)).getEntry();
+        // m_pred_yaw_distance = m_shuffleboardTab.add("Yaw Look Distance Weight", 0)
+        // .withWidget(BuiltInWidgets.kNumberSlider)
+        // .withSize(3, 1)
+        // .withPosition(2, 2).withProperties(Map.of("min", 0.0, "max",
+        // 100.0)).getEntry();
     }
 }

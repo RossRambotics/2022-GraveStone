@@ -168,16 +168,6 @@ public class Shooter extends SubsystemBase {
             m_diffBackRPM.setDouble(m_BackRPM_shooter - m_goalRPM.getDouble(0));
             m_diffFrontRPM.setDouble(m_FrontRPM_shooter - m_goalRPM.getDouble(0));
             m_goalPitch = fs.m_pitch;
-
-            // update Turret pitch for firing solution unless in test mode
-            if (!RobotContainer.m_Turret.isTestMode()) {
-                // TODO test removing this and adding it to the start method below (currently
-                // commented out)
-                if (DriverStation.isTeleop()) {
-                    return;
-                }
-                RobotContainer.m_Turret.setPitchDegrees(fs.m_pitch);
-            }
         }
     }
 
@@ -293,7 +283,7 @@ public class Shooter extends SubsystemBase {
 
     }
 
-    public void start() {
+    public void shootHigh() {
         /**
          * Convert RPM to units / 100ms.
          * 2048 Units/Rev * RPM / 600 100ms/min in either direction:
@@ -315,9 +305,8 @@ public class Shooter extends SubsystemBase {
             m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms * Math.abs(100.0 - spin) / 100.0);
         }
 
-        // TODO Test this
         // set the pitch
-        // RobotContainer.m_Turret.setPitchDegrees(m_goalPitch);
+        RobotContainer.m_Turret.setPitchDegrees(m_goalPitch);
     }
 
     public void stop() {
