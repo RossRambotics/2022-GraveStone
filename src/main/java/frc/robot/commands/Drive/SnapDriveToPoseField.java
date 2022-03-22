@@ -21,12 +21,24 @@ public class SnapDriveToPoseField extends CommandBase {
     ProfiledPIDController m_xPID = null;
     ProfiledPIDController m_yPID = null;
     private Pose2d m_error = null;
+    final private double m_maxErrorMeters;
 
     /** Creates a new DriveWhileTracking. */
+    /**
+     * 
+     * @param drivetrainSubsystem Drive subsystem
+     * @param goal                the goal pose that the robot should move to
+     * @param maxErrorMeters      error tolerance in meters. Once the x and y error
+     *                            is less than this amount the command will finish.
+     */
     public SnapDriveToPoseField(DrivetrainSubsystem drivetrainSubsystem,
-            Pose2d goal) {
+            Pose2d goal, double maxErrorMeters) {
+
         this.m_drivetrainSubsystem = drivetrainSubsystem;
-        m_goal = goal;
+        double kFACTOR = 1.15;
+
+        m_goal = new Pose2d(goal.getX() * kFACTOR, goal.getY() * kFACTOR, goal.getRotation());
+        m_maxErrorMeters = maxErrorMeters;
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drivetrainSubsystem);
@@ -122,8 +134,8 @@ public class SnapDriveToPoseField extends CommandBase {
     @Override
     public boolean isFinished() {
         // end if we have reached target Pose
-        if ((Math.abs(m_error.getX()) < 0.2)
-                && (Math.abs(m_error.getY()) < 0.2)
+        if ((Math.abs(m_error.getX()) < m_maxErrorMeters)
+                && (Math.abs(m_error.getY()) < m_maxErrorMeters)
                 && (Math.abs(m_error.getRotation().getDegrees()) < 1.0)) {
             return true;
         }
