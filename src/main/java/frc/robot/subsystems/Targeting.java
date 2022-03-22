@@ -35,8 +35,8 @@ public class Targeting extends SubsystemBase {
     private HubFound m_cmdHubFound = new HubFound();
     private HubNotFound m_cmdHubNotFound = new HubNotFound();
     private HubTargeted m_cmdHubTargeted = new HubTargeted();
-    private static final double kHEIGHT = 2.0; // the difference in height of the robot to the target ring
-    private static final double kMOUNT_PITCH = 32.19; // the angle of the camera mount pitch
+    private static final double kHEIGHT = 1.87; // the difference in height of the robot to the target ring
+    private static final double kMOUNT_PITCH = 32.5; // the angle of the camera mount pitch
     private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Targeting");
     private NetworkTableEntry m_pred_distance = null;
     private NetworkTableEntry m_pred_yaw = null;
