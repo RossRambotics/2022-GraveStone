@@ -27,7 +27,8 @@ public class Start3LowBackHigh extends CommandBase {
     @Override
     public void initialize() {
         // setup odometry
-        Pose2d start = new Pose2d(7.14, 1.55, new Rotation2d(Math.toRadians(69.13)));
+        // Pose2d start = new Pose2d(7.14, 1.55, new Rotation2d(Math.toRadians(69.13)));
+        Pose2d start = new Pose2d(5.0 * 1.15, 1, new Rotation2d(Math.toRadians(0)));
         RobotContainer.m_drivetrainSubsystem.getOdometry().resetPosition(start,
                 RobotContainer.m_drivetrainSubsystem.getGyroHeading());
     }
@@ -36,8 +37,11 @@ public class Start3LowBackHigh extends CommandBase {
     @Override
     public void execute() {
 
+        // CommandBase gotoPose1 = new
+        // SnapDriveToPoseField(RobotContainer.m_drivetrainSubsystem,
+        // new Pose2d(7.63, 0.41, new Rotation2d(Math.toRadians(90.00))));
         CommandBase gotoPose1 = new SnapDriveToPoseField(RobotContainer.m_drivetrainSubsystem,
-                new Pose2d(7.63, 0.41, new Rotation2d(Math.toRadians(90.00))));
+                new Pose2d(0, 1, new Rotation2d(Math.toRadians(0.00))));
 
         SequentialCommandGroup command = new SequentialCommandGroup(
                 new ShootLow().withTimeout(2.6),

@@ -26,6 +26,9 @@ public class SnapDriveToPoseRobot extends CommandBase {
     public SnapDriveToPoseRobot(DrivetrainSubsystem drivetrainSubsystem,
             Pose2d goal) {
         this.m_drivetrainSubsystem = drivetrainSubsystem;
+
+        // TODO goal needs to transform goal to be field oriented
+
         this.m_goal = goal;
 
         // Use addRequirements() here to declare subsystem dependencies.

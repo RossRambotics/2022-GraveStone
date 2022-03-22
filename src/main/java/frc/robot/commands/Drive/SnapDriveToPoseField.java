@@ -16,17 +16,17 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 
 public class SnapDriveToPoseField extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
-    private final Pose2d m_goal;
+    private Pose2d m_goal;
     ProfiledPIDController m_rotationPID = null;
     ProfiledPIDController m_xPID = null;
     ProfiledPIDController m_yPID = null;
-    private Pose2d m_error = getError();
+    private Pose2d m_error = null;
 
     /** Creates a new DriveWhileTracking. */
     public SnapDriveToPoseField(DrivetrainSubsystem drivetrainSubsystem,
             Pose2d goal) {
         this.m_drivetrainSubsystem = drivetrainSubsystem;
-        this.m_goal = goal;
+        m_goal = goal;
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drivetrainSubsystem);
@@ -38,11 +38,11 @@ public class SnapDriveToPoseField extends CommandBase {
 
         double ANGULAR_P = 0.1;
         double ANGULAR_D = 0.001;
-        double TRANSLATE_P = 0.1;
-        double TRANSLATE_D = 0.001;
+        double TRANSLATE_P = 0.5;
+        double TRANSLATE_D = 0.0;
 
         TrapezoidProfile.Constraints rotationConstraints = new TrapezoidProfile.Constraints(
-                3, 3);
+                1.0, 0.5);
         m_rotationPID = new ProfiledPIDController(
                 ANGULAR_P, 0, ANGULAR_D, rotationConstraints);
 
@@ -50,7 +50,7 @@ public class SnapDriveToPoseField extends CommandBase {
         m_rotationPID.enableContinuousInput(0, 360);
 
         TrapezoidProfile.Constraints translateConstraints = new TrapezoidProfile.Constraints(
-                1, 1);
+                1, 0.75);
         m_xPID = new ProfiledPIDController(TRANSLATE_P, 0, TRANSLATE_D, translateConstraints);
         m_yPID = new ProfiledPIDController(TRANSLATE_P, 0, TRANSLATE_D, translateConstraints);
 
@@ -58,6 +58,7 @@ public class SnapDriveToPoseField extends CommandBase {
 
     private Pose2d getError() {
         Pose2d current = RobotContainer.m_drivetrainSubsystem.getOdometryPose();
+
         Pose2d error = new Pose2d(m_goal.getX() - current.getX(),
                 m_goal.getY() - current.getY(),
                 m_goal.getRotation().minus(current.getRotation()));
@@ -74,17 +75,38 @@ public class SnapDriveToPoseField extends CommandBase {
         m_error = getError();
 
         // update PIDs
-        double rotationSpeed = -m_rotationPID.calculate(m_error.getRotation().getDegrees(), 0);
+        double rotationSpeed = m_rotationPID.calculate(m_error.getRotation().getDegrees(), 0);
 
         rotationSpeed = MathUtil.clamp(rotationSpeed, -3.0, 3.0);
 
+        if (Math.abs(rotationSpeed) < 0.05) {
+            rotationSpeed = 0;
+        }
+
         double translateSpeedX = m_xPID.calculate(m_error.getX(), 0);
+
+        double TRANSLATE_FF = 0.1;
+        if (translateSpeedX > 0) {
+            translateSpeedX += TRANSLATE_FF;
+        } else {
+            translateSpeedX -= TRANSLATE_FF;
+        }
+
         double translateSpeedY = m_yPID.calculate(m_error.getY(), 0);
+
+        if (translateSpeedY > 0) {
+            translateSpeedY += TRANSLATE_FF;
+        } else {
+            translateSpeedY -= TRANSLATE_FF;
+        }
+
+        DataLogManager.log("SnapDriveToPoseField: Corrections: X: " + translateSpeedX + " Y: " + translateSpeedY
+                + " Rot: " + rotationSpeed);
 
         m_drivetrainSubsystem.drive(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
-                        translateSpeedX,
-                        translateSpeedY,
+                        -translateSpeedX,
+                        -translateSpeedY,
                         rotationSpeed,
                         m_drivetrainSubsystem.getGyroscopeRotation()),
                 rotationSpeed);
@@ -100,8 +122,8 @@ public class SnapDriveToPoseField extends CommandBase {
     @Override
     public boolean isFinished() {
         // end if we have reached target Pose
-        if ((Math.abs(m_error.getX()) < 0.01)
-                && (Math.abs(m_error.getY()) < 0.01)
+        if ((Math.abs(m_error.getX()) < 0.2)
+                && (Math.abs(m_error.getY()) < 0.2)
                 && (Math.abs(m_error.getRotation().getDegrees()) < 1.0)) {
             return true;
         }
