@@ -39,10 +39,6 @@ public class AimTarget extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        if (RobotContainer.m_Turret.getIsOnTarget()) {
-            return true;
-        }
-
         return false;
     }
 }
