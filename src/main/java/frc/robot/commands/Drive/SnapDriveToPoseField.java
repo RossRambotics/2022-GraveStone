@@ -68,6 +68,10 @@ public class SnapDriveToPoseField extends CommandBase {
         m_xPID.reset(error.getTranslation().getX());
         m_yPID.reset(error.getTranslation().getY());
 
+        // TODO uncomment this and test it, then add it to other Snap commands as
+        // necessary...
+        // m_rotationPID.reset(error.getRotation().getDegrees());
+
     }
 
     private Pose2d getError() {
