@@ -13,7 +13,16 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
-public class DriveWhileTracking extends CommandBase {
+/**
+ * Drive command that uses ball tracking.
+ * 
+ * 1 - Determines what orientation to snap on to.
+ * 2 - sets a PID to orient to that angle
+ * 3 - does strafing along that orientation
+ * 
+ */
+
+public class BallStrafeDrive extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final DoubleSupplier m_translationXSupplier;
     private final DoubleSupplier m_translationYSupplier;
@@ -21,7 +30,7 @@ public class DriveWhileTracking extends CommandBase {
     PIDController m_PIDTracking = null;
 
     /** Creates a new DriveWhileTracking. */
-    public DriveWhileTracking(DrivetrainSubsystem drivetrainSubsystem,
+    public BallStrafeDrive(DrivetrainSubsystem drivetrainSubsystem,
             DoubleSupplier translationXSupplier,
             DoubleSupplier translationYSupplier,
             DoubleSupplier rotationSupplier) {

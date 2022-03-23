@@ -71,15 +71,20 @@ public class AutoDriveWhileTracking extends CommandBase {
             double fieldXSpeed = m_BaseSpeed * Math.sin(m_drivetrainSubsystem.getGyroHeading().getDegrees());
             double fieldYSpeed = m_BaseSpeed * Math.cos(m_drivetrainSubsystem.getGyroHeading().getDegrees());
 
-            DoubleSupplier x = () -> {return fieldXSpeed;};
-            DoubleSupplier y = () -> {return fieldYSpeed;};
+            DoubleSupplier x = () -> {
+                return fieldXSpeed;
+            };
+            DoubleSupplier y = () -> {
+                return fieldYSpeed;
+            };
 
             m_drivetrainSubsystem.drive(
                     ChassisSpeeds.fromFieldRelativeSpeeds(
-                           x.getAsDouble(),
-                           y.getAsDouble(),
+                            x.getAsDouble(),
+                            y.getAsDouble(),
                             rotationSpeed,
-                            m_drivetrainSubsystem.getGyroscopeRotation()));
+                            m_drivetrainSubsystem.getGyroscopeRotation()),
+                    rotationSpeed);
         } else {
             // if we aren't tracking a target then do normal drive...
             m_drivetrainSubsystem.drive(
@@ -87,14 +92,15 @@ public class AutoDriveWhileTracking extends CommandBase {
                             m_translationXSupplier.getAsDouble(),
                             m_translationYSupplier.getAsDouble(),
                             m_rotationSupplier.getAsDouble(),
-                            m_drivetrainSubsystem.getGyroscopeRotation()));
+                            m_drivetrainSubsystem.getGyroscopeRotation()),
+                    m_rotationSupplier.getAsDouble());
         }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
+        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0), 0.0);
 
         RobotContainer.m_Tracking.disableSearchLight();
     }

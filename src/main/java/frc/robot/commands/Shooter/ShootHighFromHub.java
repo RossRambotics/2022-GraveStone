@@ -20,7 +20,7 @@ public class ShootHighFromHub extends CommandBase {
     public ShootHighFromHub() {
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(RobotContainer.m_Shooter, RobotContainer.m_Indexer,
-                RobotContainer.m_Intake, RobotContainer.m_Intake.m_roller);
+                RobotContainer.m_Intake, RobotContainer.m_Intake.m_roller, RobotContainer.m_Turret);
     }
 
     // Called when the command is initially scheduled.
@@ -41,15 +41,15 @@ public class ShootHighFromHub extends CommandBase {
         RobotContainer.m_Intake.retract();
         RobotContainer.m_Intake.stop();
         RobotContainer.m_Shooter.shootHighFromHub();
-        RobotContainer.m_Turret.setYawDegreesFront(0);
+        RobotContainer.m_Turret.setYawDegreesFront(-2.6);
         RobotContainer.m_Turret.setPitchDegrees(3.5);
 
         m_isShooting = false;
         m_isShooting2 = false;
         m_isCompacting = true;
 
-        m_AimCmd = new frc.robot.commands.Turret.AimTarget().withTimeout(2.0);
-        m_AimCmd.schedule();
+        // m_AimCmd = new frc.robot.commands.Turret.AimTarget().withTimeout(2.0);
+        // m_AimCmd.schedule();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
@@ -66,7 +66,7 @@ public class ShootHighFromHub extends CommandBase {
             m_timer.start();
         }
 
-        if (m_timer.hasElapsed(0.1) == false) {
+        if (m_timer.hasElapsed(0.2) == false) {
             return;
         }
 

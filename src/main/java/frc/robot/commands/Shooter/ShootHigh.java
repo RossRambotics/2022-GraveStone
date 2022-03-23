@@ -42,7 +42,7 @@ public class ShootHigh extends CommandBase {
                 " Shooter (e) RPM: " + RobotContainer.m_Shooter.getErrorRPM());
         RobotContainer.m_Intake.retract();
         RobotContainer.m_Intake.stop();
-        RobotContainer.m_Shooter.start();
+        RobotContainer.m_Shooter.shootHigh();
 
         m_isShooting = false;
         m_isShooting2 = false;
@@ -55,6 +55,10 @@ public class ShootHigh extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        // update firing solution
+        if (m_timer.hasElapsed(0.2)) {
+            RobotContainer.m_Shooter.shootHigh();
+        }
 
         if (m_isCompacting && (m_timer.hasElapsed(0.2) == false)) {
             RobotContainer.m_Indexer.reverse();
@@ -98,12 +102,15 @@ public class ShootHigh extends CommandBase {
 
         RobotContainer.m_Indexer.stop();
 
+        // update firing solution
+        RobotContainer.m_Shooter.shootHigh();
         // pause briefly then turn on the intake
         if (m_timer.hasElapsed(0.75) == false) {
 
             return;
         }
-
+        // update firing solution
+        RobotContainer.m_Shooter.shootHigh();
         RobotContainer.m_Indexer.start();
 
         DataLogManager.log("ShootHigh Shoot2:" +
@@ -126,6 +133,8 @@ public class ShootHigh extends CommandBase {
         RobotContainer.m_Shooter.stop();
         RobotContainer.m_Intake.stop();
         RobotContainer.m_Turret.setYawDegreesFront(0);
+        RobotContainer.m_Turret.setPitchDegrees(0);
+        m_AimCmd.cancel();
     }
 
     // Returns true when the command should end.

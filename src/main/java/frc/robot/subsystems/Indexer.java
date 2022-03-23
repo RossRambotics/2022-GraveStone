@@ -9,25 +9,18 @@ package frc.robot.subsystems;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.TalonFX_Gains;
-import frc.robot.RobotContainer;
-
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Indexer extends SubsystemBase {
 
@@ -39,8 +32,8 @@ public class Indexer extends SubsystemBase {
     public AnalogInput m_Sensor_IndexerMiddle = new AnalogInput(Constants.INDEXER_MIDDLE);
     public AnalogInput m_Sensor_IndexerExit = new AnalogInput(Constants.INDEXER_EXIT);
 
-    private NetworkTableEntry m_wheelSpeed = null;
-    private NetworkTableEntry m_diffWheelSpeed = null;
+    private double m_wheelSpeed = 2500.0;
+    private double m_diffWheelSpeed = 0.0;
 
     /**
      * PID Gains may have to be adjusted based on the responsiveness of control
@@ -101,8 +94,7 @@ public class Indexer extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        m_diffWheelSpeed
-                .setDouble(Math.abs(m_frontwheels.getSelectedSensorVelocity(0)) - Math.abs(m_wheelSpeed.getDouble(0)));
+        m_diffWheelSpeed = Math.abs(m_frontwheels.getSelectedSensorVelocity(0)) - Math.abs(m_wheelSpeed);
     }
 
     public boolean getSensorIndexerEntry() {
@@ -154,18 +146,21 @@ public class Indexer extends SubsystemBase {
         // SmartDashboard.putData(c);
         indexerCommands.add(c);
 
-        m_wheelSpeed = m_shuffleboardTab.add("Indexer Shoot RPM", 2500).withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(4, 1)
-                .withPosition(2, 0).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
+        // m_wheelSpeed = m_shuffleboardTab.add("Indexer Shoot RPM",
+        // 2500).withWidget(BuiltInWidgets.kNumberSlider)
+        // .withSize(4, 1)
+        // .withPosition(2, 0).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
 
-        m_diffWheelSpeed = m_shuffleboardTab.add("Indexer Error RPM", 0).withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(4, 1)
-                .withPosition(2, 1).withProperties(Map.of("min", -100, "max", 100)).getEntry();
+        // m_diffWheelSpeed = m_shuffleboardTab.add("Indexer Error RPM",
+        // 0).withWidget(BuiltInWidgets.kNumberSlider)
+        // .withSize(4, 1)
+        // .withPosition(2, 1).withProperties(Map.of("min", -100, "max",
+        // 100)).getEntry();
 
     }
 
     public double getIndexError() {
-        return m_diffWheelSpeed.getDouble(0);
+        return m_diffWheelSpeed;
     }
 
     class IndexerConstants {
@@ -212,7 +207,7 @@ public class Indexer extends SubsystemBase {
          * 2048 Units/Rev * RPM / 600 100ms/min in either direction:
          * velocity setpoint is in units/100ms
          */
-        double targetVelocity_UnitsPer100ms = m_wheelSpeed.getDouble(2500) * 2048.0 / 600.0;
+        double targetVelocity_UnitsPer100ms = m_wheelSpeed * 2048.0 / 600.0;
         /* 2000 RPM in either direction */
 
         m_frontwheels.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms);

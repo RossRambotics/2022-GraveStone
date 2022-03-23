@@ -11,31 +11,26 @@ import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
-import frc.robot.commands.DriveWhileTracking;
-import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 public class Tracking extends SubsystemBase {
 
-    private NetworkTableEntry m_currentYaw = null;
-    private NetworkTableEntry m_goalYaw = null;
-    private NetworkTableEntry m_testTargetYaw = null;
+    private double m_currentYaw = 0;
+    private double m_goalYaw = 0;
+    private double m_testTargetYaw = 0;
     private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Tracking");
     private PhotonCamera m_camera;
-    private NetworkTableEntry m_pEntry = null;
-    private NetworkTableEntry m_dEntry = null;
+    private double m_pEntry = 0.1;
+    private double m_dEntry = 0.001;
     private PowerDistribution m_PDH = null;
 
     private boolean m_isTesting = false;
@@ -80,22 +75,19 @@ public class Tracking extends SubsystemBase {
         // if (true)
         // return;
         // This method will be called once per scheduler run
-        m_currentYaw.setDouble(RobotContainer.m_drivetrainSubsystem.getGyroHeading()
-                .getDegrees());
-        m_goalYaw.setDouble(m_currentYaw.getDouble(0) + getHeadingOffset());
-        this.setTestTarget(m_testTargetYaw.getDouble(0));
+        m_currentYaw = RobotContainer.m_drivetrainSubsystem.getGyroHeading()
+                .getDegrees();
+        m_goalYaw = m_currentYaw + getHeadingOffset();
+        this.setTestTarget(m_testTargetYaw);
 
         if (m_isTesting) {
             return;
         }
-
-        PhotonPipelineResult result = m_camera.getLatestResult();
-
     }
 
     public double getHeadingOffset() {
         if (m_isTesting) {
-            return m_testTargetYaw.getDouble(0) - m_currentYaw.getDouble(0);
+            return m_testTargetYaw - m_currentYaw;
         }
 
         // TODO Chester fix this! this!
@@ -150,32 +142,38 @@ public class Tracking extends SubsystemBase {
         c.setName("Test Mode");
         commands.add(c);
 
-        m_testTargetYaw = m_shuffleboardTab.add("Test Target Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(4, 1)
-                .withPosition(2, 0).withProperties(Map.of("min", -100.0, "max", 100.0)).getEntry();
+        // m_testTargetYaw = m_shuffleboardTab.add("Test Target Yaw",
+        // 0).withWidget(BuiltInWidgets.kNumberSlider)
+        // .withSize(4, 1)
+        // .withPosition(2, 0).withProperties(Map.of("min", -100.0, "max",
+        // 100.0)).getEntry();
 
-        m_currentYaw = m_shuffleboardTab.add("Current Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(4, 1)
-                .withPosition(2, 1).withProperties(Map.of("min", -100.0, "max", 100.0)).getEntry();
+        // m_currentYaw = m_shuffleboardTab.add("Current Yaw",
+        // 0).withWidget(BuiltInWidgets.kNumberSlider)
+        // .withSize(4, 1)
+        // .withPosition(2, 1).withProperties(Map.of("min", -100.0, "max",
+        // 100.0)).getEntry();
 
-        m_goalYaw = m_shuffleboardTab.add("Goal Yaw", 0).withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(4, 1)
-                .withPosition(2, 2).withProperties(Map.of("min", -100.0, "max", 100.0)).getEntry();
-        m_pEntry = m_shuffleboardTab.add("Angle P", 0.1)
-                .withSize(1, 1)
-                .withPosition(6, 0).getEntry();
-        m_dEntry = m_shuffleboardTab.add("Angle D", 0.001)
-                .withSize(1, 1)
-                .withPosition(6, 1).getEntry();
-        m_testTargetYaw.setDouble(45);
+        // m_goalYaw = m_shuffleboardTab.add("Goal Yaw",
+        // 0).withWidget(BuiltInWidgets.kNumberSlider)
+        // .withSize(4, 1)
+        // .withPosition(2, 2).withProperties(Map.of("min", -100.0, "max",
+        // 100.0)).getEntry();
+        // m_pEntry = m_shuffleboardTab.add("Angle P", 0.1)
+        // .withSize(1, 1)
+        // .withPosition(6, 0).getEntry();
+        // m_dEntry = m_shuffleboardTab.add("Angle D", 0.001)
+        // .withSize(1, 1)
+        // .withPosition(6, 1).getEntry();
+        // m_testTargetYaw.setDouble(45);
     }
 
     public double getAngleP() {
-        return m_pEntry.getDouble(0);
+        return m_pEntry;
     }
 
     public double getAngleD() {
-        return m_dEntry.getDouble(0);
+        return m_dEntry;
     }
 
     public void EnableTestMode() {

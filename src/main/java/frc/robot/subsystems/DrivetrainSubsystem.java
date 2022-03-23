@@ -17,10 +17,15 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 import static frc.robot.Constants.*;
 
@@ -111,6 +116,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private SwerveModuleState[] m_swerveModuleStates = new SwerveModuleState[4]; // added while adding odometry
                                                                                  // support
                                                                                  // & replaced m_chassisSpeeds
+    private Field2d m_field = new Field2d();
+
+    private double m_lastRotationSpeed;
 
     public DrivetrainSubsystem() {
         m_swerveModuleStates[0] = new SwerveModuleState();
@@ -119,6 +127,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_swerveModuleStates[3] = new SwerveModuleState();
 
         ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
+        ShuffleboardTab fieldtab = Shuffleboard.getTab("Field");
+        fieldtab.add(m_field).withWidget(BuiltInWidgets.kField)
+                .withSize(8, 8)
+                .withPosition(0, 0);
 
         // There are 4 methods you can call to create your swerve modules.
         // The method you use depends on what motors you are using.
@@ -208,6 +220,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // m_navx.zeroYaw();
     }
 
+    public void setGyroScope(double yaw) {
+        m_pigeon.setYaw(yaw);
+    }
+
     public void resetOdometry() {
         zeroGyroscope();
         m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
@@ -256,12 +272,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     }
 
-    public void drive(ChassisSpeeds chassisSpeeds) {
+    /**
+     * 
+     * @param chassisSpeeds
+     * @param rotationSpeed - used for simulation only
+     */
+    public void drive(ChassisSpeeds chassisSpeeds, double rotationSpeed) {
         m_swerveModuleStates = m_kinematics.toSwerveModuleStates(chassisSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(
                 m_swerveModuleStates,
                 MAX_VELOCITY_METERS_PER_SECOND);
 
+        m_lastRotationSpeed = rotationSpeed;
         // update the actual swerve modules
         this.updateSDSSwerveModules();
     }
@@ -302,8 +324,19 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // states[3].angle.getRadians());
 
         // update odometry
-        // TODO --- should this be moved to only be called during autonomous?
         m_odometryPose = m_odometry.update(getGyroscopeRotation(), m_swerveModuleStates);
+
+        // update field sim
+        if (Robot.isSimulation()) {
+            Pose2d simPose = new Pose2d(
+                    m_odometryPose.getX(),
+                    m_odometryPose.getY(),
+                    m_odometryPose.getRotation().plus(new Rotation2d(m_lastRotationSpeed)));
+            m_field.setRobotPose(simPose);
+        } else {
+            m_field.setRobotPose(m_odometryPose);
+        }
+
     }
 
     public Pose2d getOdometryPose() {
@@ -312,5 +345,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public SwerveDriveOdometry getOdometry() {
         return m_odometry;
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        // This method will be called once per scheduler run during simulation
     }
 }
