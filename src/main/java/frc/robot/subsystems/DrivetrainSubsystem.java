@@ -220,6 +220,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // m_navx.zeroYaw();
     }
 
+    public void setGyroScope(double yaw) {
+        m_pigeon.setYaw(yaw);
+    }
+
     public void resetOdometry() {
         zeroGyroscope();
         m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());

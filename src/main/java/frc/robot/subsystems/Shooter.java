@@ -42,16 +42,17 @@ public class Shooter extends SubsystemBase {
     private TalonFX_Gains m_gainsVelocity = new TalonFX_Gains(0.1, 0, 5, 1023.0 / 20660.0, 300, 1.00);
     private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Sub.Shooter");
     private NetworkTableEntry m_goalRPM = null;
-    private NetworkTableEntry m_actualFrontRPM = null;
-    private NetworkTableEntry m_actualBackRPM = null;
+    private double m_actualFrontRPM = 0;
+    private double m_actualBackRPM = 0;
     private NetworkTableEntry m_diffFrontRPM = null;
     private NetworkTableEntry m_diffBackRPM = null;
-    private NetworkTableEntry m_pid_kP = null;
-    private NetworkTableEntry m_pid_kI = null;
-    private NetworkTableEntry m_pid_kD = null;
-    private NetworkTableEntry m_pid_kFF = null;
-    private NetworkTableEntry m_nt_distance = null;
-    private NetworkTableEntry m_nt_rpmreturn = null;
+    private double m_pid_kP = m_gainsVelocity.kP;
+    private double m_pid_kI = m_gainsVelocity.kI;
+    private double m_pid_kD = m_gainsVelocity.kD;
+    private double m_pid_kFF = m_gainsVelocity.kF;
+    private NetworkTableEntry m_fs_distance = null;
+    private NetworkTableEntry m_fs_rpm = null;
+    private NetworkTableEntry m_fs_pitch = null;
     private NetworkTableEntry m_spinPercent = null;
     private NetworkTableEntry m_tuning_percent_RPM = null;
 
@@ -138,30 +139,30 @@ public class Shooter extends SubsystemBase {
         // Get the RPM of the motors
         m_FrontRPM_shooter = Math.abs(m_frontMotor.getSelectedSensorVelocity(ShooterConstants.kPIDLoopIdx));
         m_FrontRPM_shooter = m_FrontRPM_shooter / 2048 * 600;
-        m_actualFrontRPM.setDouble(m_FrontRPM_shooter);
+        m_actualFrontRPM = m_FrontRPM_shooter;
         m_diffFrontRPM.setDouble(m_FrontRPM_shooter - m_goalRPM.getDouble(0));
 
         m_BackRPM_shooter = Math.abs(m_backMotor.getSelectedSensorVelocity(ShooterConstants.kPIDLoopIdx));
         m_BackRPM_shooter = m_BackRPM_shooter / 2048 * 600;
-        m_actualBackRPM.setDouble(m_BackRPM_shooter);
+        m_actualBackRPM = m_BackRPM_shooter;
         m_diffBackRPM.setDouble(m_BackRPM_shooter - m_goalRPM.getDouble(0));
 
         // if we are in test mode use the distance provided by shuffleboard
         if (m_bTestMode) {
-            m_distance = m_nt_distance.getDouble(0);
+            m_distance = m_fs_distance.getDouble(0);
         } else {
             // see if we are targeting object and calculate firing solution
             if (!RobotContainer.m_Targeting.isTrackingTarget()) {
                 return;
             }
             m_distance = RobotContainer.m_Targeting.getTargetDistance();
-            m_nt_distance.setDouble(m_distance);
+            m_fs_distance.setDouble(m_distance);
         }
 
         // only do the following if the shooter has a target and is not in test mode
         FiringSolution fs = m_firingCalculator.compute(m_distance);
 
-        m_nt_rpmreturn.setDouble(fs.m_speed);
+        m_fs_rpm.setDouble(fs.m_speed);
 
         if (!m_bTestMode) {
             m_goalRPM.setDouble(fs.m_speed);
@@ -203,19 +204,19 @@ public class Shooter extends SubsystemBase {
                 .withSize(4, 1)
                 .withPosition(2, 1).withProperties(Map.of("min", -100, "max", 100)).getEntry();
 
-        m_actualFrontRPM = m_shuffleboardTab.add("Shooter Front Actual RPM", 4000)
-                .withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(4, 1)
-                .withPosition(0, 2).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
+        // m_actualFrontRPM = m_shuffleboardTab.add("Shooter Front Actual RPM", 4000)
+        // .withWidget(BuiltInWidgets.kNumberSlider)
+        // .withSize(4, 1)
+        // .withPosition(0, 2).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
 
         m_diffFrontRPM = m_shuffleboardTab.add("Shooter Front Diff RPM", 4000).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
                 .withPosition(0, 3).withProperties(Map.of("min", -100, "max", 100)).getEntry();
 
-        m_actualBackRPM = m_shuffleboardTab.add("Shooter Back Actual RPM", 4000)
-                .withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(4, 1)
-                .withPosition(4, 2).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
+        // m_actualBackRPM = m_shuffleboardTab.add("Shooter Back Actual RPM", 4000)
+        // .withWidget(BuiltInWidgets.kNumberSlider)
+        // .withSize(4, 1)
+        // .withPosition(4, 2).withProperties(Map.of("min", 0, "max", 7000)).getEntry();
 
         m_diffBackRPM = m_shuffleboardTab.add("Shooter Back Diff RPM", 4000).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
@@ -225,20 +226,23 @@ public class Shooter extends SubsystemBase {
         // "Y-axis/Upper bound": 7000.0,
         // "Y-axis/Lower bound": 0.0,
         // "Y-axis/Unit": "RPM",
-        m_nt_distance = m_shuffleboardTab.add("Shooter Distance", m_distance).withWidget(BuiltInWidgets.kNumberSlider)
+        m_fs_distance = m_shuffleboardTab.add("Shooter Distance", m_distance).withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(2, 1)
                 .withPosition(7, 0).withProperties(Map.of("min", 0, "max", 10)).getEntry();
-        m_nt_rpmreturn = m_shuffleboardTab.add("Shooter/RPM Return", 0.0)
+        m_fs_rpm = m_shuffleboardTab.add("Shooter/RPM Return", 0.0)
                 .withSize(1, 1)
                 .withPosition(6, 1).getEntry();
-        m_pid_kFF = m_shuffleboardTab.add("Shooter PID kFF",
-                m_gainsVelocity.kF).withSize(2, 1).withPosition(8, 1).getEntry();
-        m_pid_kP = m_shuffleboardTab.add("Shooter PID kP",
-                m_gainsVelocity.kP).withSize(2, 1).withPosition(8, 2).getEntry();
-        m_pid_kD = m_shuffleboardTab.add("Shooter PID kD",
-                m_gainsVelocity.kD).withSize(2, 1).withPosition(8, 3).getEntry();
-        m_pid_kI = m_shuffleboardTab.add("Shooter PID kI",
-                m_gainsVelocity.kI).withSize(2, 1).withPosition(8, 4).getEntry();
+        m_fs_pitch = m_shuffleboardTab.add("Shooter Pitch", m_distance).withWidget(BuiltInWidgets.kNumberSlider)
+                .withSize(2, 1)
+                .withPosition(7, 1).withProperties(Map.of("min", 0, "max", 20)).getEntry();
+        // m_pid_kFF = m_shuffleboardTab.add("Shooter PID kFF",
+        // m_gainsVelocity.kF).withSize(2, 1).withPosition(8, 1).getEntry();
+        // m_pid_kP = m_shuffleboardTab.add("Shooter PID kP",
+        // m_gainsVelocity.kP).withSize(2, 1).withPosition(8, 2).getEntry();
+        // m_pid_kD = m_shuffleboardTab.add("Shooter PID kD",
+        // m_gainsVelocity.kD).withSize(2, 1).withPosition(8, 3).getEntry();
+        // m_pid_kI = m_shuffleboardTab.add("Shooter PID kI",
+        // m_gainsVelocity.kI).withSize(2, 1).withPosition(8, 4).getEntry();
 
         // Add tuning for during Match
         // Adjust Shooter RPM
@@ -321,10 +325,10 @@ public class Shooter extends SubsystemBase {
 
     public void updatePIDF() {
         // Get PIDF values from the dashboard
-        m_gainsVelocity.kF = m_pid_kFF.getDouble(0);
-        m_gainsVelocity.kP = m_pid_kP.getDouble(0);
-        m_gainsVelocity.kD = m_pid_kD.getDouble(0);
-        m_gainsVelocity.kI = m_pid_kI.getDouble(0);
+        // m_gainsVelocity.kF = m_pid_kFF.getDouble(0);
+        // m_gainsVelocity.kP = m_pid_kP.getDouble(0);
+        // m_gainsVelocity.kD = m_pid_kD.getDouble(0);
+        // m_gainsVelocity.kI = m_pid_kI.getDouble(0);
 
         /* Config the Velocity closed loop gains in slot0 */
         m_frontMotor.config_kF(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kF, ShooterConstants.kTimeoutMs);

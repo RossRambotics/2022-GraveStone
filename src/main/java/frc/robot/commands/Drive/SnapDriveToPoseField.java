@@ -35,7 +35,7 @@ public class SnapDriveToPoseField extends CommandBase {
             Pose2d goal, double maxErrorMeters) {
 
         this.m_drivetrainSubsystem = drivetrainSubsystem;
-        double kFACTOR = 1.15;
+        double kFACTOR = 1.0;
 
         m_goal = new Pose2d(goal.getX() * kFACTOR, goal.getY() * kFACTOR, goal.getRotation());
         m_maxErrorMeters = maxErrorMeters;
@@ -120,7 +120,7 @@ public class SnapDriveToPoseField extends CommandBase {
                         -translateSpeedX,
                         -translateSpeedY,
                         rotationSpeed,
-                        m_drivetrainSubsystem.getGyroscopeRotation()),
+                        RobotContainer.m_drivetrainSubsystem.getOdometryPose().getRotation()),
                 rotationSpeed);
     }
 

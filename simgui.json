@@ -91,6 +91,7 @@
       "/Shuffleboard/Sub.Tracking/Commands/Test Mode": "Command",
       "/Shuffleboard/Sub.Tracking/Commands/Update PIDF": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Acquire FRont": "Command",
+      "/Shuffleboard/Sub.Turret/Commands/Acquire Front": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Enable Pitch": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Enable Yaw": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Lock Turret": "Command",

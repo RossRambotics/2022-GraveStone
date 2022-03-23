@@ -15,13 +15,12 @@ import frc.robot.commands.Intake.ExtendIntake;
 import frc.robot.commands.Intake.RetractIntake;
 import frc.robot.commands.Intake.StartIntake;
 import frc.robot.commands.Intake.StopIntake;
-import frc.robot.commands.Shooter.ShootHigh;
 import frc.robot.commands.Shooter.ShootHighFromHub;
 import frc.robot.commands.Shooter.ShootLow;
 
-public class Start3LowBackHighHub extends CommandBase {
+public class Start3_2LowBackHighHub extends CommandBase {
     /** Creates a new Start3LowBackHigh. */
-    public Start3LowBackHighHub() {
+    public Start3_2LowBackHighHub() {
         // Use addRequirements() here to declare subsystem dependencies.
     }
 
@@ -44,7 +43,7 @@ public class Start3LowBackHighHub extends CommandBase {
 
         CommandBase gotoPose1 = new SnapDriveToPoseField(
                 RobotContainer.m_drivetrainSubsystem,
-                new Pose2d(7.63, 0.41, new Rotation2d(Math.toRadians(90.00))),
+                new Pose2d(4.97, 1.85, new Rotation2d(Math.toRadians(9.35))),
                 0.2);
         CommandBase gotoPose2 = new SnapDriveToPoseField(
                 RobotContainer.m_drivetrainSubsystem,

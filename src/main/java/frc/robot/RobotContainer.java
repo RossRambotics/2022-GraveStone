@@ -422,6 +422,12 @@ public class RobotContainer {
         cmd = new frc.robot.commands.auto2.Start3LowBackHigh();
         commands.add(cmd);
 
+        cmd = new frc.robot.commands.auto2.Start3LowBackHighHub();
+        commands.add(cmd);
+
+        cmd = new frc.robot.commands.auto2.Start3_2LowBackHighHub();
+        commands.add(cmd);
+
         // Add auto routines
         CommandBase autoCmd = null;
         autoCmd = new InstantCommand();

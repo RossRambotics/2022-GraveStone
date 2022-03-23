@@ -6,6 +6,7 @@ package frc.robot.commands.auto2;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
@@ -29,7 +30,9 @@ public class Start3LowBackHigh extends CommandBase {
         // setup odometry
         Pose2d start = new Pose2d(7.85, 3.00, new Rotation2d(Math.toRadians(69.13)));
         // Pose2d start = new Pose2d(5.0 * 1.15, 1, new Rotation2d(Math.toRadians(0)));
-
+        DataLogManager.log("Start3LowBackHigh: Start: " + start);
+        RobotContainer.m_drivetrainSubsystem.setGyroScope(start.getRotation().getDegrees());
+        RobotContainer.m_drivetrainSubsystem.resetOdometry();
         RobotContainer.m_drivetrainSubsystem.getOdometry().resetPosition(start,
                 RobotContainer.m_drivetrainSubsystem.getGyroHeading());
     }
