@@ -6,62 +6,40 @@ package frc.robot;
 
 import java.util.Map;
 
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.PerpetualCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWhileTracking;
-import frc.robot.commands.Indexer.ReverseWheels;
 import frc.robot.commands.Climb.DefaultClimb;
 import frc.robot.commands.Drive.SnapDrive;
 import frc.robot.commands.Intake.ExtendIntake;
-import frc.robot.commands.Intake.RetractIntake;
 import frc.robot.commands.Intake.ReverseIntake;
 import frc.robot.commands.Intake.StartIntake;
-import frc.robot.commands.Intake.StopIntake;
-import frc.robot.commands.Turret.TrackTarget;
-import frc.robot.commands.auto.BackAndShoot;
 import frc.robot.commands.auto.BackShootBall;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.Indexer;
-
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.RioLEDs;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Targeting;
 import frc.robot.subsystems.Tracking;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.LEDPanel.LEDPanel;
 import frc.robot.subsystems.LEDStrip.LEDStrip;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import frc.robot.commands.AutoDriveWhileTracking;
 
 public class RobotContainer {
 
@@ -92,7 +70,7 @@ public class RobotContainer {
     static public final RioLEDs m_RioLEDs = new RioLEDs();
 
     static public final LEDStrip m_LEDStrip = new LEDStrip();
-    static public final LEDPanel m_LEDPanel = new LEDPanel();
+    // static public final LEDPanel m_LEDPanel = new LEDPanel();
 
     private final XboxController m_controllerDriver = new XboxController(0);
     private final XboxController m_controllerOperator = new XboxController(1);

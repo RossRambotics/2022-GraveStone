@@ -131,7 +131,7 @@ public class SnapDriveToPoseField extends CommandBase {
                         -translateSpeedY,
                         rotationSpeed,
                         RobotContainer.m_drivetrainSubsystem.getOdometryPose().getRotation()),
-                rotationSpeed);
+                m_goal.getRotation().getRadians());
     }
 
     // Called once the command ends or is interrupted.
