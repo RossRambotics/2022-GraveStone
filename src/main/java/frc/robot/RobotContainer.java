@@ -6,62 +6,41 @@ package frc.robot;
 
 import java.util.Map;
 
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.PerpetualCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveWhileTracking;
-import frc.robot.commands.Indexer.ReverseWheels;
 import frc.robot.commands.Climb.DefaultClimb;
 import frc.robot.commands.Drive.SnapDrive;
 import frc.robot.commands.Intake.ExtendIntake;
-import frc.robot.commands.Intake.RetractIntake;
 import frc.robot.commands.Intake.ReverseIntake;
 import frc.robot.commands.Intake.StartIntake;
-import frc.robot.commands.Intake.StopIntake;
-import frc.robot.commands.Turret.TrackTarget;
-import frc.robot.commands.auto.BackAndShoot;
 import frc.robot.commands.auto.BackShootBall;
 import frc.robot.sim.PhysicsSim;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.Indexer;
-
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.RioLEDs;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Targeting;
 import frc.robot.subsystems.Tracking;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.LEDPanel.LEDPanel;
 import frc.robot.subsystems.LEDStrip.LEDStrip;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import frc.robot.commands.AutoDriveWhileTracking;
 
 public class RobotContainer {
 
@@ -92,7 +71,7 @@ public class RobotContainer {
     static public final RioLEDs m_RioLEDs = new RioLEDs();
 
     static public final LEDStrip m_LEDStrip = new LEDStrip();
-    static public final LEDPanel m_LEDPanel = new LEDPanel();
+    // static public final LEDPanel m_LEDPanel = new LEDPanel();
 
     private final XboxController m_controllerDriver = new XboxController(0);
     private final XboxController m_controllerOperator = new XboxController(1);
@@ -132,17 +111,17 @@ public class RobotContainer {
         // LiveWindow.disableAllTelemetry();
     }
 
-    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(2.0);
+    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(1.5);
 
     private double getInputLeftY() {
         double driverLeftY = modifyAxis(m_controllerDriver.getLeftY());
 
         double slew = m_slewLeftY.calculate(driverLeftY) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
-        return slew * 0.6;
+        return slew * 0.4;
 
     }
 
-    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(2.0);
+    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(1.5);
 
     private double getInputLeftX() {
         double driverLeftX = modifyAxis(m_controllerDriver.getLeftX());
@@ -155,7 +134,7 @@ public class RobotContainer {
         double operatorRightY = 0;
 
         // implement Joystick Deadzone
-        if (Math.abs(m_controllerOperator.getRightY()) > 0.01) {
+        if (Math.abs(m_controllerOperator.getRightY()) > 0.08) {
             operatorRightY = m_controllerOperator.getRightY();
 
         }
@@ -163,12 +142,16 @@ public class RobotContainer {
         return operatorRightY;
     }
 
+    private double m_lastSnapAngle = 720; // defaults to 720 because 720 tell snap drive to not adjust the angle
+
     private double snapAngle() {
         double x = m_controllerDriver.getRightX();
         double y = -m_controllerDriver.getRightY();
 
         if (Math.abs(x) < 0.1 && Math.abs(y) < 0.1) {
-            return 720;
+            // return 720;
+            // stop angle drift
+            return m_lastSnapAngle;
         }
 
         double angle = Math.toDegrees(Math.atan2(x, y));
@@ -177,6 +160,7 @@ public class RobotContainer {
             return 360;
         }
 
+        m_lastSnapAngle = angle;
         return angle;
     }
 
@@ -426,6 +410,11 @@ public class RobotContainer {
         commands.add(cmd);
 
         cmd = new frc.robot.commands.auto2.Start3_2LowBackHighHub();
+        commands.add(cmd);
+
+        cmd = new frc.robot.commands.Drive.SnapDriveToCargo(
+                RobotContainer.m_drivetrainSubsystem,
+                new Rotation2d(0));
         commands.add(cmd);
 
         // Add auto routines

@@ -44,11 +44,11 @@ public class Start3_2LowBackHighHub extends CommandBase {
         CommandBase gotoPose1 = new SnapDriveToPoseField(
                 RobotContainer.m_drivetrainSubsystem,
                 new Pose2d(4.97, 1.85, new Rotation2d(Math.toRadians(9.35))),
-                0.2);
+                0.2).withTimeout(5.0);
         CommandBase gotoPose2 = new SnapDriveToPoseField(
                 RobotContainer.m_drivetrainSubsystem,
                 new Pose2d(7.85, 3.00, new Rotation2d(Math.toRadians(69.13))),
-                0.2);
+                0.2).withTimeout(5.0);
 
         // CommandBase gotoPose1 = new SnapDriveToPoseField(
         // RobotContainer.m_drivetrainSubsystem,

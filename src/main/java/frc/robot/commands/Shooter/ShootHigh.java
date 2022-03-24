@@ -48,7 +48,7 @@ public class ShootHigh extends CommandBase {
         m_isShooting2 = false;
         m_isCompacting = true;
 
-        m_AimCmd = new frc.robot.commands.Turret.AimTarget().withTimeout(2.0);
+        m_AimCmd = new frc.robot.commands.Turret.AimTarget().withTimeout(5.0);
         m_AimCmd.schedule();
     }
 
@@ -70,7 +70,7 @@ public class ShootHigh extends CommandBase {
             m_timer.start();
         }
 
-        if (m_timer.hasElapsed(0.1) == false) {
+        if (m_timer.hasElapsed(0.3) == false) {
             return;
         }
 
@@ -104,6 +104,7 @@ public class ShootHigh extends CommandBase {
 
         // update firing solution
         RobotContainer.m_Shooter.shootHigh();
+
         // pause briefly then turn on the intake
         if (m_timer.hasElapsed(0.75) == false) {
 

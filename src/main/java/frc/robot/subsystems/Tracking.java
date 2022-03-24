@@ -11,7 +11,10 @@ import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -58,18 +61,23 @@ public class Tracking extends SubsystemBase {
     @Override
     public void periodic() {
         // make sure we are using the appropriate vision pipeline
-        // if (DriverStation.getAlliance() != DriverStation.Alliance.Invalid &&
-        // m_currentPipeline == -1) {
-        // if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
-        // m_currentPipeline = kBLUE_PIPELINE;
-        // m_camera.setPipelineIndex(kBLUE_PIPELINE);
-        // DataLogManager.log("Tracking: We are BLUE alliance.");
-        // } else {
-        // m_currentPipeline = kRED_PIPELINE;
-        // m_camera.setPipelineIndex(kRED_PIPELINE);
-        // DataLogManager.log("Tracking: We are RED alliance.");
-        // }
-        // }
+        if (DriverStation.getMatchType() == MatchType.None &&
+                m_currentPipeline == -1) {
+            m_currentPipeline = kRED_PIPELINE;
+            DataLogManager.log("Tracking: not FMS match");
+        }
+        if (DriverStation.getAlliance() != DriverStation.Alliance.Invalid &&
+                m_currentPipeline == -1) {
+            if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+                m_currentPipeline = kBLUE_PIPELINE;
+                m_camera.setPipelineIndex(kBLUE_PIPELINE);
+                DataLogManager.log("Tracking: We are BLUE alliance.");
+            } else {
+                m_currentPipeline = kRED_PIPELINE;
+                m_camera.setPipelineIndex(kRED_PIPELINE);
+                DataLogManager.log("Tracking: We are RED alliance.");
+            }
+        }
 
         // TODO remove this
         // if (true)
@@ -182,9 +190,11 @@ public class Tracking extends SubsystemBase {
 
     public void enableSearchLight() {
         m_PDH.setSwitchableChannel(true);
+        m_camera.setDriverMode(false);
     }
 
     public void disableSearchLight() {
         m_PDH.setSwitchableChannel(false);
+        m_camera.setDriverMode(true);
     }
 }

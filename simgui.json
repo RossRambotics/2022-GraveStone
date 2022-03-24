@@ -43,8 +43,31 @@
       "/LiveWindow/Ungrouped/PIDController[10]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[11]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[12]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[13]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[14]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[15]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[16]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[17]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[18]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[19]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[20]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[21]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[22]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[23]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[24]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[25]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[26]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[27]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[28]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[29]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[30]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[31]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[32]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[33]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[34]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[35]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
@@ -67,6 +90,8 @@
       "/Shuffleboard/Match.Auto/Commands/Example Path": "Command",
       "/Shuffleboard/Match.Auto/Commands/HubShotBackShot": "Command",
       "/Shuffleboard/Match.Auto/Commands/Start3LowBackHigh": "Command",
+      "/Shuffleboard/Match.Auto/Commands/Start3LowBackHighHub": "Command",
+      "/Shuffleboard/Match.Auto/Commands/Start3_2LowBackHighHub": "Command",
       "/Shuffleboard/Match.Auto/Commands/TestShort": "Command",
       "/Shuffleboard/Sub.Auto/Autonomous": "String Chooser",
       "/Shuffleboard/Sub.Auto/Commands/Example Path": "Command",
@@ -85,6 +110,9 @@
       "/Shuffleboard/Sub.Intake/Commands/Stop Intake": "Command",
       "/Shuffleboard/Sub.Intake/Commands/Update PIDF": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Enable Test Mode": "Command",
+      "/Shuffleboard/Sub.Shooter/Commands/Shoot High": "Command",
+      "/Shuffleboard/Sub.Shooter/Commands/Shoot High From Hub": "Command",
+      "/Shuffleboard/Sub.Shooter/Commands/Shoot Low": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Start Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Stop Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Update PIDF": "Command",
@@ -111,6 +139,13 @@
       "/SmartDashboard/Stop Shooter": "Command",
       "/SmartDashboard/Test Mode": "Command",
       "/SmartDashboard/Update PIDF": "Command"
+    },
+    "windows": {
+      "/Shuffleboard/Match.Auto/Commands/Start3LowBackHigh": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables View": {

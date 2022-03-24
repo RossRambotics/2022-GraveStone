@@ -120,11 +120,14 @@ public class Shooter extends SubsystemBase {
         m_firingCalculator.addSolution(new FiringSolution(1, 7.5, 1700));
         m_firingCalculator.addSolution(new FiringSolution(2, 11.26, 1801));
         m_firingCalculator.addSolution(new FiringSolution(3, 13.14, 2131));
-        m_firingCalculator.addSolution(new FiringSolution(4, 17, 2501));
-        m_firingCalculator.addSolution(new FiringSolution(5, 18, 2701));
-        m_firingCalculator.addSolution(new FiringSolution(6, 18, 2900));
-        m_firingCalculator.addSolution(new FiringSolution(7, 18, 3100));
-        m_firingCalculator.addSolution(new FiringSolution(8, 18, 3300));
+        m_firingCalculator.addSolution(new FiringSolution(3.83, 16.21, 2210));
+        m_firingCalculator.addSolution(new FiringSolution(4.5, 13.21, 2515));
+
+        // m_firingCalculator.addSolution(new FiringSolution(4, 17, 2501));
+        m_firingCalculator.addSolution(new FiringSolution(5.5, 15.0, 2701));
+        // m_firingCalculator.addSolution(new FiringSolution(6, 18, 2900));
+        // m_firingCalculator.addSolution(new FiringSolution(7, 18, 3100));
+        m_firingCalculator.addSolution(new FiringSolution(8, 17, 3300));
 
         // m_firingCalculator.addSolution(new FiringSolution(6, , 1700));
         // m_firingCalculator.addSolution(new FiringSolution(7, 7.5, 1700));
@@ -174,7 +177,7 @@ public class Shooter extends SubsystemBase {
 
     public void createShuffleBoardTab() {
         ShuffleboardTab tab = m_shuffleboardTab;
-        ShuffleboardLayout shooterCommands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 2)
+        ShuffleboardLayout shooterCommands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 3)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
         CommandBase c = new frc.robot.commands.Shooter.StartShooter();
@@ -194,6 +197,18 @@ public class Shooter extends SubsystemBase {
 
         c = new frc.robot.commands.Shooter.EnableTestMode();
         c.setName("Enable Test Mode");
+        shooterCommands.add(c);
+
+        c = new frc.robot.commands.Shooter.ShootLow();
+        c.setName("Shoot Low");
+        shooterCommands.add(c);
+
+        c = new frc.robot.commands.Shooter.ShootHighFromHub();
+        c.setName("Shoot High From Hub");
+        shooterCommands.add(c);
+
+        c = new frc.robot.commands.Shooter.ShootHigh();
+        c.setName("Shoot High");
         shooterCommands.add(c);
 
         m_goalRPM = m_shuffleboardTab.add("Shooter Test RPM", 4000).withWidget(BuiltInWidgets.kNumberSlider)
@@ -233,8 +248,8 @@ public class Shooter extends SubsystemBase {
                 .withSize(1, 1)
                 .withPosition(6, 1).getEntry();
         m_fs_pitch = m_shuffleboardTab.add("Shooter Pitch", m_distance).withWidget(BuiltInWidgets.kNumberSlider)
-                .withSize(2, 1)
-                .withPosition(7, 1).withProperties(Map.of("min", 0, "max", 20)).getEntry();
+                .withSize(4, 1)
+                .withPosition(2, 2).withProperties(Map.of("min", 0, "max", 20)).getEntry();
         // m_pid_kFF = m_shuffleboardTab.add("Shooter PID kFF",
         // m_gainsVelocity.kF).withSize(2, 1).withPosition(8, 1).getEntry();
         // m_pid_kP = m_shuffleboardTab.add("Shooter PID kP",
@@ -298,6 +313,9 @@ public class Shooter extends SubsystemBase {
         // apply tunning percentage
         targetVelocity_UnitsPer100ms *= 1.0 + (m_tuning_percent_RPM.getDouble(0) / 100.0);
 
+        // set the pitch
+        RobotContainer.m_Turret.setPitchDegrees(m_goalPitch);
+
         /* 2000 RPM in either direction */
 
         if (m_spinPercent.getDouble(0) == 0) {
@@ -308,9 +326,6 @@ public class Shooter extends SubsystemBase {
             m_frontMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms * (100.0 + spin) / 100.0);
             m_backMotor.set(TalonFXControlMode.Velocity, targetVelocity_UnitsPer100ms * Math.abs(100.0 - spin) / 100.0);
         }
-
-        // set the pitch
-        RobotContainer.m_Turret.setPitchDegrees(m_goalPitch);
     }
 
     public void stop() {

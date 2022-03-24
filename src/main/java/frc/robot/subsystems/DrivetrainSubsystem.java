@@ -331,7 +331,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             Pose2d simPose = new Pose2d(
                     m_odometryPose.getX(),
                     m_odometryPose.getY(),
-                    m_odometryPose.getRotation().plus(new Rotation2d(m_lastRotationSpeed)));
+                    new Rotation2d(m_lastRotationSpeed));
             m_field.setRobotPose(simPose);
         } else {
             m_field.setRobotPose(m_odometryPose);

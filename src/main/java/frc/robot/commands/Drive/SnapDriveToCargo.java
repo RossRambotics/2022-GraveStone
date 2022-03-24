@@ -7,6 +7,7 @@ package frc.robot.commands.Drive;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -14,31 +15,30 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DrivetrainSubsystem;
 
-public class SnapDriveToPoseField extends CommandBase {
+public class SnapDriveToCargo extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
-    private Pose2d m_goal;
+    private Rotation2d m_goal;
     ProfiledPIDController m_rotationPID = null;
     ProfiledPIDController m_xPID = null;
-    ProfiledPIDController m_yPID = null;
-    private Pose2d m_error = null;
-    final private double m_maxErrorMeters;
+    private Rotation2d m_rotError = null;
+    private double m_xError;
+    private int m_lostCargoFrames = 0;
 
     /** Creates a new DriveWhileTracking. */
     /**
      * 
      * @param drivetrainSubsystem Drive subsystem
-     * @param goal                the goal pose that the robot should move to
-     * @param maxErrorMeters      error tolerance in meters. Once the x and y error
-     *                            is less than this amount the command will finish.
+     * @param rotFromCurrent      the robot relative goal angle that the robot
+     *                            should move to
+     * 
      */
-    public SnapDriveToPoseField(DrivetrainSubsystem drivetrainSubsystem,
-            Pose2d goal, double maxErrorMeters) {
+    public SnapDriveToCargo(DrivetrainSubsystem drivetrainSubsystem,
+            Rotation2d rotFromCurrent) {
 
         this.m_drivetrainSubsystem = drivetrainSubsystem;
-        double kFACTOR = 1.0;
 
-        m_goal = new Pose2d(goal.getX() * kFACTOR, goal.getY() * kFACTOR, goal.getRotation());
-        m_maxErrorMeters = maxErrorMeters;
+        // use the current orientation of the robot plus the
+        m_goal = rotFromCurrent.plus(RobotContainer.m_drivetrainSubsystem.getGyroHeading());
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drivetrainSubsystem);
@@ -60,28 +60,36 @@ public class SnapDriveToPoseField extends CommandBase {
                 SnapConstants.kMAX_TRANSLATE_VELOCITY, SnapConstants.kMAX_TRANSLATE_ACCEL);
         m_xPID = new ProfiledPIDController(SnapConstants.kTRANSLATE_P, 0,
                 SnapConstants.kTRANSLATE_D, translateConstraints);
-        m_yPID = new ProfiledPIDController(SnapConstants.kTRANSLATE_P, 0,
-                SnapConstants.kTRANSLATE_D, translateConstraints);
 
         // setup the X/Y PIDs
-        Pose2d error = getError();
-        m_xPID.reset(error.getTranslation().getX());
-        m_yPID.reset(error.getTranslation().getY());
+        double error = getXError();
+        m_xPID.reset(error);
 
-        // TODO uncomment this and test it, then add it to other Snap commands as
-        // necessary...
-        // m_rotationPID.reset(error.getRotation().getDegrees());
+        m_lostCargoFrames = 0;
 
+        RobotContainer.m_Tracking.enableSearchLight();
     }
 
-    private Pose2d getError() {
+    private double getXError() {
+        double error = 0;
+        if (RobotContainer.m_Tracking.isTrackingTarget()) {
+            error = RobotContainer.m_Tracking.getHeadingOffset();
+        }
+
+        DataLogManager.log("SnapDriveToCargo: isTracking?: "
+                + RobotContainer.m_Tracking.isTrackingTarget()
+                + " X Error: " + error);
+
+        // TODO tune the factor below
+        return error * 0.05;
+    }
+
+    private Rotation2d getRotError() {
         Pose2d current = RobotContainer.m_drivetrainSubsystem.getOdometryPose();
 
-        Pose2d error = new Pose2d(m_goal.getX() - current.getX(),
-                m_goal.getY() - current.getY(),
-                m_goal.getRotation().minus(current.getRotation()));
+        Rotation2d error = m_goal.minus(current.getRotation());
 
-        DataLogManager.log("SnapDriveToPoseField: Current: " + current + " Error: " + error);
+        DataLogManager.log("SnapDriveToCargo: Rotation Current: " + current + " Error: " + error);
 
         return error;
     }
@@ -90,10 +98,11 @@ public class SnapDriveToPoseField extends CommandBase {
     @Override
     public void execute() {
         // update error
-        m_error = getError();
+        m_rotError = getRotError();
+        m_xError = getXError();
 
         // update PIDs
-        double rotationSpeed = m_rotationPID.calculate(m_error.getRotation().getDegrees(), 0);
+        double rotationSpeed = m_rotationPID.calculate(m_rotError.getDegrees(), 0);
 
         rotationSpeed = MathUtil.clamp(rotationSpeed, -3.0, 3.0);
 
@@ -101,7 +110,7 @@ public class SnapDriveToPoseField extends CommandBase {
             rotationSpeed = 0;
         }
 
-        double translateSpeedX = m_xPID.calculate(m_error.getX(), 0);
+        double translateSpeedX = m_xPID.calculate(m_xError, 0);
         translateSpeedX = MathUtil.clamp(translateSpeedX, -SnapConstants.kMAX_TRANSLATE_VELOCITY,
                 SnapConstants.kMAX_TRANSLATE_VELOCITY);
 
@@ -112,43 +121,42 @@ public class SnapDriveToPoseField extends CommandBase {
             translateSpeedX -= TRANSLATE_FF;
         }
 
-        double translateSpeedY = m_yPID.calculate(m_error.getY(), 0);
-        translateSpeedY = MathUtil.clamp(translateSpeedY, -SnapConstants.kMAX_TRANSLATE_VELOCITY,
-                SnapConstants.kMAX_TRANSLATE_VELOCITY);
-
-        if (translateSpeedY > 0) {
-            translateSpeedY += TRANSLATE_FF;
-        } else {
-            translateSpeedY -= TRANSLATE_FF;
+        double translateSpeedY = 0;
+        if (translateSpeedX < 0.2) {
+            translateSpeedY = -0.2;
         }
 
-        DataLogManager.log("SnapDriveToPoseField: Corrections: X: " + translateSpeedX + " Y: " + translateSpeedY
+        DataLogManager.log("SnapDriveToCargo: Corrections: X: " + translateSpeedX + " Y: " + translateSpeedY
                 + " Rot: " + rotationSpeed);
 
         m_drivetrainSubsystem.drive(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
+                new ChassisSpeeds(
                         -translateSpeedX,
                         -translateSpeedY,
-                        rotationSpeed,
-                        RobotContainer.m_drivetrainSubsystem.getOdometryPose().getRotation()),
-                m_goal.getRotation().getRadians());
+                        rotationSpeed),
+                rotationSpeed);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0), 0.0);
+        RobotContainer.m_Tracking.disableSearchLight();
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        // end if we have reached target Pose
-        if ((Math.abs(m_error.getX()) < m_maxErrorMeters)
-                && (Math.abs(m_error.getY()) < m_maxErrorMeters)
-                && (Math.abs(m_error.getRotation().getDegrees()) < 1.0)) {
+        // end if we go 5 frames without tracking a cargo
+        if (RobotContainer.m_Tracking.isTrackingTarget()) {
+            m_lostCargoFrames = 0;
+            return false;
+        }
+
+        if (m_lostCargoFrames++ > 4) {
             return true;
         }
+
         return false;
     }
 }
