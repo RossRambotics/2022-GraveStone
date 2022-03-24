@@ -70,7 +70,7 @@ public class ShootHigh extends CommandBase {
             m_timer.start();
         }
 
-        if (m_timer.hasElapsed(0.1) == false) {
+        if (m_timer.hasElapsed(0.3) == false) {
             return;
         }
 

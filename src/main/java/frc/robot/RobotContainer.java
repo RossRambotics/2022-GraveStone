@@ -7,6 +7,7 @@ package frc.robot;
 import java.util.Map;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -110,17 +111,17 @@ public class RobotContainer {
         // LiveWindow.disableAllTelemetry();
     }
 
-    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(2.0);
+    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(1.5);
 
     private double getInputLeftY() {
         double driverLeftY = modifyAxis(m_controllerDriver.getLeftY());
 
         double slew = m_slewLeftY.calculate(driverLeftY) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
-        return slew * 0.6;
+        return slew * 0.4;
 
     }
 
-    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(2.0);
+    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(1.5);
 
     private double getInputLeftX() {
         double driverLeftX = modifyAxis(m_controllerDriver.getLeftX());
@@ -404,6 +405,11 @@ public class RobotContainer {
         commands.add(cmd);
 
         cmd = new frc.robot.commands.auto2.Start3_2LowBackHighHub();
+        commands.add(cmd);
+
+        cmd = new frc.robot.commands.Drive.SnapDriveToCargo(
+                RobotContainer.m_drivetrainSubsystem,
+                new Rotation2d(0));
         commands.add(cmd);
 
         // Add auto routines

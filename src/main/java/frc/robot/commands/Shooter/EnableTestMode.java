@@ -11,7 +11,7 @@ public class EnableTestMode extends CommandBase {
     /** Creates a new EnableTestMode. */
     public EnableTestMode() {
         // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(RobotContainer.m_Shooter);
+        // addRequirements(RobotContainer.m_Shooter);
     }
 
     // Called when the command is initially scheduled.
