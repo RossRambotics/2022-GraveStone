@@ -28,14 +28,18 @@ public class SnapDriveToCargo extends CommandBase {
     /**
      * 
      * @param drivetrainSubsystem Drive subsystem
-     * @param goal                the goal angle that the robot should move to
+     * @param rotFromCurrent      the robot relative goal angle that the robot
+     *                            should move to
      * 
      */
     public SnapDriveToCargo(DrivetrainSubsystem drivetrainSubsystem,
-            Rotation2d goal) {
+            Rotation2d rotFromCurrent) {
 
         this.m_drivetrainSubsystem = drivetrainSubsystem;
-        m_goal = goal;
+
+        // use the current orientation of the robot plus the
+        m_goal = rotFromCurrent.plus(RobotContainer.m_drivetrainSubsystem.getGyroHeading());
+
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drivetrainSubsystem);
     }

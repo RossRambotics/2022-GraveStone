@@ -142,12 +142,16 @@ public class RobotContainer {
         return operatorRightY;
     }
 
+    private double m_lastSnapAngle = 720; // defaults to 720 because 720 tell snap drive to not adjust the angle
+
     private double snapAngle() {
         double x = m_controllerDriver.getRightX();
         double y = -m_controllerDriver.getRightY();
 
         if (Math.abs(x) < 0.1 && Math.abs(y) < 0.1) {
-            return 720;
+            // return 720;
+            // stop angle drift
+            return m_lastSnapAngle;
         }
 
         double angle = Math.toDegrees(Math.atan2(x, y));
@@ -156,6 +160,7 @@ public class RobotContainer {
             return 360;
         }
 
+        m_lastSnapAngle = angle;
         return angle;
     }
 
