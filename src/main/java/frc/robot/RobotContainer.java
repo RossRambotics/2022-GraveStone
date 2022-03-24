@@ -134,7 +134,7 @@ public class RobotContainer {
         double operatorRightY = 0;
 
         // implement Joystick Deadzone
-        if (Math.abs(m_controllerOperator.getRightY()) > 0.01) {
+        if (Math.abs(m_controllerOperator.getRightY()) > 0.08) {
             operatorRightY = m_controllerOperator.getRightY();
 
         }
