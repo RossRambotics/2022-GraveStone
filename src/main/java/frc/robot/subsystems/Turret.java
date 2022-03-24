@@ -323,7 +323,7 @@ public class Turret extends SubsystemBase {
         // convert to yaw that is relative to the front of the robot
         goal += m_currentYaw;
         goal = clampYaw(goal);
-        this.setYawDegreesFront(goal);
+        this.setYawDegreesFront(goal + getTuningYawOffset());
     }
 
     public void setPitchDegrees(double goal) {
