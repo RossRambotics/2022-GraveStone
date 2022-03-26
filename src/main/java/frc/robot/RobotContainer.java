@@ -220,7 +220,7 @@ public class RobotContainer {
                 cmd.setName("A Button - Intake Cargo");
 
                 new Button(m_controllerDriver::getAButton)
-                                .whenHeld(cmd);
+                                .whenHeld(cmd.withTimeout(5));
 
                 // // reverse the intake
                 cmd = new ReverseIntake();
