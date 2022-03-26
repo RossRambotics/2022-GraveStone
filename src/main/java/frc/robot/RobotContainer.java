@@ -73,6 +73,7 @@ public class RobotContainer {
 
         static public final LEDStrip m_LEDStrip = new LEDStrip();
         // static public final LEDPanel m_LEDPanel = new LEDPanel();
+        private static double slewLimit = 0.6;
 
         private final XboxController m_controllerDriver = new XboxController(0);
         private final XboxController m_controllerOperator = new XboxController(1);
@@ -118,7 +119,8 @@ public class RobotContainer {
                 double driverLeftY = modifyAxis(m_controllerDriver.getLeftY());
 
                 double slew = m_slewLeftY.calculate(driverLeftY) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
-                return slew * 0.4;
+
+                return slew * slewLimit;
 
         }
 
@@ -128,7 +130,7 @@ public class RobotContainer {
                 double driverLeftX = modifyAxis(m_controllerDriver.getLeftX());
 
                 double slew = m_slewLeftX.calculate(driverLeftX) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
-                return slew * 0.6;
+                return slew * slewLimit;
         }
 
         private double getOperatorRightY() {
@@ -255,14 +257,9 @@ public class RobotContainer {
                 new Button(m_controllerOperator::getAButton)
                                 .whenPressed(new frc.robot.commands.Intake.ResetIntake());
 
-                CommandBase boost = new ParallelCommandGroup(
-                                new BoostMode(m_drivetrainSubsystem,
-                                                () -> m_controllerDriver.getLeftY(),
-                                                () -> m_controllerDriver.getLeftX(),
-                                                () -> 0.0));
-                boost.setName("BoostMode");
-                new Button(m_controllerDriver::getLeftBumper)
-                                .whenHeld(boost, true);
+                if (m_controllerDriver.getRightStickButton() == true) {
+                        slewLimit = 1;
+                }
 
                 /**
                  * Implement Snap Drive
