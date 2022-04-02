@@ -220,7 +220,7 @@ public class RobotContainer {
                 cmd.setName("A Button - Intake Cargo");
 
                 new Button(m_controllerDriver::getAButton)
-                                .whenHeld(cmd.withTimeout(5));
+                                .toggleWhenPressed(cmd);
 
                 // // reverse the intake
                 cmd = new ReverseIntake();
@@ -259,6 +259,8 @@ public class RobotContainer {
 
                 if (m_controllerDriver.getRightStickButton() == true) {
                         slewLimit = 1;
+                } else {
+                        slewLimit = 0.6;
                 }
 
                 /**

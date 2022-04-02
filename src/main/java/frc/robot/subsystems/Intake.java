@@ -38,7 +38,7 @@ public class Intake extends SubsystemBase {
     static public final Intake_roller m_roller = new Intake_roller();
 
     // Default Intake Extension
-    private double m_extensionTargetDegrees = 125;
+    private double m_extensionTargetDegrees = 115;
 
     /**
      * PID Gains may have to be adjusted based on the responsiveness of control
@@ -181,7 +181,7 @@ public class Intake extends SubsystemBase {
     public void start() {
         // Start intake
         // System.out.println("Starting Intake");
-        m_rollerMotor.set(TalonFXControlMode.PercentOutput, 0.45);
+        m_rollerMotor.set(TalonFXControlMode.PercentOutput, 0.95);
         // m_rollerMotor.setVoltage(2);
     }
 

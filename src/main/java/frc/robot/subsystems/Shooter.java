@@ -117,17 +117,17 @@ public class Shooter extends SubsystemBase {
         m_backMotor.config_kI(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kI, ShooterConstants.kTimeoutMs);
         m_backMotor.config_kD(ShooterConstants.kPIDLoopIdx, m_gainsVelocity.kD, ShooterConstants.kTimeoutMs);
 
-        m_firingCalculator.addSolution(new FiringSolution(1, 7.5, 1700));
-        m_firingCalculator.addSolution(new FiringSolution(2, 11.26, 1801));
-        m_firingCalculator.addSolution(new FiringSolution(3, 13.14, 2131));
-        m_firingCalculator.addSolution(new FiringSolution(3.83, 16.21, 2210));
-        m_firingCalculator.addSolution(new FiringSolution(4.5, 13.21, 2515));
+        m_firingCalculator.addSolution(new FiringSolution(1, 8.5, 1750));
+        m_firingCalculator.addSolution(new FiringSolution(2, 11.1, 1850));
+        m_firingCalculator.addSolution(new FiringSolution(3, 13.5, 2100));
+        m_firingCalculator.addSolution(new FiringSolution(4, 17.3, 2650));
+        m_firingCalculator.addSolution(new FiringSolution(5, 18.4, 3800));
 
         // m_firingCalculator.addSolution(new FiringSolution(4, 17, 2501));
-        m_firingCalculator.addSolution(new FiringSolution(5.5, 15.0, 2701));
+        m_firingCalculator.addSolution(new FiringSolution(5.5, 18.4, 3900));
         // m_firingCalculator.addSolution(new FiringSolution(6, 18, 2900));
         // m_firingCalculator.addSolution(new FiringSolution(7, 18, 3100));
-        m_firingCalculator.addSolution(new FiringSolution(8, 17, 3300));
+        m_firingCalculator.addSolution(new FiringSolution(8, 18.4, 4500));
 
         // m_firingCalculator.addSolution(new FiringSolution(6, , 1700));
         // m_firingCalculator.addSolution(new FiringSolution(7, 7.5, 1700));
@@ -172,7 +172,10 @@ public class Shooter extends SubsystemBase {
             m_diffBackRPM.setDouble(m_BackRPM_shooter - m_goalRPM.getDouble(0));
             m_diffFrontRPM.setDouble(m_FrontRPM_shooter - m_goalRPM.getDouble(0));
             m_goalPitch = fs.m_pitch;
+        } else {
+            m_goalPitch = m_fs_pitch.getDouble(0.0);
         }
+
     }
 
     public void createShuffleBoardTab() {

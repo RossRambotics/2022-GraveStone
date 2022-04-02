@@ -112,7 +112,7 @@ public class ShootHigh extends CommandBase {
         }
         // update firing solution
         RobotContainer.m_Shooter.shootHigh();
-        RobotContainer.m_Indexer.start();
+        RobotContainer.m_Indexer.shoot();
 
         DataLogManager.log("ShootHigh Shoot2:" +
                 " Target Yaw: " + RobotContainer.m_Targeting.getTargetOffsetYaw() +

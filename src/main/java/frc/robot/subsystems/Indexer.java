@@ -32,7 +32,7 @@ public class Indexer extends SubsystemBase {
     public AnalogInput m_Sensor_IndexerMiddle = new AnalogInput(Constants.INDEXER_MIDDLE);
     public AnalogInput m_Sensor_IndexerExit = new AnalogInput(Constants.INDEXER_EXIT);
 
-    private double m_wheelSpeed = 2500.0;
+    private double m_wheelSpeed = 3000.0;
     private double m_diffWheelSpeed = 0.0;
 
     /**
