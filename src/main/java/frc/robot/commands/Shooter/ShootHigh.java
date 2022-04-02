@@ -74,6 +74,10 @@ public class ShootHigh extends CommandBase {
             return;
         }
 
+        if (RobotContainer.m_Turret.getIsOnTarget() == false) {
+            return;
+        }
+
         if (!m_isShooting && RobotContainer.m_Shooter.isSpunUp()) {
             m_isShooting = true;
             m_isShooting2 = true;
