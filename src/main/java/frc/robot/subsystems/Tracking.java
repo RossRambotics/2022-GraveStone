@@ -37,7 +37,6 @@ public class Tracking extends SubsystemBase {
     private PowerDistribution m_PDH = null;
 
     private boolean m_isTesting = false;
-    private boolean m_isBlueAlliance = true;
     private final int kBLUE_PIPELINE = 2;
     private final int kRED_PIPELINE = 1;
     // set to -1
@@ -58,31 +57,36 @@ public class Tracking extends SubsystemBase {
 
     }
 
+    public void blueAlliance() {
+        m_currentPipeline = kBLUE_PIPELINE;
+        m_camera.setPipelineIndex(m_currentPipeline);
+        DataLogManager.log("Tracking: We are BLUE alliance.");
+    }
+
+    public void redAlliance() {
+        m_currentPipeline = kRED_PIPELINE;
+        m_camera.setPipelineIndex(m_currentPipeline);
+        DataLogManager.log("Tracking: We are RED alliance.");
+    }
+
     @Override
     public void periodic() {
         // make sure we are using the appropriate vision pipeline
+        // if not connected to FMS default to red alliance
         if (DriverStation.getMatchType() == MatchType.None &&
                 m_currentPipeline == -1) {
-            m_currentPipeline = kRED_PIPELINE;
+            this.redAlliance();
             DataLogManager.log("Tracking: not FMS match");
         }
         if (DriverStation.getAlliance() != DriverStation.Alliance.Invalid &&
                 m_currentPipeline == -1) {
             if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
-                m_currentPipeline = kBLUE_PIPELINE;
-                m_camera.setPipelineIndex(kBLUE_PIPELINE);
-                DataLogManager.log("Tracking: We are BLUE alliance.");
+                this.blueAlliance();
             } else {
-                m_currentPipeline = kRED_PIPELINE;
-                m_camera.setPipelineIndex(kRED_PIPELINE);
-                DataLogManager.log("Tracking: We are RED alliance.");
+                this.redAlliance();
             }
         }
 
-        // TODO remove this
-        // if (true)
-        // return;
-        // This method will be called once per scheduler run
         m_currentYaw = RobotContainer.m_drivetrainSubsystem.getGyroHeading()
                 .getDegrees();
         m_goalYaw = m_currentYaw + getHeadingOffset();
@@ -139,7 +143,7 @@ public class Tracking extends SubsystemBase {
 
     public void createShuffleBoardTab() {
         ShuffleboardTab tab = m_shuffleboardTab;
-        ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 2)
+        ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 4)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
         CommandBase c = new frc.robot.commands.Tracking.UpdatePIDF();
@@ -148,6 +152,14 @@ public class Tracking extends SubsystemBase {
 
         c = new frc.robot.commands.Tracking.EnableTestMode();
         c.setName("Test Mode");
+        commands.add(c);
+
+        c = new frc.robot.commands.Tracking.RedCargo();
+        c.setName("Red Cargo");
+        commands.add(c);
+
+        c = new frc.robot.commands.Tracking.BlueCargo();
+        c.setName("Blue Cargo");
         commands.add(c);
 
         // m_testTargetYaw = m_shuffleboardTab.add("Test Target Yaw",
