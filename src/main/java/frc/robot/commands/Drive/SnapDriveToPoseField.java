@@ -139,6 +139,7 @@ public class SnapDriveToPoseField extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0), 0.0);
+        DataLogManager.log("SnapDriveToPoseField End.");
     }
 
     // Returns true when the command should end.

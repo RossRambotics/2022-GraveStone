@@ -75,6 +75,7 @@ public class ShootHigh extends CommandBase {
         }
 
         if (RobotContainer.m_Turret.getIsOnTarget() == false) {
+            DataLogManager.log("Shoot High: Not on target yet...");
             return;
         }
 
@@ -140,6 +141,7 @@ public class ShootHigh extends CommandBase {
         RobotContainer.m_Turret.setYawDegreesFront(0);
         RobotContainer.m_Turret.setPitchDegrees(0);
         m_AimCmd.cancel();
+        DataLogManager.log("ShootHigh End.");
     }
 
     // Returns true when the command should end.

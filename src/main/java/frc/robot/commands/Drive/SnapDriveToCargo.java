@@ -153,6 +153,7 @@ public class SnapDriveToCargo extends CommandBase {
     public void end(boolean interrupted) {
         m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0), 0.0);
         RobotContainer.m_Tracking.disableSearchLight();
+        DataLogManager.log("SnapDriveToCargo End.");
     }
 
     // Returns true when the command should end.

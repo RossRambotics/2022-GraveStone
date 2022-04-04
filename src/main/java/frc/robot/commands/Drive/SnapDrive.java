@@ -53,7 +53,6 @@ public class SnapDrive extends CommandBase {
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drivetrainSubsystem);
 
-        m_timer.start();
     }
 
     // Called when the command is initially scheduled.
@@ -73,6 +72,8 @@ public class SnapDrive extends CommandBase {
         m_PIDTracking.enableContinuousInput(0, 360);
         // m_PIDTracking.reset(getError());
 
+        m_timer.reset();
+        m_timer.start();
     }
 
     private double getError() {

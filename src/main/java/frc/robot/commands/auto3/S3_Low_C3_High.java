@@ -19,7 +19,7 @@ public class S3_Low_C3_High extends CommandBase {
     @Override
     public void initialize() {
         // Log the auto command name
-        DataLogManager.log("Auto command" + this.getName());
+        DataLogManager.log("Auto command: " + this.getName());
 
         // Set Starting Pose
         AutoPoses.SetStartPose(AutoPoses.S3);

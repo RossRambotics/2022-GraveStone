@@ -126,6 +126,7 @@ public class ShootHighFromHub extends CommandBase {
         RobotContainer.m_Shooter.stop();
         RobotContainer.m_Intake.stop();
         RobotContainer.m_Turret.setYawDegreesFront(0);
+        DataLogManager.log("ShootHighFromHub End.");
     }
 
     // Returns true when the command should end.
