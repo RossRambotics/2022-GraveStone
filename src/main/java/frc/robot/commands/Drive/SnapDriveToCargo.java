@@ -38,7 +38,7 @@ public class SnapDriveToCargo extends CommandBase {
         this.m_drivetrainSubsystem = drivetrainSubsystem;
 
         // use the current orientation of the robot plus the
-        m_goal = rotFromCurrent.plus(RobotContainer.m_drivetrainSubsystem.getGyroHeading());
+        m_goal = RobotContainer.m_drivetrainSubsystem.getGyroscopeRotation();
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drivetrainSubsystem);
@@ -57,7 +57,7 @@ public class SnapDriveToCargo extends CommandBase {
         m_rotationPID.enableContinuousInput(0, 360);
 
         TrapezoidProfile.Constraints translateConstraints = new TrapezoidProfile.Constraints(
-                SnapConstants.kMAX_TRANSLATE_VELOCITY, SnapConstants.kMAX_TRANSLATE_ACCEL);
+                0.5, 0.1);
         m_xPID = new ProfiledPIDController(SnapConstants.kTRANSLATE_P, 0,
                 SnapConstants.kTRANSLATE_D, translateConstraints);
 
@@ -73,7 +73,11 @@ public class SnapDriveToCargo extends CommandBase {
     private double getXError() {
         double error = 0;
         if (RobotContainer.m_Tracking.isTrackingTarget()) {
-            error = RobotContainer.m_Tracking.getHeadingOffset();
+            error = RobotContainer.m_Tracking.getXOffset();
+        }
+
+        if (Math.abs(error) < 5.0) {
+            error = 0.0;
         }
 
         DataLogManager.log("SnapDriveToCargo: isTracking?: "
@@ -81,15 +85,17 @@ public class SnapDriveToCargo extends CommandBase {
                 + " X Error: " + error);
 
         // TODO tune the factor below
-        return error * 0.05;
+        return error * 0.005;
     }
 
     private Rotation2d getRotError() {
-        Pose2d current = RobotContainer.m_drivetrainSubsystem.getOdometryPose();
+        // Pose2d current = RobotContainer.m_drivetrainSubsystem.getOdometryPose();
 
-        Rotation2d error = m_goal.minus(current.getRotation());
+        // Rotation2d error = m_goal.minus(current.getRotation());
+        Rotation2d error = m_goal.minus(RobotContainer.m_drivetrainSubsystem.getGyroscopeRotation());
 
-        DataLogManager.log("SnapDriveToCargo: Rotation Current: " + current + " Error: " + error);
+        DataLogManager.log("SnapDriveToCargo: Rotation Current: " + RobotContainer.m_drivetrainSubsystem
+                .getGyroscopeRotation() + " Error: " + error);
 
         return error;
     }
@@ -113,6 +119,8 @@ public class SnapDriveToCargo extends CommandBase {
         double translateSpeedX = m_xPID.calculate(m_xError, 0);
         translateSpeedX = MathUtil.clamp(translateSpeedX, -SnapConstants.kMAX_TRANSLATE_VELOCITY,
                 SnapConstants.kMAX_TRANSLATE_VELOCITY);
+        translateSpeedX = MathUtil.clamp(translateSpeedX, -0.5,
+                0.5);
 
         double TRANSLATE_FF = 0.1;
         if (translateSpeedX > 0) {
@@ -121,19 +129,22 @@ public class SnapDriveToCargo extends CommandBase {
             translateSpeedX -= TRANSLATE_FF;
         }
 
-        double translateSpeedY = 0;
-        if (translateSpeedX < 0.2) {
-            translateSpeedY = -0.2;
+        double translateSpeedY = 0.0;
+        if (translateSpeedX < 0.2 && RobotContainer.m_Tracking.isTrackingTarget()) {
+            translateSpeedY = -0.8;
         }
+
+        // translateSpeedX = 0.3;
+        // translateSpeedY = 0.0;
 
         DataLogManager.log("SnapDriveToCargo: Corrections: X: " + translateSpeedX + " Y: " + translateSpeedY
                 + " Rot: " + rotationSpeed);
 
         m_drivetrainSubsystem.drive(
                 new ChassisSpeeds(
+                        translateSpeedY,
                         -translateSpeedX,
-                        -translateSpeedY,
-                        rotationSpeed),
+                        0.0),
                 rotationSpeed);
     }
 

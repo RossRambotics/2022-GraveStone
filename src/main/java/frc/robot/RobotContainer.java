@@ -27,7 +27,9 @@ import frc.robot.commands.DriveWhileTracking;
 import frc.robot.commands.Climb.DefaultClimb;
 import frc.robot.commands.Drive.BoostMode;
 import frc.robot.commands.Drive.SnapDrive;
+import frc.robot.commands.Drive.SnapDriveToCargo;
 import frc.robot.commands.Intake.ExtendIntake;
+import frc.robot.commands.Intake.IntakeCargo;
 import frc.robot.commands.Intake.ReverseIntake;
 import frc.robot.commands.Intake.StartIntake;
 import frc.robot.commands.auto.BackShootBall;
@@ -184,10 +186,9 @@ public class RobotContainer {
         // map button for tracking cargo
         // create tracking cargo drive command
         CommandBase cmd = new ParallelCommandGroup(
-                new DriveWhileTracking(m_drivetrainSubsystem,
-                        () -> -getInputLeftY(),
-                        () -> -getInputLeftX(),
-                        () -> snapAngle()));
+                new SnapDriveToCargo(m_drivetrainSubsystem,
+                        new Rotation2d()),
+                new IntakeCargo());
         cmd.setName("DriveWhileTracking");
         new Button(m_controllerDriver::getLeftBumper)
                 .whenHeld(cmd, true);
@@ -213,9 +214,7 @@ public class RobotContainer {
                 .whenHeld(cmd);
 
         // extends the intake and turns on the intake wheels Driver
-        cmd = new ParallelCommandGroup(
-                new ExtendIntake(),
-                new StartIntake());
+        cmd = new IntakeCargo();
 
         cmd.setName("A Button - Intake Cargo");
 

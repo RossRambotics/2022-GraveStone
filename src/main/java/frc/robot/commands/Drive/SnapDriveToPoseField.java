@@ -5,6 +5,7 @@
 package frc.robot.commands.Drive;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -18,8 +19,8 @@ public class SnapDriveToPoseField extends CommandBase {
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private Pose2d m_goal;
     ProfiledPIDController m_rotationPID = null;
-    ProfiledPIDController m_xPID = null;
-    ProfiledPIDController m_yPID = null;
+    PIDController m_xPID = null;
+    PIDController m_yPID = null;
     private Pose2d m_error = null;
     final private double m_maxErrorMeters;
 
@@ -58,15 +59,15 @@ public class SnapDriveToPoseField extends CommandBase {
 
         TrapezoidProfile.Constraints translateConstraints = new TrapezoidProfile.Constraints(
                 SnapConstants.kMAX_TRANSLATE_VELOCITY, SnapConstants.kMAX_TRANSLATE_ACCEL);
-        m_xPID = new ProfiledPIDController(SnapConstants.kTRANSLATE_P, 0,
-                SnapConstants.kTRANSLATE_D, translateConstraints);
-        m_yPID = new ProfiledPIDController(SnapConstants.kTRANSLATE_P, 0,
-                SnapConstants.kTRANSLATE_D, translateConstraints);
-
+        m_xPID = new PIDController(0.4, 0,
+                SnapConstants.kTRANSLATE_D);
+        m_yPID = new PIDController(0.4, 0,
+                SnapConstants.kTRANSLATE_D);
         // setup the X/Y PIDs
-        Pose2d error = getError();
-        m_xPID.reset(error.getTranslation().getX());
-        m_yPID.reset(error.getTranslation().getY());
+
+        // Pose2d error = getError();
+        // m_xPID.reset(error.getTranslation().getX());
+        // m_yPID.reset(error.getTranslation().getY());
 
         // TODO uncomment this and test it, then add it to other Snap commands as
         // necessary...

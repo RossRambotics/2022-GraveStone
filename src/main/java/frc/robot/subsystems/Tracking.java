@@ -37,8 +37,8 @@ public class Tracking extends SubsystemBase {
     private PowerDistribution m_PDH = null;
 
     private boolean m_isTesting = false;
-    private final int kBLUE_PIPELINE = 2;
-    private final int kRED_PIPELINE = 1;
+    private final int kBLUE_PIPELINE = 1;
+    private final int kRED_PIPELINE = 0;
     // set to -1
     private int m_currentPipeline = -1;
 
@@ -119,6 +119,34 @@ public class Tracking extends SubsystemBase {
         }
 
         return yaw;
+
+    }
+
+    public double getXOffset() {
+        if (m_isTesting) {
+            return m_testTargetYaw - m_currentYaw;
+        }
+
+        double yaw = 0;
+        double pitch = 0;
+        double x = 0;
+
+        // set yaw equal to yaw from photonvision
+        // something like
+        PhotonPipelineResult result = m_camera.getLatestResult();
+
+        if (result.hasTargets()) {
+            pitch = result.getBestTarget().getPitch();
+            yaw = result.getBestTarget().getYaw();
+
+            pitch += 22.0;
+
+            // approximate the distance
+            double distance = 2.738 * pitch;
+            x = distance * Math.tan(Math.toRadians(yaw));
+        }
+
+        return x;
 
     }
 

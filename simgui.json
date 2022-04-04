@@ -89,6 +89,8 @@
       "/Shuffleboard/Match.Auto/Autonomous": "String Chooser",
       "/Shuffleboard/Match.Auto/Commands/Example Path": "Command",
       "/Shuffleboard/Match.Auto/Commands/HubShotBackShot": "Command",
+      "/Shuffleboard/Match.Auto/Commands/S3_Low_C3_High": "Command",
+      "/Shuffleboard/Match.Auto/Commands/SnapDriveToCargo": "Command",
       "/Shuffleboard/Match.Auto/Commands/Start3LowBackHigh": "Command",
       "/Shuffleboard/Match.Auto/Commands/Start3LowBackHighHub": "Command",
       "/Shuffleboard/Match.Auto/Commands/Start3_2LowBackHighHub": "Command",
@@ -116,6 +118,8 @@
       "/Shuffleboard/Sub.Shooter/Commands/Start Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Stop Shooter": "Command",
       "/Shuffleboard/Sub.Shooter/Commands/Update PIDF": "Command",
+      "/Shuffleboard/Sub.Tracking/Commands/Blue Cargo": "Command",
+      "/Shuffleboard/Sub.Tracking/Commands/Red Cargo": "Command",
       "/Shuffleboard/Sub.Tracking/Commands/Test Mode": "Command",
       "/Shuffleboard/Sub.Tracking/Commands/Update PIDF": "Command",
       "/Shuffleboard/Sub.Turret/Commands/Acquire FRont": "Command",
@@ -141,6 +145,11 @@
       "/SmartDashboard/Update PIDF": "Command"
     },
     "windows": {
+      "/Shuffleboard/Match.Auto/Commands/S3_Low_C3_High": {
+        "window": {
+          "visible": true
+        }
+      },
       "/Shuffleboard/Match.Auto/Commands/Start3LowBackHigh": {
         "window": {
           "visible": true
