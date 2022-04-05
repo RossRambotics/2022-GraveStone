@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Intake.ResetIntake;
 import frc.robot.commands.Shooter.ShootLow;
 
-public class S3_Low_C3_High extends CommandBase {
+public class S2_Low_C1_W1_Hign extends CommandBase {
     /** Creates a new S3_Low_C3_High. */
-    public S3_Low_C3_High() {
+    public S2_Low_C1_W1_Hign() {
         // Use addRequirements() here to declare subsystem dependencies.
     }
 
@@ -23,14 +23,14 @@ public class S3_Low_C3_High extends CommandBase {
         DataLogManager.log("Auto command: " + this.getName());
 
         // Set Starting Pose
-        AutoPoses.SetStartPose(AutoPoses.S3);
+        AutoPoses.SetStartPose(AutoPoses.S2);
 
         // Create command group for the auto routine
         SequentialCommandGroup command = new SequentialCommandGroup(
                 new ResetIntake().withTimeout(0.2),
                 new ShootLow().withTimeout(2.6),
-                AutoPoses.CaptureCargo(AutoPoses.C3).withTimeout(5.0),
-                AutoPoses.ShootHigh(AutoPoses.C3).withTimeout(5.0));
+                AutoPoses.CaptureCargo(AutoPoses.C1).withTimeout(5.0),
+                AutoPoses.ShootHigh(AutoPoses.W1).withTimeout(5.0));
 
         command.schedule();
     }

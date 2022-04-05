@@ -96,15 +96,15 @@ public class ShootHighFromHub extends CommandBase {
             return;
         }
 
-        RobotContainer.m_Indexer.stop();
+        // RobotContainer.m_Indexer.stop();
 
         // pause briefly then turn on the intake
-        if (m_timer.hasElapsed(0.75) == false) {
+        // if (m_timer.hasElapsed(0.75) == false) {
 
-            return;
-        }
+        // return;
+        // }
 
-        RobotContainer.m_Indexer.start();
+        RobotContainer.m_Indexer.shoot();
 
         DataLogManager.log("ShootHighFromHub Shoot2:" +
                 " Target Yaw: " + RobotContainer.m_Targeting.getTargetOffsetYaw() +

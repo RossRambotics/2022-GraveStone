@@ -24,7 +24,7 @@ public class AutoPoses {
     public final static Pose2d S3 = new Pose2d(7.7, 2.75, new Rotation2d(Math.toRadians(69)));
     public final static Pose2d C1 = new Pose2d(5.77, 5.86, new Rotation2d(Math.toRadians(-22.84)));
     public final static Pose2d C2 = new Pose2d(5.81, 2.31, new Rotation2d(Math.toRadians(29.75)));
-    public final static Pose2d C3 = new Pose2d(7.64, 1.04, new Rotation2d(Math.toRadians(90.00)));
+    public final static Pose2d C3 = new Pose2d(7.32, 1.39, new Rotation2d(Math.toRadians(90.00)));
     public final static Pose2d C4 = new Pose2d(1.77, 1.66, new Rotation2d(Math.toRadians(45.0)));
     public final static Pose2d C5 = new Pose2d(1.77, 1.66, new Rotation2d(Math.toRadians(45.0)));
     public final static Pose2d W1 = new Pose2d(5.54, 5.17, new Rotation2d(Math.toRadians(-17.98)));

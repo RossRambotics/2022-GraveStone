@@ -445,6 +445,11 @@ public class RobotContainer {
         autoCmd = new BackShootBall();
         autoCmd.setName("BackShootBall");
         m_autoChooser.addOption("BackShootBall", autoCmd);
+
+        autoCmd = new frc.robot.commands.auto3.S3_Low_C3_High();
+        autoCmd.setName("S3_Low_C3_High");
+        m_autoChooser.addOption("S3_Low_C3_High", autoCmd);
+
         // autoCmd = new frc.robot.commands.auto.BottomLeftNoHumanPlayer();
         // autoCmd.setName("Bottom Left No Human");
         // m_autoChooser.addOption("Bottom Left No Human", autoCmd);

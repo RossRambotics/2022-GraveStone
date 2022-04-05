@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Intake.ResetIntake;
 import frc.robot.commands.Shooter.ShootLow;
 
-public class S3_Low_C3_High extends CommandBase {
+public class S3_Low_C3_W3_High extends CommandBase {
     /** Creates a new S3_Low_C3_High. */
-    public S3_Low_C3_High() {
+    public S3_Low_C3_W3_High() {
         // Use addRequirements() here to declare subsystem dependencies.
     }
 
@@ -30,7 +30,7 @@ public class S3_Low_C3_High extends CommandBase {
                 new ResetIntake().withTimeout(0.2),
                 new ShootLow().withTimeout(2.6),
                 AutoPoses.CaptureCargo(AutoPoses.C3).withTimeout(5.0),
-                AutoPoses.ShootHigh(AutoPoses.C3).withTimeout(5.0));
+                AutoPoses.ShootHigh(AutoPoses.W3).withTimeout(5.0));
 
         command.schedule();
     }
