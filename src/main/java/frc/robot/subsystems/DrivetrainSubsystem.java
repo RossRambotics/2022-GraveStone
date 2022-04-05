@@ -214,14 +214,20 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void zeroGyroscope() {
         // FIXME Remove if you are using a Pigeon
         // m_pigeon.setFusedHeading(0.0);
-        m_pigeon.setYaw(0.0);
+        m_pigeon.setYaw(0.0, 10);
 
         // FIXME Uncomment if you are using a NavX
         // m_navx.zeroYaw();
     }
 
-    public void setGyroScope(double yaw) {
-        m_pigeon.setYaw(yaw);
+    /**
+     * updates the current gyro yaw. this update is asynchronous and while it waits
+     * 10ms for the update, the actual update may take longer.
+     * 
+     * @param yawDegrees
+     */
+    public void setGyroScope(double yawDegrees) {
+        m_pigeon.setYaw(yawDegrees, 10);
     }
 
     public void resetOdometry() {

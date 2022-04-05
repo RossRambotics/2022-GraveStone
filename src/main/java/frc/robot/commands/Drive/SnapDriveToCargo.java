@@ -165,7 +165,7 @@ public class SnapDriveToCargo extends CommandBase {
             return false;
         }
 
-        if (m_lostCargoFrames++ > 20) {
+        if (m_lostCargoFrames++ > 40) {
             return true;
         }
 

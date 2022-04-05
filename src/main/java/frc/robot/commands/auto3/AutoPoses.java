@@ -75,7 +75,8 @@ public class AutoPoses {
                     new Rotation2d(Math.toRadians(69.0)));
         } else {
             RobotContainer.m_drivetrainSubsystem.getOdometry().resetPosition(pose,
-                    RobotContainer.m_drivetrainSubsystem.getGyroscopeRotation());
+                    pose.getRotation()); // uses pose, not gyro because gyro update above is async and may not be
+                                         // updated by now
         }
         DataLogManager.log(
                 "Setting Start Pose: Odometry Updated Pose: " + RobotContainer.m_drivetrainSubsystem.getOdometryPose());
