@@ -15,6 +15,7 @@ public class S2_C1_W1_High extends CommandBase {
         // Use addRequirements() here to declare subsystem dependencies.
     }
 
+    // Ben
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
