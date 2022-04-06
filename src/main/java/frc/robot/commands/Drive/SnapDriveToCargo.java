@@ -126,11 +126,13 @@ public class SnapDriveToCargo extends CommandBase {
         translateSpeedX = MathUtil.clamp(translateSpeedX, -0.5,
                 0.5);
 
-        double TRANSLATE_FF = 0.1;
-        if (translateSpeedX > 0) {
-            translateSpeedX += TRANSLATE_FF;
-        } else {
-            translateSpeedX -= TRANSLATE_FF;
+        if (Math.abs(translateSpeedX) > 0.01) {
+            double TRANSLATE_FF = 0.1;
+            if (translateSpeedX > 0) {
+                translateSpeedX += TRANSLATE_FF;
+            } else {
+                translateSpeedX -= TRANSLATE_FF;
+            }
         }
 
         double translateSpeedY = 0.0;
