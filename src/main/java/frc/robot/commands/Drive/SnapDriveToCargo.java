@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DrivetrainSubsystem;
@@ -23,6 +24,7 @@ public class SnapDriveToCargo extends CommandBase {
     private Rotation2d m_rotError = null;
     private double m_xError;
     private int m_lostCargoFrames = 0;
+    private Timer m_timer = new Timer();
 
     /** Creates a new DriveWhileTracking. */
     /**
@@ -47,6 +49,8 @@ public class SnapDriveToCargo extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        m_timer.reset();
+        m_timer.start();
 
         TrapezoidProfile.Constraints rotationConstraints = new TrapezoidProfile.Constraints(
                 1.0, 0.5);
@@ -131,7 +135,7 @@ public class SnapDriveToCargo extends CommandBase {
 
         double translateSpeedY = 0.0;
         if (translateSpeedX < 0.2 && RobotContainer.m_Tracking.isTrackingTarget()) {
-            translateSpeedY = -0.8;
+            translateSpeedY = -0.6;
         }
 
         // translateSpeedX = 0.3;
@@ -161,13 +165,18 @@ public class SnapDriveToCargo extends CommandBase {
     public boolean isFinished() {
         // end if we go 5 frames without tracking a cargo
         if (RobotContainer.m_Tracking.isTrackingTarget()) {
+            m_timer.reset();
+            m_timer.start();
             m_lostCargoFrames = 0;
             return false;
         }
 
-        if (m_lostCargoFrames++ > 40) {
+        if (m_timer.hasElapsed(2.0)) {
             return true;
         }
+        // if (m_lostCargoFrames++ > 80) {
+        // return true;
+        // }
 
         return false;
     }
