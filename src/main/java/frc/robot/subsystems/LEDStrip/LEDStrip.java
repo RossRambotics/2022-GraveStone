@@ -65,7 +65,7 @@ public class LEDStrip extends SubsystemBase {
         for (var i = 0; i < m_ledBuffer.getLength(); i++) {
             // Sets the specified LED to the RGB values for red
 
-            if ((i % 2) == 0) {
+            if ((i % 2) == 1) {
 
                 m_ledBuffer.setRGB(i, 100, 100, 100);
 
@@ -82,7 +82,7 @@ public class LEDStrip extends SubsystemBase {
         for (var a = 0; a < m_ledBuffer.getLength(); a++) {
             // Sets the specified LED to the RGB values for red
 
-            if ((a % 2) == 0) {
+            if ((a % 2) == 1) {
 
                 m_ledBuffer.setRGB(a, 0, 0, 0);
 
