@@ -28,7 +28,7 @@ public class S1_C1_High extends CommandBase {
         // Create command group for the auto routine
         SequentialCommandGroup command = new SequentialCommandGroup(
                 new ResetIntake().withTimeout(0.2),
-                AutoPoses.CaptureCargo(AutoPoses.C1).withTimeout(10.0),
+                AutoPoses.CaptureCargo(AutoPoses.C1).withTimeout(7.0),
                 AutoPoses.ShootHigh(AutoPoses.C1).withTimeout(5.0));
 
         command.schedule();
