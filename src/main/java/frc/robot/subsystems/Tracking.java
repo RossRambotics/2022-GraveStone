@@ -73,11 +73,11 @@ public class Tracking extends SubsystemBase {
     public void periodic() {
         // make sure we are using the appropriate vision pipeline
         // if not connected to FMS default to red alliance
-        if (DriverStation.getMatchType() == MatchType.None &&
-                m_currentPipeline == -1) {
-            this.redAlliance();
-            DataLogManager.log("Tracking: not FMS match");
-        }
+        // if (DriverStation.getMatchType() == MatchType.None &&
+        // m_currentPipeline == -1) {
+        // this.redAlliance();
+        // DataLogManager.log("Tracking: not FMS match");
+        // }
         if (DriverStation.getAlliance() != DriverStation.Alliance.Invalid &&
                 m_currentPipeline == -1) {
             if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {

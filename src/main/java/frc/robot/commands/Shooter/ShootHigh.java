@@ -138,11 +138,12 @@ public class ShootHigh extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        m_AimCmd.cancel();
         RobotContainer.m_Shooter.stop();
         RobotContainer.m_Intake.stop();
         RobotContainer.m_Turret.setYawDegreesFront(0);
         RobotContainer.m_Turret.setPitchDegrees(0);
-        m_AimCmd.cancel();
+
         DataLogManager.log("ShootHigh End.");
     }
 

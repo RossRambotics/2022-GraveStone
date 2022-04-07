@@ -188,6 +188,8 @@ public class RobotContainer {
         // create tracking cargo drive command
         CommandBase cmd = new ParallelCommandGroup(
                 new SnapDriveToCargo(m_drivetrainSubsystem,
+                        () -> -getInputLeftY(),
+                        () -> -getInputLeftX(),
                         new Rotation2d()),
                 new IntakeCargo());
         cmd.setName("DriveWhileTracking");

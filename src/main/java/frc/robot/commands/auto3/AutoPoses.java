@@ -14,7 +14,9 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.Drive.SnapDriveToCargo;
 import frc.robot.commands.Drive.SnapDriveToPoseField;
 import frc.robot.commands.Intake.ExtendIntake;
+import frc.robot.commands.Intake.RetractIntake;
 import frc.robot.commands.Intake.StartIntake;
+import frc.robot.commands.Intake.StopIntake;
 import frc.robot.commands.Shooter.ShootHigh;
 
 /** Add your docs here. */
@@ -41,7 +43,9 @@ public class AutoPoses {
                 .andThen(new StartIntake().withTimeout(0.01))
                 .andThen(new SnapDriveToCargo(
                         RobotContainer.m_drivetrainSubsystem,
-                        new Rotation2d()));
+                        new Rotation2d())
+                                .andThen(new RetractIntake().withTimeout(0.01))
+                                .andThen(new StopIntake().withTimeout(0.01)));
 
         return cmd;
     }
