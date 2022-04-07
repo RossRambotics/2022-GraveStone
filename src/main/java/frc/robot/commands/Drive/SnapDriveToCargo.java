@@ -4,6 +4,8 @@
 
 package frc.robot.commands.Drive;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -25,6 +27,8 @@ public class SnapDriveToCargo extends CommandBase {
     private double m_xError;
     private int m_lostCargoFrames = 0;
     private Timer m_timer = new Timer();
+    private final DoubleSupplier m_translationXSupplier;
+    private final DoubleSupplier m_translationYSupplier;
 
     /** Creates a new DriveWhileTracking. */
     /**
@@ -38,6 +42,30 @@ public class SnapDriveToCargo extends CommandBase {
             Rotation2d rotFromCurrent) {
 
         this.m_drivetrainSubsystem = drivetrainSubsystem;
+        this.m_translationXSupplier = null;
+        this.m_translationYSupplier = null;
+
+        // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements(drivetrainSubsystem);
+    }
+
+    /**
+     * SnapDriveToCargo with joystick values. The values are used to "settle" the
+     * robot before engaging SnapDrive. Because we don't want our robot to flip.
+     * 
+     * @param drivetrainSubsystem
+     * @param translationXSupplier
+     * @param translationYSupplier
+     * @param rotFromCurrent
+     */
+    public SnapDriveToCargo(DrivetrainSubsystem drivetrainSubsystem,
+            DoubleSupplier translationXSupplier,
+            DoubleSupplier translationYSupplier,
+            Rotation2d rotFromCurrent) {
+
+        this.m_drivetrainSubsystem = drivetrainSubsystem;
+        this.m_translationXSupplier = translationXSupplier;
+        this.m_translationYSupplier = translationXSupplier;
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drivetrainSubsystem);
@@ -107,6 +135,21 @@ public class SnapDriveToCargo extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        // make sure the robot slows down before engaging ball tracking
+        // max engage speed
+        double maxEngageSpeed = 0.2;
+        if (m_translationXSupplier != null) {
+            if (m_translationXSupplier.getAsDouble() > maxEngageSpeed) {
+                return;
+            }
+        }
+
+        if (m_translationYSupplier != null) {
+            if (m_translationYSupplier.getAsDouble() > maxEngageSpeed) {
+                return;
+            }
+        }
+
         // update error
         m_rotError = getRotError();
         m_xError = getXError();
