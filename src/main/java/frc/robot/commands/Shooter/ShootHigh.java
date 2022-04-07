@@ -28,6 +28,7 @@ public class ShootHigh extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        RobotContainer.m_Targeting.ResetSnapshot();
         m_timer.reset();
         m_timer.start();
         DataLogManager.log("ShootHigh Initialize:" +
@@ -85,6 +86,7 @@ public class ShootHigh extends CommandBase {
             RobotContainer.m_Indexer.shoot();
             m_timer.reset();
             m_timer.start();
+            RobotContainer.m_Targeting.TakeSnapshot();
 
             DataLogManager.log("ShootHigh Shoot1:" +
                     " Target Yaw: " + RobotContainer.m_Targeting.getTargetOffsetYaw() +
