@@ -437,17 +437,9 @@ public class RobotContainer {
         autoCmd.setName("Do Nothing");
         m_autoChooser.addOption("Do Nothing", autoCmd);
 
-        autoCmd = new frc.robot.commands.auto.TestShort();
-        autoCmd.setName("Test Short");
-        m_autoChooser.addOption("Test Short", autoCmd);
-
         autoCmd = new frc.robot.commands.auto.HubShotBackShot();
         autoCmd.setName("Auto Hub Shot");
         m_autoChooser.setDefaultOption("Hub Shot", autoCmd);
-
-        autoCmd = new BackShootBall();
-        autoCmd.setName("BackShootBall");
-        m_autoChooser.addOption("BackShootBall", autoCmd);
 
         autoCmd = new frc.robot.commands.auto3.S3_C3_High();
         autoCmd.setName("S3_C3_High");
