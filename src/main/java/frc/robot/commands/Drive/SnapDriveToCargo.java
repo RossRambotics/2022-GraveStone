@@ -137,34 +137,34 @@ public class SnapDriveToCargo extends CommandBase {
     public void execute() {
         // make sure the robot slows down before engaging ball tracking
         // max engage speed
-        double maxEngageSpeed = 0.2;
-        if (m_translationXSupplier != null) {
-            if (m_translationXSupplier.getAsDouble() > maxEngageSpeed) {
-                DataLogManager.log("Snap Slow!");
-                m_drivetrainSubsystem.drive(
-                        ChassisSpeeds.fromFieldRelativeSpeeds(
-                                m_translationXSupplier.getAsDouble(),
-                                m_translationYSupplier.getAsDouble(),
-                                0,
-                                m_drivetrainSubsystem.getGyroscopeRotation()),
-                        0);
-                return;
-            }
-        }
+        // double maxEngageSpeed = 0.2;
+        // if (m_translationXSupplier != null) {
+        // if (m_translationXSupplier.getAsDouble() > maxEngageSpeed) {
+        // DataLogManager.log("Snap Slow!");
+        // m_drivetrainSubsystem.drive(
+        // ChassisSpeeds.fromFieldRelativeSpeeds(
+        // m_translationXSupplier.getAsDouble(),
+        // m_translationYSupplier.getAsDouble(),
+        // 0,
+        // m_drivetrainSubsystem.getGyroscopeRotation()),
+        // 0);
+        // return;
+        // }
+        // }
 
-        if (m_translationYSupplier != null) {
-            if (m_translationYSupplier.getAsDouble() > maxEngageSpeed) {
-                DataLogManager.log("Snap Slow!");
-                m_drivetrainSubsystem.drive(
-                        ChassisSpeeds.fromFieldRelativeSpeeds(
-                                m_translationXSupplier.getAsDouble(),
-                                m_translationYSupplier.getAsDouble(),
-                                0,
-                                m_drivetrainSubsystem.getGyroscopeRotation()),
-                        0);
-                return;
-            }
-        }
+        // if (m_translationYSupplier != null) {
+        // if (m_translationYSupplier.getAsDouble() > maxEngageSpeed) {
+        // DataLogManager.log("Snap Slow!");
+        // m_drivetrainSubsystem.drive(
+        // ChassisSpeeds.fromFieldRelativeSpeeds(
+        // m_translationXSupplier.getAsDouble(),
+        // m_translationYSupplier.getAsDouble(),
+        // 0,
+        // m_drivetrainSubsystem.getGyroscopeRotation()),
+        // 0);
+        // return;
+        // }
+        // }
 
         // update error
         m_rotError = getRotError();
