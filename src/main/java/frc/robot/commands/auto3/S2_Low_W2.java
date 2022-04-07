@@ -31,7 +31,7 @@ public class S2_Low_W2 extends CommandBase {
         SequentialCommandGroup command = new SequentialCommandGroup(
                 new ResetIntake().withTimeout(0.2),
                 new ShootLow().withTimeout(2.6),
-                AutoPoses.CaptureCargo(AutoPoses.C1).withTimeout(5.0),
+                AutoPoses.CaptureCargo(AutoPoses.C1).withTimeout(10.0),
                 new SnapDriveToPoseField(RobotContainer.m_drivetrainSubsystem, AutoPoses.W2, 0.2));
 
         command.schedule();

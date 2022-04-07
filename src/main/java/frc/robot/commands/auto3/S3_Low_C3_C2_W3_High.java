@@ -29,9 +29,9 @@ public class S3_Low_C3_C2_W3_High extends CommandBase {
         SequentialCommandGroup command = new SequentialCommandGroup(
                 new ResetIntake().withTimeout(0.2),
                 new ShootLow().withTimeout(2.6),
-                AutoPoses.CaptureCargo(AutoPoses.C3).withTimeout(5.0),
-                AutoPoses.CaptureCargo(AutoPoses.C2).withTimeout(5.0),
-                AutoPoses.ShootHigh(AutoPoses.W3).withTimeout(5.0));
+                AutoPoses.CaptureCargo(AutoPoses.C3).withTimeout(10.0),
+                AutoPoses.CaptureCargo(AutoPoses.C2).withTimeout(10.0),
+                AutoPoses.ShootHigh(AutoPoses.W3).withTimeout(10.0));
 
         command.schedule();
     }

@@ -28,11 +28,11 @@ public class S3_C2_High_C4_C5_W3_High extends CommandBase {
         // Create command group for the auto routine
         SequentialCommandGroup command = new SequentialCommandGroup(
                 new ResetIntake().withTimeout(0.2),
-                AutoPoses.CaptureCargo(AutoPoses.C2).withTimeout(5.0),
-                AutoPoses.ShootHigh(AutoPoses.C2).withTimeout(5.0),
-                AutoPoses.CaptureCargo(AutoPoses.C4).withTimeout(5.0),
-                AutoPoses.CaptureCargo(AutoPoses.C5).withTimeout(5.0),
-                AutoPoses.ShootHigh(AutoPoses.W3).withTimeout(5.0));
+                AutoPoses.CaptureCargo(AutoPoses.C2).withTimeout(10.0),
+                AutoPoses.ShootHigh(AutoPoses.C2).withTimeout(10.0),
+                AutoPoses.CaptureCargo(AutoPoses.C4).withTimeout(10.0),
+                AutoPoses.CaptureCargo(AutoPoses.C5).withTimeout(10.0),
+                AutoPoses.ShootHigh(AutoPoses.W3).withTimeout(10.0));
 
         command.schedule();
     }

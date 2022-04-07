@@ -29,8 +29,8 @@ public class S2_Low_C1_W1_Hign extends CommandBase {
         SequentialCommandGroup command = new SequentialCommandGroup(
                 new ResetIntake().withTimeout(0.2),
                 new ShootLow().withTimeout(2.6),
-                AutoPoses.CaptureCargo(AutoPoses.C1).withTimeout(5.0),
-                AutoPoses.ShootHigh(AutoPoses.W1).withTimeout(5.0));
+                AutoPoses.CaptureCargo(AutoPoses.C1).withTimeout(10.0),
+                AutoPoses.ShootHigh(AutoPoses.W1).withTimeout(10.0));
 
         command.schedule();
     }
