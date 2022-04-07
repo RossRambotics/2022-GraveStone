@@ -39,6 +39,15 @@ public class Targeting extends SubsystemBase {
 
     }
 
+    public void TakeSnapshot() {
+        m_limelight_nt.getEntry("snapshot").setNumber(1);
+
+    }
+
+    public void ResetSnapshot() {
+        m_limelight_nt.getEntry("snapshot").setNumber(0);
+    }
+
     @Override
     public void periodic() {
         // get updates from limelight

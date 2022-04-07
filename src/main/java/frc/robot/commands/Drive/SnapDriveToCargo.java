@@ -39,9 +39,6 @@ public class SnapDriveToCargo extends CommandBase {
 
         this.m_drivetrainSubsystem = drivetrainSubsystem;
 
-        // use the current orientation of the robot plus the
-        m_goal = RobotContainer.m_drivetrainSubsystem.getGyroscopeRotation();
-
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(drivetrainSubsystem);
     }
@@ -51,6 +48,9 @@ public class SnapDriveToCargo extends CommandBase {
     public void initialize() {
         m_timer.reset();
         m_timer.start();
+
+        // use the current orientation of the robot plus the
+        m_goal = RobotContainer.m_drivetrainSubsystem.getGyroscopeRotation();
 
         TrapezoidProfile.Constraints rotationConstraints = new TrapezoidProfile.Constraints(
                 1.0, 0.5);
@@ -150,7 +150,8 @@ public class SnapDriveToCargo extends CommandBase {
                 new ChassisSpeeds(
                         translateSpeedY,
                         -translateSpeedX,
-                        0.0),
+                        // 0.0),
+                        rotationSpeed),
                 rotationSpeed);
     }
 
@@ -173,7 +174,7 @@ public class SnapDriveToCargo extends CommandBase {
             return false;
         }
 
-        if (m_timer.hasElapsed(2.0)) {
+        if (m_timer.hasElapsed(1.0)) {
             return true;
         }
         // if (m_lostCargoFrames++ > 80) {
