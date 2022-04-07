@@ -35,6 +35,7 @@ public class Tracking extends SubsystemBase {
     private double m_pEntry = 0.1;
     private double m_dEntry = 0.001;
     private PowerDistribution m_PDH = null;
+    private boolean m_isLightOn = false;
 
     private boolean m_isTesting = false;
     private final int kBLUE_PIPELINE = 1;
@@ -94,6 +95,14 @@ public class Tracking extends SubsystemBase {
 
         if (m_isTesting) {
             return;
+        }
+
+        if (m_isLightOn) {
+            if (this.isTrackingTarget()) {
+                RobotContainer.m_LEDStrip.setBallWhite();
+            } else {
+                RobotContainer.m_LEDStrip.setBallBlack();
+            }
         }
     }
 
@@ -231,10 +240,12 @@ public class Tracking extends SubsystemBase {
     public void enableSearchLight() {
         m_PDH.setSwitchableChannel(true);
         m_camera.setDriverMode(false);
+        m_isLightOn = true;
     }
 
     public void disableSearchLight() {
         m_PDH.setSwitchableChannel(false);
         m_camera.setDriverMode(true);
+        m_isLightOn = false;
     }
 }
