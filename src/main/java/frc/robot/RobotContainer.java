@@ -43,452 +43,453 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Targeting;
 import frc.robot.subsystems.Tracking;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.LEDPanel.LEDPanel;
 import frc.robot.subsystems.LEDStrip.LEDStrip;
 
 public class RobotContainer {
 
-        private static RobotContainer m_theRobot = null;
+    private static RobotContainer m_theRobot = null;
 
-        public static void setTheRobot(RobotContainer r) {
-                m_theRobot = r;
+    public static void setTheRobot(RobotContainer r) {
+        m_theRobot = r;
+    }
+
+    public static RobotContainer getTheRobot() {
+        return m_theRobot;
+    }
+
+    private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Match.Auto");
+    static public final ShuffleboardTab m_TuningTab = Shuffleboard.getTab("Match.Tuning");
+
+    static public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+
+    static public final Shooter m_Shooter = new Shooter();
+    static public final Tracking m_Tracking = new Tracking();
+    static public final Turret m_Turret = new Turret();
+
+    static public final Climb m_Climb = new Climb();
+
+    static public final Targeting m_Targeting = new Targeting();
+    static public final Intake m_Intake = new Intake();
+    static public final Indexer m_Indexer = new Indexer();
+    static public final RioLEDs m_RioLEDs = new RioLEDs();
+
+    static public final LEDStrip m_LEDStrip = new LEDStrip();
+    static public final LEDPanel m_LEDPanel = new LEDPanel();
+    private static double slewLimit = 0.6;
+
+    private final XboxController m_controllerDriver = new XboxController(0);
+    private final XboxController m_controllerOperator = new XboxController(1);
+
+    public PhysicsSim m_PhysicsSim;
+
+    public RobotContainer() {
+        // Set up the default command for the drivetrain.
+        // The controls are for field-oriented driving:
+        // Left stick Y axis -> forward and backwards movement
+        // Left stick X axis -> left and right movement
+        // Right stick X axis -> rotation
+
+        // m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+        // m_drivetrainSubsystem,
+        // () -> -getInputLeftY(),
+        // () -> -getInputLeftX(),
+        // () -> -getInputRightX()));
+
+        m_drivetrainSubsystem.setDefaultCommand(new SnapDrive(m_drivetrainSubsystem,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                () -> snapAngle()));
+
+        // Climb Default Command
+        m_Climb.setDefaultCommand(new DefaultClimb(m_Climb, () -> -getOperatorRightY()));
+
+        // Configure the button bindings
+        configureButtonBindings();
+
+        // Configure auton shuffleboard panel
+        // createShuffleBoardTab();
+
+        // disable Live Window per recommendations by WPILIB team to reduce network
+        // overhead
+        // remove this line if stuff is missing from shuffleboard that we need.
+        // LiveWindow.disableAllTelemetry();
+    }
+
+    private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(1.5);
+
+    private double getInputLeftY() {
+        double driverLeftY = modifyAxis(m_controllerDriver.getLeftY());
+
+        double slew = m_slewLeftY.calculate(driverLeftY) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+
+        return slew * slewLimit;
+
+    }
+
+    private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(1.5);
+
+    private double getInputLeftX() {
+        double driverLeftX = modifyAxis(m_controllerDriver.getLeftX());
+
+        double slew = m_slewLeftX.calculate(driverLeftX) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+        return slew * slewLimit;
+    }
+
+    private double getOperatorRightY() {
+        double operatorRightY = 0;
+
+        // implement Joystick Deadzone
+        if (Math.abs(m_controllerOperator.getRightY()) > 0.08) {
+            operatorRightY = m_controllerOperator.getRightY();
+
         }
 
-        public static RobotContainer getTheRobot() {
-                return m_theRobot;
+        return operatorRightY;
+    }
+
+    private double m_lastSnapAngle = 720; // defaults to 720 because 720 tell snap drive to not adjust the angle
+
+    private double snapAngle() {
+        double x = m_controllerDriver.getRightX();
+        double y = -m_controllerDriver.getRightY();
+
+        if (Math.abs(x) < 0.1 && Math.abs(y) < 0.1) {
+            // return 720;
+            // stop angle drift
+            return m_lastSnapAngle;
         }
 
-        private ShuffleboardTab m_shuffleboardTab = Shuffleboard.getTab("Match.Auto");
-        static public final ShuffleboardTab m_TuningTab = Shuffleboard.getTab("Match.Tuning");
+        double angle = Math.toDegrees(Math.atan2(x, y));
 
-        static public final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
-
-        static public final Shooter m_Shooter = new Shooter();
-        static public final Tracking m_Tracking = new Tracking();
-        static public final Turret m_Turret = new Turret();
-
-        static public final Climb m_Climb = new Climb();
-
-        static public final Targeting m_Targeting = new Targeting();
-        static public final Intake m_Intake = new Intake();
-        static public final Indexer m_Indexer = new Indexer();
-        static public final RioLEDs m_RioLEDs = new RioLEDs();
-
-        static public final LEDStrip m_LEDStrip = new LEDStrip();
-        // static public final LEDPanel m_LEDPanel = new LEDPanel();
-        private static double slewLimit = 0.6;
-
-        private final XboxController m_controllerDriver = new XboxController(0);
-        private final XboxController m_controllerOperator = new XboxController(1);
-
-        public PhysicsSim m_PhysicsSim;
-
-        public RobotContainer() {
-                // Set up the default command for the drivetrain.
-                // The controls are for field-oriented driving:
-                // Left stick Y axis -> forward and backwards movement
-                // Left stick X axis -> left and right movement
-                // Right stick X axis -> rotation
-
-                // m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-                // m_drivetrainSubsystem,
-                // () -> -getInputLeftY(),
-                // () -> -getInputLeftX(),
-                // () -> -getInputRightX()));
-
-                m_drivetrainSubsystem.setDefaultCommand(new SnapDrive(m_drivetrainSubsystem,
-                                () -> -getInputLeftY(),
-                                () -> -getInputLeftX(),
-                                () -> snapAngle()));
-
-                // Climb Default Command
-                m_Climb.setDefaultCommand(new DefaultClimb(m_Climb, () -> -getOperatorRightY()));
-
-                // Configure the button bindings
-                configureButtonBindings();
-
-                // Configure auton shuffleboard panel
-                // createShuffleBoardTab();
-
-                // disable Live Window per recommendations by WPILIB team to reduce network
-                // overhead
-                // remove this line if stuff is missing from shuffleboard that we need.
-                // LiveWindow.disableAllTelemetry();
+        if ((angle > 360) || (angle < -360)) {
+            return 360;
         }
 
-        private SlewRateLimiter m_slewLeftY = new SlewRateLimiter(1.5);
+        m_lastSnapAngle = angle;
+        return angle;
+    }
 
-        private double getInputLeftY() {
-                double driverLeftY = modifyAxis(m_controllerDriver.getLeftY());
+    /**
+     * Use this method to define your button->command mappings. Buttons can be
+     * created by
+     * instantiating a {@link GenericHID} or one of its subclasses ({@link
+     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+     * it to a {@link
+     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     */
+    private void configureButtonBindings() {
+        // Back button zeros the gyroscope
+        new Button(m_controllerDriver::getBackButton)
+                // No requirements because we don't need to interrupt anything
+                .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
 
-                double slew = m_slewLeftY.calculate(driverLeftY) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
+        // map button for tracking cargo
+        // create tracking cargo drive command
+        CommandBase cmd = new ParallelCommandGroup(
+                new SnapDriveToCargo(m_drivetrainSubsystem,
+                        new Rotation2d()),
+                new IntakeCargo());
+        cmd.setName("DriveWhileTracking");
+        new Button(m_controllerDriver::getLeftBumper)
+                .whenHeld(cmd, true);
 
-                return slew * slewLimit;
+        cmd = new DefaultDriveCommand(
+                m_drivetrainSubsystem,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                () -> {
+                    return -0.2;
+                });
+        new POVButton(m_controllerDriver, 180)
+                .whenHeld(cmd);
 
-        }
+        cmd = new DefaultDriveCommand(
+                m_drivetrainSubsystem,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                () -> {
+                    return 0.2;
+                });
+        new POVButton(m_controllerDriver, 90)
+                .whenHeld(cmd);
 
-        private SlewRateLimiter m_slewLeftX = new SlewRateLimiter(1.5);
+        // extends the intake and turns on the intake wheels Driver
+        cmd = new IntakeCargo();
 
-        private double getInputLeftX() {
-                double driverLeftX = modifyAxis(m_controllerDriver.getLeftX());
+        cmd.setName("A Button - Intake Cargo");
 
-                double slew = m_slewLeftX.calculate(driverLeftX) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND;
-                return slew * slewLimit;
-        }
+        new Button(m_controllerDriver::getAButton)
+                .toggleWhenPressed(cmd);
 
-        private double getOperatorRightY() {
-                double operatorRightY = 0;
+        // // reverse the intake
+        cmd = new ReverseIntake();
+        new Button(m_controllerDriver::getBButton)
+                .whenHeld(cmd);
 
-                // implement Joystick Deadzone
-                if (Math.abs(m_controllerOperator.getRightY()) > 0.08) {
-                        operatorRightY = m_controllerOperator.getRightY();
+        // // shootes into the lower hub at low RPM Driver
+        new Button(m_controllerDriver::getYButton)
+                .whenPressed(new frc.robot.commands.Shooter.ShootLow()
+                        .withTimeout(2.6));
 
-                }
+        // shoots into the high goal from hub
+        new Button(m_controllerDriver::getXButton)
+                .whenPressed(new frc.robot.commands.Shooter.ShootHighFromHub()
+                        .withTimeout(5.0));
 
-                return operatorRightY;
-        }
+        // // shoot
+        new Button(m_controllerDriver::getRightBumperPressed)
+                .whenPressed(new frc.robot.commands.Shooter.ShootHigh()
+                        .withTimeout(5));
 
-        private double m_lastSnapAngle = 720; // defaults to 720 because 720 tell snap drive to not adjust the angle
+        /**
+         * Operator controls
+         */
 
-        private double snapAngle() {
-                double x = m_controllerDriver.getRightX();
-                double y = -m_controllerDriver.getRightY();
+        // assign lock turret
+        new Button(m_controllerOperator::getYButton)
+                .whenPressed(new frc.robot.commands.Turret.LockTurret());
 
-                if (Math.abs(x) < 0.1 && Math.abs(y) < 0.1) {
-                        // return 720;
-                        // stop angle drift
-                        return m_lastSnapAngle;
-                }
+        // assign unlock turret
+        new Button(m_controllerOperator::getXButton)
+                .whenPressed(new frc.robot.commands.Turret.UnlockTurret());
 
-                double angle = Math.toDegrees(Math.atan2(x, y));
+        new Button(m_controllerOperator::getAButton)
+                .whenPressed(new frc.robot.commands.Intake.ResetIntake());
 
-                if ((angle > 360) || (angle < -360)) {
-                        return 360;
-                }
-
-                m_lastSnapAngle = angle;
-                return angle;
+        if (m_controllerDriver.getRightStickButton() == true) {
+            slewLimit = 1;
+        } else {
+            slewLimit = 0.6;
         }
 
         /**
-         * Use this method to define your button->command mappings. Buttons can be
-         * created by
-         * instantiating a {@link GenericHID} or one of its subclasses ({@link
-         * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
-         * it to a {@link
-         * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+         * Implement Snap Drive
          */
-        private void configureButtonBindings() {
-                // Back button zeros the gyroscope
-                new Button(m_controllerDriver::getBackButton)
-                                // No requirements because we don't need to interrupt anything
-                                .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
 
-                // map button for tracking cargo
-                // create tracking cargo drive command
-                CommandBase cmd = new ParallelCommandGroup(
-                                new SnapDriveToCargo(m_drivetrainSubsystem,
-                                                new Rotation2d()),
-                                new IntakeCargo());
-                cmd.setName("DriveWhileTracking");
-                new Button(m_controllerDriver::getLeftBumper)
-                                .whenHeld(cmd, true);
+        // North
+        cmd = new frc.robot.commands.Drive.SnapDrive(
+                m_drivetrainSubsystem,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                0);
 
-                cmd = new DefaultDriveCommand(
-                                m_drivetrainSubsystem,
-                                () -> -getInputLeftY(),
-                                () -> -getInputLeftX(),
-                                () -> {
-                                        return -0.2;
-                                });
-                new POVButton(m_controllerDriver, 180)
-                                .whenHeld(cmd);
+        new POVButton(m_controllerOperator, 0)
+                .whenHeld(cmd);
 
-                cmd = new DefaultDriveCommand(
-                                m_drivetrainSubsystem,
-                                () -> -getInputLeftY(),
-                                () -> -getInputLeftX(),
-                                () -> {
-                                        return 0.2;
-                                });
-                new POVButton(m_controllerDriver, 90)
-                                .whenHeld(cmd);
+        // South
+        cmd = new frc.robot.commands.Drive.SnapDrive(
+                m_drivetrainSubsystem,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                180);
 
-                // extends the intake and turns on the intake wheels Driver
-                cmd = new IntakeCargo();
+        new POVButton(m_controllerOperator, 180)
+                .whenHeld(cmd);
 
-                cmd.setName("A Button - Intake Cargo");
+        // East
+        cmd = new frc.robot.commands.Drive.SnapDrive(
+                m_drivetrainSubsystem,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                90);
 
-                new Button(m_controllerDriver::getAButton)
-                                .toggleWhenPressed(cmd);
+        new POVButton(m_controllerOperator, 90)
+                .whenHeld(cmd);
 
-                // // reverse the intake
-                cmd = new ReverseIntake();
-                new Button(m_controllerDriver::getBButton)
-                                .whenHeld(cmd);
+        // West
+        cmd = new frc.robot.commands.Drive.SnapDrive(
+                m_drivetrainSubsystem,
+                () -> -getInputLeftY(),
+                () -> -getInputLeftX(),
+                270);
 
-                // // shootes into the lower hub at low RPM Driver
-                new Button(m_controllerDriver::getYButton)
-                                .whenPressed(new frc.robot.commands.Shooter.ShootLow()
-                                                .withTimeout(2.6));
+        new POVButton(m_controllerOperator, 270)
+                .whenHeld(cmd);
 
-                // shoots into the high goal from hub
-                new Button(m_controllerDriver::getXButton)
-                                .whenPressed(new frc.robot.commands.Shooter.ShootHighFromHub()
-                                                .withTimeout(5.0));
+        // // turret go up
+        // POVButton operatorTurretUp = new POVButton(m_controllerOperator, 0);
+        // operatorTurretUp.whenPressed(new DefaultDriveCommand(
 
-                // // shoot
-                new Button(m_controllerDriver::getRightBumperPressed)
-                                .whenPressed(new frc.robot.commands.Shooter.ShootHigh()
-                                                .withTimeout(5));
+        // .withTimeout(angleTurret));
 
-                /**
-                 * Operator controls
-                 */
+        // // turret go down
+        // POVButton operatorTurretDown = new POVButton(m_controllerOperator, 180);
+        // operatorTurretDown.whenPressed(new DefaultDriveCommand(
 
-                // assign lock turret
-                new Button(m_controllerOperator::getYButton)
-                                .whenPressed(new frc.robot.commands.Turret.LockTurret());
+        // .withTimeout(angleTurret));
 
-                // assign unlock turret
-                new Button(m_controllerOperator::getXButton)
-                                .whenPressed(new frc.robot.commands.Turret.UnlockTurret());
+        // // turret go right
+        // POVButton operatorTurretRight = new POVButton(m_controllerOperator, 90);
+        // operatorTurretRight.whenPressed(new DefaultDriveCommand(
 
-                new Button(m_controllerOperator::getAButton)
-                                .whenPressed(new frc.robot.commands.Intake.ResetIntake());
+        // .withTimeout(spinTurret));
 
-                if (m_controllerDriver.getRightStickButton() == true) {
-                        slewLimit = 1;
-                } else {
-                        slewLimit = 0.6;
-                }
+        // // turret go up
+        // POVButton operatorTurretleft = new POVButton(m_controllerOperator, 0);
+        // operatorTurretleft.whenPressed(new DefaultDriveCommand(
 
-                /**
-                 * Implement Snap Drive
-                 */
+        // .withTimeout(spinTurret));
+    }
 
-                // North
-                cmd = new frc.robot.commands.Drive.SnapDrive(
-                                m_drivetrainSubsystem,
-                                () -> -getInputLeftY(),
-                                () -> -getInputLeftX(),
-                                0);
-
-                new POVButton(m_controllerOperator, 0)
-                                .whenHeld(cmd);
-
-                // South
-                cmd = new frc.robot.commands.Drive.SnapDrive(
-                                m_drivetrainSubsystem,
-                                () -> -getInputLeftY(),
-                                () -> -getInputLeftX(),
-                                180);
-
-                new POVButton(m_controllerOperator, 180)
-                                .whenHeld(cmd);
-
-                // East
-                cmd = new frc.robot.commands.Drive.SnapDrive(
-                                m_drivetrainSubsystem,
-                                () -> -getInputLeftY(),
-                                () -> -getInputLeftX(),
-                                90);
-
-                new POVButton(m_controllerOperator, 90)
-                                .whenHeld(cmd);
-
-                // West
-                cmd = new frc.robot.commands.Drive.SnapDrive(
-                                m_drivetrainSubsystem,
-                                () -> -getInputLeftY(),
-                                () -> -getInputLeftX(),
-                                270);
-
-                new POVButton(m_controllerOperator, 270)
-                                .whenHeld(cmd);
-
-                // // turret go up
-                // POVButton operatorTurretUp = new POVButton(m_controllerOperator, 0);
-                // operatorTurretUp.whenPressed(new DefaultDriveCommand(
-
-                // .withTimeout(angleTurret));
-
-                // // turret go down
-                // POVButton operatorTurretDown = new POVButton(m_controllerOperator, 180);
-                // operatorTurretDown.whenPressed(new DefaultDriveCommand(
-
-                // .withTimeout(angleTurret));
-
-                // // turret go right
-                // POVButton operatorTurretRight = new POVButton(m_controllerOperator, 90);
-                // operatorTurretRight.whenPressed(new DefaultDriveCommand(
-
-                // .withTimeout(spinTurret));
-
-                // // turret go up
-                // POVButton operatorTurretleft = new POVButton(m_controllerOperator, 0);
-                // operatorTurretleft.whenPressed(new DefaultDriveCommand(
-
-                // .withTimeout(spinTurret));
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        // An ExampleCommand will run in autonomous
+        CommandBase cmd = (CommandBase) m_autoChooser.getSelected();
+        if (cmd == null) {
+            return new InstantCommand();
         }
+        return cmd;
+    }
 
-        /**
-         * Use this to pass the autonomous command to the main {@link Robot} class.
-         *
-         * @return the command to run in autonomous
-         */
-        public Command getAutonomousCommand() {
-                // An ExampleCommand will run in autonomous
-                CommandBase cmd = (CommandBase) m_autoChooser.getSelected();
-                if (cmd == null) {
-                        return new InstantCommand();
-                }
-                return cmd;
+    private static double deadband(double value, double deadband) {
+        if (Math.abs(value) > deadband) {
+            if (value > 0.0) {
+                return (value - deadband) / (1.0 - deadband);
+            } else {
+                return (value + deadband) / (1.0 - deadband);
+            }
+        } else {
+            return 0.0;
         }
+    }
 
-        private static double deadband(double value, double deadband) {
-                if (Math.abs(value) > deadband) {
-                        if (value > 0.0) {
-                                return (value - deadband) / (1.0 - deadband);
-                        } else {
-                                return (value + deadband) / (1.0 - deadband);
-                        }
-                } else {
-                        return 0.0;
-                }
-        }
+    private static double modifyAxis(double value) {
+        // Deadband
+        value = deadband(value, 0.1);
 
-        private static double modifyAxis(double value) {
-                // Deadband
-                value = deadband(value, 0.1);
+        // Square the axis
+        value = Math.copySign(value * value, value);
 
-                // Square the axis
-                value = Math.copySign(value * value, value);
+        return value;
+    }
 
-                return value;
-        }
+    private SendableChooser m_autoChooser = new SendableChooser();
 
-        private SendableChooser m_autoChooser = new SendableChooser();
+    public void createShuffleBoardTab() {
+        ShuffleboardTab tab = m_shuffleboardTab;
+        ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 1)
+                .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
-        public void createShuffleBoardTab() {
-                ShuffleboardTab tab = m_shuffleboardTab;
-                ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 1)
-                                .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
+        // PathPlannerTrajectory examplePath = PathPlanner.loadPath("Test1", 3, 1);
 
-                // PathPlannerTrajectory examplePath = PathPlanner.loadPath("Test1", 3, 1);
+        // TrapezoidProfile.Constraints kThetaControllerConstraints = new
+        // TrapezoidProfile.Constraints(
+        // Math.PI, Math.PI);
+        // ProfiledPIDController thetaController = new ProfiledPIDController(
+        // 4, 0, 0, kThetaControllerConstraints);
 
-                // TrapezoidProfile.Constraints kThetaControllerConstraints = new
-                // TrapezoidProfile.Constraints(
-                // Math.PI, Math.PI);
-                // ProfiledPIDController thetaController = new ProfiledPIDController(
-                // 4, 0, 0, kThetaControllerConstraints);
+        // // let's the theta controller know that it is a circle (ie, 180 = -180)
+        // thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        // m_drivetrainSubsystem.zeroGyroscope();
 
-                // // let's the theta controller know that it is a circle (ie, 180 = -180)
-                // thetaController.enableContinuousInput(-Math.PI, Math.PI);
-                // m_drivetrainSubsystem.zeroGyroscope();
+        // // use this to automatically set
+        // // the robot position on the field to match the start of the trajectory
+        // PathPlannerState start = examplePath.getInitialState();
+        // m_drivetrainSubsystem.getOdometry().resetPosition(start.poseMeters,
+        // m_drivetrainSubsystem.getGyroscopeRotation());
 
-                // // use this to automatically set
-                // // the robot position on the field to match the start of the trajectory
-                // PathPlannerState start = examplePath.getInitialState();
-                // m_drivetrainSubsystem.getOdometry().resetPosition(start.poseMeters,
-                // m_drivetrainSubsystem.getGyroscopeRotation());
+        // PPSwerveControllerCommand command = new PPSwerveControllerCommand(
+        // examplePath,
+        // m_drivetrainSubsystem::getOdometryPose,
+        // m_drivetrainSubsystem.getKinematics(),
+        // // Position controllers
+        // new PIDController(0.2, 0, 0),
+        // new PIDController(0.2, 0, 0),
+        // thetaController,
+        // m_drivetrainSubsystem::setSwerveModulesStates,
+        // m_drivetrainSubsystem);
+        // command.setName("Example Path");
+        // commands.add(command);
 
-                // PPSwerveControllerCommand command = new PPSwerveControllerCommand(
-                // examplePath,
-                // m_drivetrainSubsystem::getOdometryPose,
-                // m_drivetrainSubsystem.getKinematics(),
-                // // Position controllers
-                // new PIDController(0.2, 0, 0),
-                // new PIDController(0.2, 0, 0),
-                // thetaController,
-                // m_drivetrainSubsystem::setSwerveModulesStates,
-                // m_drivetrainSubsystem);
-                // command.setName("Example Path");
-                // commands.add(command);
+        CommandBase cmd = new frc.robot.commands.auto.TestShort();
+        commands.add(cmd);
 
-                CommandBase cmd = new frc.robot.commands.auto.TestShort();
-                commands.add(cmd);
+        cmd = new frc.robot.commands.auto.HubShotBackShot();
+        commands.add(cmd);
 
-                cmd = new frc.robot.commands.auto.HubShotBackShot();
-                commands.add(cmd);
+        cmd = new frc.robot.commands.auto2.Start3LowBackHigh();
+        commands.add(cmd);
 
-                cmd = new frc.robot.commands.auto2.Start3LowBackHigh();
-                commands.add(cmd);
+        cmd = new frc.robot.commands.auto2.Start3LowBackHighHub();
+        commands.add(cmd);
 
-                cmd = new frc.robot.commands.auto2.Start3LowBackHighHub();
-                commands.add(cmd);
+        cmd = new frc.robot.commands.auto2.Start3_2LowBackHighHub();
+        commands.add(cmd);
 
-                cmd = new frc.robot.commands.auto2.Start3_2LowBackHighHub();
-                commands.add(cmd);
+        cmd = new frc.robot.commands.auto3.S3_Low_C3_High();
+        commands.add(cmd);
 
-                cmd = new frc.robot.commands.auto3.S3_Low_C3_High();
-                commands.add(cmd);
+        cmd = new frc.robot.commands.Drive.SnapDriveToCargo(
+                RobotContainer.m_drivetrainSubsystem,
+                new Rotation2d(0));
+        commands.add(cmd);
 
-                cmd = new frc.robot.commands.Drive.SnapDriveToCargo(
-                                RobotContainer.m_drivetrainSubsystem,
-                                new Rotation2d(0));
-                commands.add(cmd);
+        // Add auto routines
+        CommandBase autoCmd = null;
+        autoCmd = new InstantCommand();
+        autoCmd.setName("Do Nothing");
+        m_autoChooser.addOption("Do Nothing", autoCmd);
 
-                // Add auto routines
-                CommandBase autoCmd = null;
-                autoCmd = new InstantCommand();
-                autoCmd.setName("Do Nothing");
-                m_autoChooser.addOption("Do Nothing", autoCmd);
+        autoCmd = new frc.robot.commands.auto.TestShort();
+        autoCmd.setName("Test Short");
+        m_autoChooser.addOption("Test Short", autoCmd);
 
-                autoCmd = new frc.robot.commands.auto.TestShort();
-                autoCmd.setName("Test Short");
-                m_autoChooser.addOption("Test Short", autoCmd);
+        autoCmd = new frc.robot.commands.auto.HubShotBackShot();
+        autoCmd.setName("Auto Hub Shot");
+        m_autoChooser.setDefaultOption("Hub Shot", autoCmd);
 
-                autoCmd = new frc.robot.commands.auto.HubShotBackShot();
-                autoCmd.setName("Auto Hub Shot");
-                m_autoChooser.setDefaultOption("Hub Shot", autoCmd);
+        autoCmd = new BackShootBall();
+        autoCmd.setName("BackShootBall");
+        m_autoChooser.addOption("BackShootBall", autoCmd);
 
-                autoCmd = new BackShootBall();
-                autoCmd.setName("BackShootBall");
-                m_autoChooser.addOption("BackShootBall", autoCmd);
+        autoCmd = new frc.robot.commands.auto3.S3_C3_High();
+        autoCmd.setName("S3_C3_High");
+        m_autoChooser.addOption("S3_C3_High", autoCmd);
 
-                autoCmd = new frc.robot.commands.auto3.S3_C3_High();
-                autoCmd.setName("S3_C3_High");
-                m_autoChooser.addOption("S3_C3_High", autoCmd);
+        autoCmd = new frc.robot.commands.auto3.S3_Low_C3_High();
+        autoCmd.setName("S3_Low_C3_High");
+        m_autoChooser.addOption("S3_Low_C3_High", autoCmd);
 
-                autoCmd = new frc.robot.commands.auto3.S3_Low_C3_High();
-                autoCmd.setName("S3_Low_C3_High");
-                m_autoChooser.addOption("S3_Low_C3_High", autoCmd);
+        autoCmd = new frc.robot.commands.auto3.S1_C1_High();
+        autoCmd.setName("S1_C1_High");
+        m_autoChooser.addOption("S1_C1_High", autoCmd);
 
-                autoCmd = new frc.robot.commands.auto3.S1_C1_High();
-                autoCmd.setName("S1_C1_High");
-                m_autoChooser.addOption("S1_C1_High", autoCmd);
+        autoCmd = new frc.robot.commands.auto3.S2_C1_W1_High();
+        autoCmd.setName("S2_C1_W1_High");
+        m_autoChooser.addOption("S2_C1_W1_High", autoCmd);
 
-                autoCmd = new frc.robot.commands.auto3.S2_C1_W1_High();
-                autoCmd.setName("S2_C1_W1_High");
-                m_autoChooser.addOption("S2_C1_W1_High", autoCmd);
+        // autoCmd = new frc.robot.commands.auto.BottomLeftNoHumanPlayer();
+        // autoCmd.setName("Bottom Left No Human");
+        // m_autoChooser.addOption("Bottom Left No Human", autoCmd);
+        tab.add("Autonomous", m_autoChooser).withSize(2, 1);
 
-                // autoCmd = new frc.robot.commands.auto.BottomLeftNoHumanPlayer();
-                // autoCmd.setName("Bottom Left No Human");
-                // m_autoChooser.addOption("Bottom Left No Human", autoCmd);
-                tab.add("Autonomous", m_autoChooser).withSize(2, 1);
+        this.m_Shooter.createShuffleBoardTab();
+        this.m_Tracking.createShuffleBoardTab();
+        this.m_Indexer.createShuffleBoardTab();
+        this.m_Intake.createShuffleBoardTab();
+        this.m_Turret.createShuffleBoardTab();
+        this.m_Targeting.createShuffleBoardTab();
 
-                this.m_Shooter.createShuffleBoardTab();
-                this.m_Tracking.createShuffleBoardTab();
-                this.m_Indexer.createShuffleBoardTab();
-                this.m_Intake.createShuffleBoardTab();
-                this.m_Turret.createShuffleBoardTab();
-                this.m_Targeting.createShuffleBoardTab();
+        // m_Turret.setDefaultCommand(new TrackTarget());
+        cmd = new frc.robot.commands.Intake.DefCommand();
 
-                // m_Turret.setDefaultCommand(new TrackTarget());
-                cmd = new frc.robot.commands.Intake.DefCommand();
+        cmd.setName("Default RetractIntake Cmd");
+        cmd.addRequirements(m_Intake);
+        m_Intake.setDefaultCommand(cmd);
 
-                cmd.setName("Default RetractIntake Cmd");
-                cmd.addRequirements(m_Intake);
-                m_Intake.setDefaultCommand(cmd);
+        cmd = new frc.robot.commands.Indexer.DefaultIndexer();
+        m_Indexer.setDefaultCommand(cmd);
 
-                cmd = new frc.robot.commands.Indexer.DefaultIndexer();
-                m_Indexer.setDefaultCommand(cmd);
+        // cmd = new frc.robot.commands.Turret.TrackTarget();
+        // m_Turret.setDefaultCommand(cmd);
 
-                // cmd = new frc.robot.commands.Turret.TrackTarget();
-                // m_Turret.setDefaultCommand(cmd);
+        DataLogManager.start();
+        DataLogManager.log("Log Started.");
 
-                DataLogManager.start();
-                DataLogManager.log("Log Started.");
-
-        }
+    }
 }
