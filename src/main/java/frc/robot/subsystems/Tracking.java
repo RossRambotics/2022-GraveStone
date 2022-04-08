@@ -200,6 +200,10 @@ public class Tracking extends SubsystemBase {
         c.setName("Blue Cargo");
         commands.add(c);
 
+        c = new frc.robot.commands.Tracking.EnableLight();
+        c.setName("Enable Light");
+        commands.add(c);
+
         // m_testTargetYaw = m_shuffleboardTab.add("Test Target Yaw",
         // 0).withWidget(BuiltInWidgets.kNumberSlider)
         // .withSize(4, 1)
