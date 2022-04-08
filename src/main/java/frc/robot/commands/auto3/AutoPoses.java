@@ -32,7 +32,7 @@ public class AutoPoses {
         public final static Pose2d W1 = new Pose2d(5.54, 5.17, new Rotation2d(Math.toRadians(-17.98)));
         public final static Pose2d W2 = new Pose2d(4.46, 4.1, new Rotation2d(Math.toRadians(3.91)));
         public final static Pose2d W3 = new Pose2d(7.19, 1.36, new Rotation2d(Math.toRadians(70.94)));
-        public final static Pose2d W4 = new Pose2d(6.08, 1.21, new Rotation2d(Math.toRadians(52.74)));
+        public final static Pose2d W4 = new Pose2d(5.71, 1.06, new Rotation2d(Math.toRadians(52.74)));
 
         public static CommandBase CaptureCargo(Pose2d pose) {
                 CommandBase cmd = new SnapDriveToPoseField(
