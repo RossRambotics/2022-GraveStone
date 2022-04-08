@@ -87,7 +87,9 @@ public class Robot extends TimedRobot {
             RobotContainer.m_Tracking.redAlliance();
         } else {
             DataLogManager.log("ALERT!  No alliance from drive station!");
-            RobotContainer.m_Tracking.redAlliance();
+            // RobotContainer.m_Tracking.redAlliance();
+            RobotContainer.m_Tracking.blueAlliance();
+
         }
 
         // schedule the autonomous command (example)
