@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Intake.ResetIntake;
+import frc.robot.commands.Shooter.ShootHigh;
 import frc.robot.commands.Shooter.ShootLow;
 
 public class S3_C3_High extends CommandBase {
@@ -29,7 +30,7 @@ public class S3_C3_High extends CommandBase {
         SequentialCommandGroup command = new SequentialCommandGroup(
                 new ResetIntake().withTimeout(0.2),
                 AutoPoses.CaptureCargo(AutoPoses.C3).withTimeout(10.0),
-                AutoPoses.ShootHigh(AutoPoses.C3).withTimeout(5.0));
+                new ShootHigh().withTimeout(5.0));
 
         command.schedule();
     }

@@ -112,8 +112,10 @@ public class SnapDriveToCargo extends CommandBase {
             error = 0.0;
         }
 
+        Pose2d current = RobotContainer.m_drivetrainSubsystem.getOdometryPose();
         DataLogManager.log("SnapDriveToCargo: isTracking?: "
                 + RobotContainer.m_Tracking.isTrackingTarget()
+                + " Current: " + current
                 + " X Error: " + error);
 
         // TODO tune the factor below

@@ -11,6 +11,7 @@ public class IntakeCargo extends CommandBase {
     /** Creates a new IntakeCargo. */
     public IntakeCargo() {
         // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements(RobotContainer.m_Intake);
     }
 
     // Called when the command is initially scheduled.
