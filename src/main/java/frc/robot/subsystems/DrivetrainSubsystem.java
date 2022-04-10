@@ -112,7 +112,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     // adding SwerveOdometry
     private SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
-    private Pose2d m_odometryPose = new Pose2d();
+    // private Pose2d m_odometryPose = new Pose2d();
     private SwerveModuleState[] m_swerveModuleStates = new SwerveModuleState[4]; // added while adding odometry
                                                                                  // support
                                                                                  // & replaced m_chassisSpeeds
@@ -214,19 +214,27 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void zeroGyroscope() {
         // FIXME Remove if you are using a Pigeon
         // m_pigeon.setFusedHeading(0.0);
-        m_pigeon.setYaw(0.0);
+        m_pigeon.setYaw(0.0, 10);
 
         // FIXME Uncomment if you are using a NavX
         // m_navx.zeroYaw();
     }
 
-    public void setGyroScope(double yaw) {
-        m_pigeon.setYaw(yaw);
+    /**
+     * updates the current gyro yaw. this update is asynchronous and while it waits
+     * 10ms for the update, the actual update may take longer.
+     * 
+     * @param yawDegrees
+     */
+    public void setGyroScope(double yawDegrees) {
+        m_pigeon.setYaw(yawDegrees, 10);
     }
 
     public void resetOdometry() {
         zeroGyroscope();
         m_odometry = new SwerveDriveOdometry(m_kinematics, getGyroscopeRotation());
+        // m_odometryPose =
+        m_odometry.update(getGyroscopeRotation(), m_swerveModuleStates); // THIS IT???
     }
 
     public Rotation2d getGyroscopeRotation() {
@@ -324,23 +332,24 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // states[3].angle.getRadians());
 
         // update odometry
-        m_odometryPose = m_odometry.update(getGyroscopeRotation(), m_swerveModuleStates);
+        // m_odometryPose =
+        m_odometry.update(getGyroscopeRotation(), m_swerveModuleStates);
 
         // update field sim
         if (Robot.isSimulation()) {
             Pose2d simPose = new Pose2d(
-                    m_odometryPose.getX(),
-                    m_odometryPose.getY(),
+                    getOdometryPose().getX(),
+                    getOdometryPose().getY(),
                     new Rotation2d(m_lastRotationSpeed));
             m_field.setRobotPose(simPose);
         } else {
-            m_field.setRobotPose(m_odometryPose);
+            m_field.setRobotPose(getOdometryPose());
         }
 
     }
 
     public Pose2d getOdometryPose() {
-        return m_odometryPose;
+        return m_odometry.getPoseMeters();
     }
 
     public SwerveDriveOdometry getOdometry() {
@@ -351,4 +360,5 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void simulationPeriodic() {
         // This method will be called once per scheduler run during simulation
     }
+
 }

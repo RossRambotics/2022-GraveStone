@@ -38,7 +38,7 @@ public class Intake extends SubsystemBase {
     static public final Intake_roller m_roller = new Intake_roller();
 
     // Default Intake Extension
-    private double m_extensionTargetDegrees = 125;
+    private double m_extensionTargetDegrees = 115.0;
 
     /**
      * PID Gains may have to be adjusted based on the responsiveness of control
@@ -82,8 +82,8 @@ public class Intake extends SubsystemBase {
 
         m_extensionMotor.configNominalOutputForward(0, IntakeConstants.kTimeoutMs);
         m_extensionMotor.configNominalOutputReverse(0, IntakeConstants.kTimeoutMs);
-        m_extensionMotor.configPeakOutputForward(0.1, IntakeConstants.kTimeoutMs);
-        m_extensionMotor.configPeakOutputReverse(-0.1, IntakeConstants.kTimeoutMs);
+        m_extensionMotor.configPeakOutputForward(0.2, IntakeConstants.kTimeoutMs);
+        m_extensionMotor.configPeakOutputReverse(-0.2, IntakeConstants.kTimeoutMs);
 
         /* Config the Velocity closed loop gains in slot0 */
         m_extensionMotor.config_kF(IntakeConstants.kPIDLoopIdx, m_gainsVelocity.kF, IntakeConstants.kTimeoutMs);
@@ -181,7 +181,7 @@ public class Intake extends SubsystemBase {
     public void start() {
         // Start intake
         // System.out.println("Starting Intake");
-        m_rollerMotor.set(TalonFXControlMode.PercentOutput, 0.45);
+        m_rollerMotor.set(TalonFXControlMode.PercentOutput, 0.95);
         // m_rollerMotor.setVoltage(2);
     }
 

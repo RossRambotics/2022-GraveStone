@@ -28,6 +28,7 @@ public class ShootHigh extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        RobotContainer.m_Targeting.ResetSnapshot();
         m_timer.reset();
         m_timer.start();
         DataLogManager.log("ShootHigh Initialize:" +
@@ -74,12 +75,18 @@ public class ShootHigh extends CommandBase {
             return;
         }
 
+        if (RobotContainer.m_Turret.getIsOnTarget() == false) {
+            DataLogManager.log("Shoot High: Not on target yet...");
+            return;
+        }
+
         if (!m_isShooting && RobotContainer.m_Shooter.isSpunUp()) {
             m_isShooting = true;
             m_isShooting2 = true;
             RobotContainer.m_Indexer.shoot();
             m_timer.reset();
             m_timer.start();
+            RobotContainer.m_Targeting.TakeSnapshot();
 
             DataLogManager.log("ShootHigh Shoot1:" +
                     " Target Yaw: " + RobotContainer.m_Targeting.getTargetOffsetYaw() +
@@ -112,7 +119,7 @@ public class ShootHigh extends CommandBase {
         }
         // update firing solution
         RobotContainer.m_Shooter.shootHigh();
-        RobotContainer.m_Indexer.start();
+        RobotContainer.m_Indexer.shoot();
 
         DataLogManager.log("ShootHigh Shoot2:" +
                 " Target Yaw: " + RobotContainer.m_Targeting.getTargetOffsetYaw() +
@@ -131,11 +138,13 @@ public class ShootHigh extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        m_AimCmd.cancel();
         RobotContainer.m_Shooter.stop();
         RobotContainer.m_Intake.stop();
         RobotContainer.m_Turret.setYawDegreesFront(0);
         RobotContainer.m_Turret.setPitchDegrees(0);
-        m_AimCmd.cancel();
+
+        DataLogManager.log("ShootHigh End.");
     }
 
     // Returns true when the command should end.

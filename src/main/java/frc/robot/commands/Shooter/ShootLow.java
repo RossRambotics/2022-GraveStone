@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Shooter;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
@@ -23,6 +24,7 @@ public class ShootLow extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        DataLogManager.log("ShootLow Initialize.");
         RobotContainer.m_Turret.setYawDegreesFront(0);
         RobotContainer.m_Shooter.shootLow();
         RobotContainer.m_Turret.setPitchDegrees(19);
@@ -38,9 +40,11 @@ public class ShootLow extends CommandBase {
         if (!m_timer.hasElapsed(0.2)) {
             return;
         }
+        DataLogManager.log("ShootLow Shoot1.");
         RobotContainer.m_Indexer.shoot();
 
         if (!m_timer.hasElapsed(0.5)) {
+            DataLogManager.log("ShootLow Shoot2.");
             RobotContainer.m_Intake.start();
         }
     }
@@ -52,6 +56,7 @@ public class ShootLow extends CommandBase {
         RobotContainer.m_Indexer.stop();
         RobotContainer.m_Intake.stop();
         RobotContainer.m_Turret.setPitchDegrees(0);
+        DataLogManager.log("ShootLow End.");
     }
 
     // Returns true when the command should end.

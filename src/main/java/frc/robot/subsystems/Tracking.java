@@ -35,11 +35,11 @@ public class Tracking extends SubsystemBase {
     private double m_pEntry = 0.1;
     private double m_dEntry = 0.001;
     private PowerDistribution m_PDH = null;
+    private boolean m_isLightOn = false;
 
     private boolean m_isTesting = false;
-    private boolean m_isBlueAlliance = true;
-    private final int kBLUE_PIPELINE = 2;
-    private final int kRED_PIPELINE = 1;
+    private final int kBLUE_PIPELINE = 1;
+    private final int kRED_PIPELINE = 0;
     // set to -1
     private int m_currentPipeline = -1;
 
@@ -58,31 +58,37 @@ public class Tracking extends SubsystemBase {
 
     }
 
+    public void blueAlliance() {
+        m_currentPipeline = kBLUE_PIPELINE;
+        m_camera.setPipelineIndex(m_currentPipeline);
+        DataLogManager.log("Tracking: We are BLUE alliance.");
+    }
+
+    public void redAlliance() {
+        m_currentPipeline = kRED_PIPELINE;
+        m_camera.setPipelineIndex(m_currentPipeline);
+        DataLogManager.log("Tracking: We are RED alliance.");
+    }
+
     @Override
     public void periodic() {
+        // MOVED TO ROBOT AUTO INIT
         // make sure we are using the appropriate vision pipeline
-        if (DriverStation.getMatchType() == MatchType.None &&
-                m_currentPipeline == -1) {
-            m_currentPipeline = kRED_PIPELINE;
-            DataLogManager.log("Tracking: not FMS match");
-        }
-        if (DriverStation.getAlliance() != DriverStation.Alliance.Invalid &&
-                m_currentPipeline == -1) {
-            if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
-                m_currentPipeline = kBLUE_PIPELINE;
-                m_camera.setPipelineIndex(kBLUE_PIPELINE);
-                DataLogManager.log("Tracking: We are BLUE alliance.");
-            } else {
-                m_currentPipeline = kRED_PIPELINE;
-                m_camera.setPipelineIndex(kRED_PIPELINE);
-                DataLogManager.log("Tracking: We are RED alliance.");
-            }
-        }
+        // if not connected to FMS default to red alliance
+        // if (DriverStation.getMatchType() == MatchType.None &&
+        // m_currentPipeline == -1) {
+        // this.blueAlliance();
+        // DataLogManager.log("Tracking: not FMS match");
+        // }
+        // if (DriverStation.getAlliance() != DriverStation.Alliance.Invalid &&
+        // m_currentPipeline == -1) {
+        // if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+        // this.blueAlliance();
+        // } else {
+        // this.redAlliance();
+        // }
+        // }
 
-        // TODO remove this
-        // if (true)
-        // return;
-        // This method will be called once per scheduler run
         m_currentYaw = RobotContainer.m_drivetrainSubsystem.getGyroHeading()
                 .getDegrees();
         m_goalYaw = m_currentYaw + getHeadingOffset();
@@ -90,6 +96,14 @@ public class Tracking extends SubsystemBase {
 
         if (m_isTesting) {
             return;
+        }
+
+        if (m_isLightOn) {
+            if (this.isTrackingTarget()) {
+                RobotContainer.m_LEDStrip.setBallWhite();
+            } else {
+                RobotContainer.m_LEDStrip.setBallBlack();
+            }
         }
     }
 
@@ -118,6 +132,34 @@ public class Tracking extends SubsystemBase {
 
     }
 
+    public double getXOffset() {
+        if (m_isTesting) {
+            return m_testTargetYaw - m_currentYaw;
+        }
+
+        double yaw = 0;
+        double pitch = 0;
+        double x = 0;
+
+        // set yaw equal to yaw from photonvision
+        // something like
+        PhotonPipelineResult result = m_camera.getLatestResult();
+
+        if (result.hasTargets()) {
+            pitch = result.getBestTarget().getPitch();
+            yaw = result.getBestTarget().getYaw();
+
+            pitch += 22.0;
+
+            // approximate the distance
+            double distance = 2.738 * pitch;
+            x = distance * Math.tan(Math.toRadians(yaw));
+        }
+
+        return x;
+
+    }
+
     // used only for testing
     private Rotation2d m_testTarget = new Rotation2d();
 
@@ -139,7 +181,7 @@ public class Tracking extends SubsystemBase {
 
     public void createShuffleBoardTab() {
         ShuffleboardTab tab = m_shuffleboardTab;
-        ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 2)
+        ShuffleboardLayout commands = tab.getLayout("Commands", BuiltInLayouts.kList).withSize(2, 4)
                 .withProperties(Map.of("Label position", "HIDDEN")); // hide labels for commands
 
         CommandBase c = new frc.robot.commands.Tracking.UpdatePIDF();
@@ -148,6 +190,18 @@ public class Tracking extends SubsystemBase {
 
         c = new frc.robot.commands.Tracking.EnableTestMode();
         c.setName("Test Mode");
+        commands.add(c);
+
+        c = new frc.robot.commands.Tracking.RedCargo();
+        c.setName("Red Cargo");
+        commands.add(c);
+
+        c = new frc.robot.commands.Tracking.BlueCargo();
+        c.setName("Blue Cargo");
+        commands.add(c);
+
+        c = new frc.robot.commands.Tracking.EnableLight();
+        c.setName("Enable Light");
         commands.add(c);
 
         // m_testTargetYaw = m_shuffleboardTab.add("Test Target Yaw",
@@ -191,10 +245,12 @@ public class Tracking extends SubsystemBase {
     public void enableSearchLight() {
         m_PDH.setSwitchableChannel(true);
         m_camera.setDriverMode(false);
+        m_isLightOn = true;
     }
 
     public void disableSearchLight() {
         m_PDH.setSwitchableChannel(false);
         m_camera.setDriverMode(true);
+        m_isLightOn = false;
     }
 }

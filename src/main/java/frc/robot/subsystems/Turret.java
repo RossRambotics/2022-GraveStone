@@ -512,7 +512,7 @@ public class Turret extends SubsystemBase {
                 .withSize(4, 1)
                 .withPosition(2, 1).withProperties(Map.of("min", -100, "max", 100)).getEntry();
 
-        m_tuning_offset_yaw = RobotContainer.m_TuningTab.add("Tune Offset Yaw", -0.50)
+        m_tuning_offset_yaw = RobotContainer.m_TuningTab.add("Tune Offset Yaw", -6.5)
                 .withWidget(BuiltInWidgets.kNumberSlider)
                 .withSize(4, 1)
                 .withPosition(2, 2).withProperties(Map.of("min", -10, "max", 10)).getEntry();

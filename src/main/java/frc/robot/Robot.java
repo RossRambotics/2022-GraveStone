@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -79,6 +80,17 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+
+        if (DriverStation.getAlliance() == DriverStation.Alliance.Blue) {
+            RobotContainer.m_Tracking.blueAlliance();
+        } else if (DriverStation.getAlliance() == DriverStation.Alliance.Red) {
+            RobotContainer.m_Tracking.redAlliance();
+        } else {
+            DataLogManager.log("ALERT!  No alliance from drive station!");
+            // RobotContainer.m_Tracking.redAlliance();
+            RobotContainer.m_Tracking.blueAlliance();
+
+        }
 
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
