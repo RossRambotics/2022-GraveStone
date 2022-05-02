@@ -195,7 +195,7 @@ public class SnapDriveToCargo extends CommandBase {
         }
 
         double translateSpeedY = 0.0;
-        if (translateSpeedX < 0.2 && RobotContainer.m_Tracking.isTrackingTarget()) {
+        if (RobotContainer.m_Tracking.isTrackingTarget()) {
             translateSpeedY = -0.6;
         }
 
